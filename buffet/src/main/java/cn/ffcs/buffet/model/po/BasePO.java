@@ -1,6 +1,9 @@
 package cn.ffcs.buffet.model.po;
 
 
+import io.swagger.annotations.ApiModelProperty;
+
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -24,10 +27,14 @@ public class BasePO implements Serializable {
     /**
      * 创建人
      */
+    @ApiModelProperty(value = "创建人", name = "createBy", required = true, example = "admin")
+    @NotEmpty(message = "创建人不能为空")
     protected String createBy;
     /**
      * 更新人
      */
+    @ApiModelProperty(value = "更新人", name = "updateBy", required = true, example = "admin")
+    @NotEmpty(message = "更新人不能为空")
     protected String updateBy;
 
     public Timestamp getCreateTime() {

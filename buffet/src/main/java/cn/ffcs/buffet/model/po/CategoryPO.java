@@ -2,7 +2,10 @@ package cn.ffcs.buffet.model.po;
 
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -22,6 +25,9 @@ public class CategoryPO extends BasePO implements Serializable {
     /**
      * 类别名称
      */
+    @ApiModelProperty(value = "类别名称", name = "name", required = true, example = "汉堡")
+    @NotEmpty(message = "类别名不能为null且不为空")
+    @Size(min = 1, max = 64, message = "类别名长度需在1至64个字符")
     private String name;
 
     public Integer getId() {

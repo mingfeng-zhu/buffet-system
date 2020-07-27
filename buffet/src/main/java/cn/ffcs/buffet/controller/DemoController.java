@@ -11,15 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @Description: demo
  * @Author: mingfeng.zhu@ffcs.cn
  * @Date: 2020/7/21 10:29
  */
 @Api(value = "/api/demo", tags = "demo服务")
-@Validated
 @RestController
 @RequestMapping(value = "/api/demo")
+@Validated
 public class DemoController {
     /**
      * 类别服务
@@ -69,7 +71,8 @@ public class DemoController {
      * @return
      */
     @PostMapping(path = "/add")
-    public Result insertCatetory(@RequestBody CategoryPO categoryPO) {
+    public Result insertCatetory(@RequestBody @Valid CategoryPO categoryPO) {
+        System.out.println(categoryPO);
         categoryService.insert(categoryPO);
         return Result.success();
 
@@ -82,7 +85,7 @@ public class DemoController {
      * @return
      */
     @PutMapping(path = "/update")
-    public Result updateById(@RequestBody CategoryPO categoryPO) {
+    public Result updateById(@RequestBody @Valid CategoryPO categoryPO) {
         categoryService.updateById(categoryPO);
         return Result.success();
     }
