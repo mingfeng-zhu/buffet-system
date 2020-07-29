@@ -3,10 +3,10 @@ server:
 spring:
   datasource:
     #数据源基本配置
-    username: root
-    password: 123456
+    username: buffet
+    password: abc123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/buffet?serverTimezone=Asia/Shanghai&useUnicode=true&amp&characterEncoding=utf-8
+    url: jdbc:mysql://111.229.32.226:3306/buffet?serverTimezone=Asia/Shanghai&useUnicode=true&amp&characterEncoding=utf-8
     type: com.alibaba.druid.pool.DruidDataSource
     #数据源其他配置
     initialSize: 5
