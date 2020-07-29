@@ -11,8 +11,14 @@ import cn.ffcs.buffet.common.enums.ExceptionEnum;
 public class Result<T> {
 
 
+    /**
+     * 成功返回的code
+     */
     public final static int SUCCESS_CODE = 2000;
 
+    /**
+     * 失败返回的code
+     */
     public final static int FAIL_CODE = 5000;
 
 
@@ -38,7 +44,7 @@ public class Result<T> {
     }
 
     /**
-     * 成功时调用
+     * 成功时调用，无数据
      *
      * @return
      */
@@ -46,22 +52,46 @@ public class Result<T> {
         return new Result(SUCCESS_CODE, null, null);
     }
 
+    /**
+     * 成功并有数据时调用
+     *
+     * @param data
+     * @param <T>
+     * @return
+     */
     public static <T> Result success(T data) {
         return new Result(SUCCESS_CODE, "", data);
     }
 
+    /**
+     * 失败时调用，并填写失败信息
+     *
+     * @param message
+     * @return
+     */
     public static Result fail(String message) {
         return new Result(FAIL_CODE, message, null);
     }
 
+    /**
+     * 失败时调用，并填写失败信息和code
+     *
+     * @param message
+     * @param code
+     * @return
+     */
     public static Result fail(String message, Integer code) {
         return new Result(code, message, null);
-
     }
 
+    /**
+     * 失败时调用,传入自定义枚举类
+     *
+     * @param e
+     * @return
+     */
     public static Result fail(ExceptionEnum e) {
         return fail(e.getMsg(), e.getCode());
-
     }
 
     public Integer getCode() {

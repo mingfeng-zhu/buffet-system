@@ -11,18 +11,22 @@ import java.util.List;
 public class Page<T> implements Serializable {
 
     private static final long serialVersionUID = 3571732864695705773L;
+
     /**
      * 查询到的数据集合
      */
     private List<T> list;
+
     /**
      * 总数
      */
     private Long total;
+
     /**
      * 当前页
      */
     private Integer pageNum = 1;
+
     /**
      * 每页显示的数量
      */
