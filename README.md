@@ -6,7 +6,7 @@ https://docs.qq.com/doc/DR1NXWXNjRXlVQmNQ
 ```
 ## 1.clone地址
 ```
-git clone https://github.com/mingfeng-zhu/buffet-system.git
+https://github.com/ffcn-8/buffet-system.git
 ```
 ## 2.admin 后台 后台框架大概用
 ```
