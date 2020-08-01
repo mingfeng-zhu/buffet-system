@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ffcs.buffet.mapper.ProductSpecificationPOMapper" >
+  <resultMap id="BaseResultMap" type="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
+    <id column="product_specification_id" property="productSpecificationId" jdbcType="INTEGER" />
+    <result column="product_specification" property="productSpecification" jdbcType="VARCHAR" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <result column="product_storage" property="productStorage" jdbcType="VARCHAR" />
+    <result column="product_price" property="productPrice" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="product_specification_picture" property="productSpecificationPicture" jdbcType="VARCHAR" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="ProductSpecificationDTOResultMap" type="cn.ffcs.buffet.model.dto.ProductSpecificationDTO">
+    <id column="product_specification_id" property="productSpecificationId" jdbcType="INTEGER"/>
+    <result column="product_specification" property="productSpecification" jdbcType="VARCHAR"/>
+    <result column="product_id" property="productId" jdbcType="INTEGER"/>
+    <result column="product_storage" property="productStorage" jdbcType="INTEGER"/>
+    <result column="product_price" property="productPrice" jdbcType="DECIMAL"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="product_specification_picture" property="productSpecificationPicture" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    product_specification_id, product_specification, product_id, product_storage, product_price,
+    status, product_specification_picture, create_by, create_time, update_by, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from product_specification
+    where product_specification_id = #{productSpecificationId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from product_specification
+    where product_specification_id = #{productSpecificationId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
+    insert into product_specification (product_specification_id, product_specification,
+      product_id, product_storage, product_price,
+      status, product_specification_picture, create_by, create_time,
+      update_by, update_time)
+    values (#{productSpecificationId,jdbcType=INTEGER}, #{productSpecification,jdbcType=VARCHAR},
+      #{productId,jdbcType=INTEGER}, #{productStorage,jdbcType=VARCHAR}, #{productPrice,jdbcType=DECIMAL},
+      #{status,jdbcType=INTEGER}, #{productSpecificationPicture, jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
+    insert into product_specification
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="productSpecificationId != null" >
+        product_specification_id,
+      </if>
+      <if test="productSpecification != null" >
+        product_specification,
+      </if>
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="productStorage != null" >
+        product_storage,
+      </if>
+      <if test="productPrice != null" >
+        product_price,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="product_specification_picture != null" >
+        product_specification_picture,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="productSpecificationId != null" >
+        #{productSpecificationId,jdbcType=INTEGER},
+      </if>
+      <if test="productSpecification != null" >
+        #{productSpecification,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="productStorage != null" >
+        #{productStorage,jdbcType=VARCHAR},
+      </if>
+      <if test="productPrice != null" >
+        #{productPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="productSpecificationPicture != null" >
+        #{productSpecificationPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
+    update product_specification
+    <set >
+      <if test="productSpecification != null" >
+        product_specification = #{productSpecification,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="productStorage != null" >
+        product_storage = #{productStorage,jdbcType=VARCHAR},
+      </if>
+      <if test="productPrice != null" >
+        product_price = #{productPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="productSpecificationPicture != null" >
+        product_specification_picture = #{productSpecificationPicture,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where product_specification_id = #{productSpecificationId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
+    update product_specification
+    set product_specification = #{productSpecification,jdbcType=VARCHAR},
+      product_id = #{productId,jdbcType=INTEGER},
+      product_storage = #{productStorage,jdbcType=VARCHAR},
+      product_price = #{productPrice,jdbcType=DECIMAL},
+      status = #{status,jdbcType=INTEGER},
+      product_specification_picture = #{productSpecificationPicture,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where product_specification_id = #{productSpecificationId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectSpecificationByProductId" resultMap="ProductSpecificationDTOResultMap" parameterType="INTEGER">
+    select product_specification_id, product_specification, product_id, product_storage,
+    product_price, status, product_specification_picture
+    from product_specification where product_id = #{productId, jdbcType=INTEGER} and status = 1
+  </select>
+
+  <select id="selectSpecificationByProductIdAndSpecification" resultMap="ProductSpecificationDTOResultMap">
+    select product_specification_id, product_specification, product_id, product_storage,
+    product_price, status, product_specification_picture
+    from product_specification
+    where product_id = #{productId, jdbcType=INTEGER} and product_specification = #{productSpecification, jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectSpecificationByProductSpecificationId" resultMap="ProductSpecificationDTOResultMap" parameterType="INTEGER">
+    select product_specification_id, product_specification, product_id, product_storage,
+    product_price, status, product_specification_picture
+    from product_specification
+    where product_specification_id = #{productSpecificationId, jdbcType=INTEGER}
+  </select>
+
+  <select id="selectSpecificationByProductSpecificationIdList" resultMap="ProductSpecificationDTOResultMap">
+    select product_specification_id, product_specification, product_id, product_storage,
+    product_price, status, product_specification_picture
+    from product_specification
+    where product_specification_id in
+    <foreach item="productSpecificationId" collection="productSpecificationIdList" open="(" separator="," close=")">
+      #{productSpecificationId, jdbcType=INTEGER}
+    </foreach>
+  </select>
+
+  <update id="updateProductStorageToMinusOne">
+    update product_specification
+    set product_storage = (product_storage - 1)
+    where product_specification_id in
+    <foreach item="productSpecificationId" collection="productSpecificationIdList" open="(" separator="," close=")">
+      #{productSpecificationId, jdbcType=INTEGER}
+    </foreach>
+
+  </update>
+</mapper>

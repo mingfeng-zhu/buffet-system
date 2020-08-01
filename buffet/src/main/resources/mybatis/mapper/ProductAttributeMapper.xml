@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ffcs.buffet.mapper.ProductAttributePOMapper" >
+  <resultMap id="BaseResultMap" type="cn.ffcs.buffet.model.po.ProductAttributePO" >
+    <id column="product_attribute_id" property="productAttributeId" jdbcType="INTEGER" />
+    <result column="product_attribute_name" property="productAttributeName" jdbcType="VARCHAR" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="ProductAttributeDTOResultMap" type="cn.ffcs.buffet.model.dto.ProductAttributeDTO">
+    <id column="product_attribute_id" property="productAttributeId" jdbcType="INTEGER" />
+    <result column="product_attribute_name" property="productAttributeName" jdbcType="VARCHAR" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <collection property="productAttributeValueDTOList"
+                column="product_attribute_id"
+                ofType="cn.ffcs.buffet.model.dto.ProductAttributeValueDTO"
+                select="cn.ffcs.buffet.mapper.ProductAttributeValuePOMapper.selectProductAttributeValueByProductAttributeId">
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    product_attribute_id, product_attribute_name, product_id, create_by, create_time, 
+    update_by, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from product_attribute
+    where product_attribute_id = #{productAttributeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from product_attribute
+    where product_attribute_id = #{productAttributeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.ffcs.buffet.model.po.ProductAttributePO" >
+    insert into product_attribute (product_attribute_id, product_attribute_name, 
+      product_id, create_by, create_time, 
+      update_by, update_time)
+    values (#{productAttributeId,jdbcType=INTEGER}, #{productAttributeName,jdbcType=VARCHAR}, 
+      #{productId,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductAttributePO" >
+    insert into product_attribute
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="productAttributeId != null" >
+        product_attribute_id,
+      </if>
+      <if test="productAttributeName != null" >
+        product_attribute_name,
+      </if>
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="productAttributeId != null" >
+        #{productAttributeId,jdbcType=INTEGER},
+      </if>
+      <if test="productAttributeName != null" >
+        #{productAttributeName,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.ffcs.buffet.model.po.ProductAttributePO" >
+    update product_attribute
+    <set >
+      <if test="productAttributeName != null" >
+        product_attribute_name = #{productAttributeName,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where product_attribute_id = #{productAttributeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.ffcs.buffet.model.po.ProductAttributePO" >
+    update product_attribute
+    set product_attribute_name = #{productAttributeName,jdbcType=VARCHAR},
+      product_id = #{productId,jdbcType=INTEGER},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where product_attribute_id = #{productAttributeId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectProductAttributeListByProductId" resultMap="ProductAttributeDTOResultMap" parameterType="INTEGER">
+    select product_attribute_id, product_attribute_name, product_id
+    from product_attribute
+    where product_id = #{productId, jdbcType=INTEGER}
+  </select>
+</mapper>
