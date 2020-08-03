@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.net.BindException;
 
 /**
@@ -84,6 +85,20 @@ public class GlobalDefaultExceptionHandler {
         LOGGER.error("错误信息：", e);
         String message = e.getMessage();
         return Result.fail(message);
+    }
+
+    /**
+     * IO异常
+     *
+     * @param request 请求
+     * @param e       异常
+     * @return Result 错误结果
+     */
+    @ExceptionHandler(value = IOException.class)
+    public Result ioException(HttpServletRequest request, Exception e) {
+        LOGGER.error(request.getRequestURI() + " 文件异常");
+        LOGGER.error("上传失败：", e);
+        return Result.fail("上传失败");
     }
 
     /**

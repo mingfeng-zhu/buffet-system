@@ -23,6 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //Windows下
         // registry.addResourceHandler("/upload/**").addResourceLocations("file:d:/upload/");
+        //linux下
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:/upload/");
     }
 
     /**
