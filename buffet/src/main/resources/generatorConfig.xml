@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+	<!--<classPathEntry location="D:\maven\repository\mysql\mysql-connector-java\5.1.40\mysql-connector-java-5.1.40.jar" />-->
+	<classPathEntry location="C:\Users\24287\.m2\repository\mysql\mysql-connector-java\8.0.17\mysql-connector-java-8.0.17.jar" />
+
+  <context id="xmgl" targetRuntime="MyBatis3" defaultModelType="flat">
+
+  	<commentGenerator>
+    	<!-- 抑制警告 -->
+            <property name="suppressTypeWarnings" value="true" />
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true" />
+            <!-- 是否生成注释代时间戳 -->
+            <property name="suppressDate" value="true" />
+    </commentGenerator>
+
+    <jdbcConnection connectionURL="jdbc:mysql://111.229.32.226:3306/buffet" driverClass="com.mysql.cj.jdbc.Driver" password="abc123456" userId="buffet" />
+
+    <javaModelGenerator targetPackage="cn.ffcs.buffet.model.po" targetProject="src/main/java" />
+
+    <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources/mybatis" />
+
+    <javaClientGenerator targetPackage="cn.ffcs.buffet.mapper" targetProject="src/main/java" type="XMLMAPPER" />
+
+      <table tableName="t_use" domainObjectName="Use"
+             enableCountByExample="false" enableUpdateByExample="false"
+             enableDeleteByExample="false" enableSelectByExample="false"
+             selectByExampleQueryId="false">
+          <!--<columnRenamingRule searchString="^D_"
+                              replaceString=""/>-->
+      </table>
+
+
+  </context>
+</generatorConfiguration>
