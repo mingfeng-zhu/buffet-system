@@ -30,7 +30,7 @@ public class ProductSpecificationDTO {
     @ApiModelProperty(value = "商品该规格的价格", name = "productPrice", example = "99.99")
     private BigDecimal productPrice;
 
-    @ApiModelProperty(value = "商品状态", name = "status", example = "0 or 1")
+    @ApiModelProperty(value = "商品状态", name = "status", example = "0")
     private Integer status;
 
     @ApiModelProperty(value = "商品规格图片的路径", name = "productSpecificationPicture", example = "http://127.0.0.1:8082/productPicture/aisdfjaskldfjklasdfjlaskdjf.jpg")
