@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.service.impl;
 
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.mapper.ProductAttributePOMapper;
 import cn.ffcs.buffet.mapper.ProductCategoryPOMapper;
 import cn.ffcs.buffet.mapper.ProductPOMapper;
@@ -8,7 +9,10 @@ import cn.ffcs.buffet.model.dto.ProductAttributeDTO;
 import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
 import cn.ffcs.buffet.model.dto.ProductDTO;
 import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
+import cn.ffcs.buffet.model.po.ProductPO;
 import cn.ffcs.buffet.service.ProductModuleService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,13 +50,16 @@ public class ProductModuleServiceImpl implements ProductModuleService {
 
     /**
      * 根据商品分类id获取商品列表
+     * @param page
      * @param productCategoryId
      * @return
      */
     @Override
-    public List<ProductDTO> selectProductListByProductCategoryId(Integer productCategoryId) {
+    public PageInfo<ProductDTO> selectProductListByProductCategoryId(Page<ProductDTO> page, Integer productCategoryId) {
+        PageHelper.startPage(page.getPageNum(), page.getPageSize());
         List<ProductDTO> productDTOList = this.productPOMapper.selectProductByProductCategoryId(productCategoryId);
-        return productDTOList;
+        PageInfo<ProductDTO> pageInfo = new PageInfo<>(productDTOList);
+        return pageInfo;
     }
 
     /**
@@ -61,9 +68,11 @@ public class ProductModuleServiceImpl implements ProductModuleService {
      * @return
      */
     @Override
-    public List<ProductDTO> selectProductListByProductName(String productName) {
+    public PageInfo<ProductDTO> selectProductListByProductName(Page<ProductDTO> page, String productName) {
+        PageHelper.startPage(page.getPageNum(), page.getPageSize());
         List<ProductDTO> productDTOList = this.productPOMapper.selectProductByProductName(productName);
-        return productDTOList;
+        PageInfo<ProductDTO> pageInfo = new PageInfo<>(productDTOList);
+        return pageInfo;
     }
 
     /**
@@ -87,6 +96,19 @@ public class ProductModuleServiceImpl implements ProductModuleService {
     public ProductSpecificationDTO selectSpecificationByProductIdAndSpecification(Integer productId, String productSpecification) {
         ProductSpecificationDTO productSpecificationDTO = this.productSpecificationPOMapper.selectSpecificationByProductIdAndSpecification(productId, productSpecification);
         return productSpecificationDTO;
+    }
+
+    /**
+     * 获取全部商品
+     * @param page
+     * @return
+     */
+    @Override
+    public PageInfo<ProductDTO> selectAllProductList(Page<ProductDTO> page) {
+        PageHelper.startPage(page.getPageNum(), page.getPageSize());
+        List<ProductDTO> productDTOList = this.productPOMapper.selectAllProductList();
+        PageInfo<ProductDTO> pageInfo = new PageInfo<>(productDTOList);
+        return pageInfo;
     }
 
     /**

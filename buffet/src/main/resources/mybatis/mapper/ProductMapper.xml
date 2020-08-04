@@ -19,11 +19,11 @@
     <result column="product_desc" property="productDesc" jdbcType="VARCHAR" />
     <result column="product_category_id" property="productCategoryId" jdbcType="INTEGER" />
     <result column="product_picture_path" property="productPicturePath" jdbcType="VARCHAR" />
-    <collection property="productSpecificationDTOList"
+    <!--<collection property="productSpecificationDTOList"
                 column="product_id"
                 ofType="cn.ffcs.buffet.model.dto.ProductSpecificationDTO"
                 select="cn.ffcs.buffet.mapper.ProductSpecificationPOMapper.selectSpecificationByProductId">
-    </collection>
+    </collection>-->
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -170,6 +170,15 @@
     <if test="productName != null and productName != ''">
       and a.product_Name like concat('%', #{productName, jdbcType=VARCHAR}, '%')
     </if>
+    group by a.product_id
+  </select>
+
+  <select id="selectAllProductList" resultMap="ProductDTOResultMap">
+    select a.product_id, a.product_name, a.product_desc, a.product_category_id, a.product_picture_path,
+    max(b.product_price) as max_price, min(b.product_price) as min_price, sum(b.product_storage) as product_storage,
+    count(b.product_specification_id) as specification_number
+    from product a, product_specification b
+    where a.product_id = b.product_id
     group by a.product_id
   </select>
 </mapper>

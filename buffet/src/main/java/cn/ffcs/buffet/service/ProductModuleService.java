@@ -1,9 +1,12 @@
 package cn.ffcs.buffet.service;
 
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.model.dto.ProductAttributeDTO;
 import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
 import cn.ffcs.buffet.model.dto.ProductDTO;
 import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
+import cn.ffcs.buffet.model.po.ProductPO;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -22,17 +25,18 @@ public interface ProductModuleService {
 
     /**
      * 根据商品分类id获取商品列表
+     * @param page
      * @param productCategoryId
      * @return
      */
-    List<ProductDTO> selectProductListByProductCategoryId(Integer productCategoryId);
+    PageInfo<ProductDTO> selectProductListByProductCategoryId(Page<ProductDTO> page, Integer productCategoryId);
 
     /**
      * 根据商品名称查询商品
      * @param productName
      * @return
      */
-    List<ProductDTO> selectProductListByProductName(String productName);
+    PageInfo<ProductDTO> selectProductListByProductName(Page<ProductDTO> page, String productName);
 
     /**
      * 根据商品id获取商品属性列表
@@ -48,6 +52,13 @@ public interface ProductModuleService {
      * @return
      */
     ProductSpecificationDTO selectSpecificationByProductIdAndSpecification(Integer productId, String productSpecification);
+
+    /**
+     * 获取全部商品
+     * @param page
+     * @return
+     */
+    PageInfo<ProductDTO> selectAllProductList(Page<ProductDTO> page);
 
     /**
      * 根据商品规格id集合返回商品规格集合

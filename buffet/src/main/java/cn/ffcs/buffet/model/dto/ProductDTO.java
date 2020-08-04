@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class ProductDTO {
     @ApiModelProperty(value = "商品ID", name = "productId", example = "1")
     private Integer productId;
 
-    @ApiModelProperty(value = "商品名称", name = "productName", required = true, example = "米饭")
+    @ApiModelProperty(value = "商品名称", name = "productName", example = "米饭")
     @NotEmpty(message = "商品名称不能为null且不为空")
     @Size(min = 1, max = 50, message = "商品名称长度需在1至50个字符")
     private String productName;
@@ -30,15 +31,15 @@ public class ProductDTO {
     @ApiModelProperty(value = "商品类别ID", name = "productCategoryId", example = "1")
     private Integer productCategoryId;
 
-    @ApiModelProperty(value = "商品图片路径", name = "productPicturePath", required = true, example = "http://127.0.0.1:8082/productPicture/aisdfjaskldfjklasdfjlaskdjf.jpg")
+    @ApiModelProperty(value = "商品图片路径", name = "productPicturePath", example = "http://127.0.0.1:8082/productPicture/aisdfjaskldfjklasdfjlaskdjf.jpg")
     @NotEmpty(message = "商品图片路径不能为null且不为空")
     private String productPicturePath;
 
     @ApiModelProperty(value = "商品最高价", name = "maxPrice", example = "999.99")
-    private Float maxPrice;
+    private BigDecimal maxPrice;
 
     @ApiModelProperty(value = "商品最低价", name = "minPrice", example = "0.99")
-    private Float minPrice;
+    private BigDecimal minPrice;
 
     @ApiModelProperty(value = "商品库存", name = "productStorage", example = "100")
     private Integer productStorage;
@@ -91,19 +92,19 @@ public class ProductDTO {
         this.productPicturePath = productPicturePath;
     }
 
-    public Float getMaxPrice() {
+    public BigDecimal getMaxPrice() {
         return maxPrice;
     }
 
-    public void setMaxPrice(Float maxPrice) {
+    public void setMaxPrice(BigDecimal maxPrice) {
         this.maxPrice = maxPrice;
     }
 
-    public Float getMinPrice() {
+    public BigDecimal getMinPrice() {
         return minPrice;
     }
 
-    public void setMinPrice(Float minPrice) {
+    public void setMinPrice(BigDecimal minPrice) {
         this.minPrice = minPrice;
     }
 

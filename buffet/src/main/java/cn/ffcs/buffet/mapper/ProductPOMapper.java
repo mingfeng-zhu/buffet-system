@@ -39,4 +39,10 @@ public interface ProductPOMapper {
      * @return
      */
     List<ProductDTO> selectProductByProductName(@Param("productName") String productName);
+
+    /**
+     * 获取全部商品
+     * @return
+     */
+    List<ProductDTO> selectAllProductList();
 }

@@ -1,11 +1,14 @@
 package cn.ffcs.buffet.controller;
 
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.model.dto.ProductAttributeDTO;
 import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
 import cn.ffcs.buffet.model.dto.ProductDTO;
 import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
+import cn.ffcs.buffet.model.po.ProductPO;
 import cn.ffcs.buffet.service.ProductModuleService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +39,39 @@ public class ProductModuleController {
     }
 
     @ApiOperation(value = "根据商品分类id获取商品列表")
-    @GetMapping(path = "/getProductListByProductCategoryId/{productCategoryId}")
-    public Result getProductListByProductCategoryId(@PathVariable Integer productCategoryId) {
-        List<ProductDTO> productDTOList = productModuleService.selectProductListByProductCategoryId(productCategoryId);
-        return Result.success(productDTOList);
+    @GetMapping(path = "/getProductListByProductCategoryId")
+    public Result getProductListByProductCategoryId(Page<ProductDTO> page, Integer productCategoryId) {
+        PageInfo<ProductDTO> productDTOList = productModuleService.selectProductListByProductCategoryId(page, productCategoryId);
+        if(productDTOList.getTotal() > 0){
+            page.setList(productDTOList.getList());
+            page.setTotal(productDTOList.getTotal());
+            return Result.success(page);
+        }
+        return Result.success();
     }
 
     @ApiOperation(value = "根据商品名称查询商品")
-    @GetMapping(path = "/getProductListByProductName/{productName}")
-    public Result getProductListByProductName(@PathVariable String productName){
-        List<ProductDTO> productDTOList = productModuleService.selectProductListByProductName(productName);
-        return Result.success(productDTOList);
+    @GetMapping(path = "/getProductListByProductName")
+    public Result getProductListByProductName(Page<ProductDTO> page, String productName){
+        PageInfo<ProductDTO> productDTOList = productModuleService.selectProductListByProductName(page, productName);
+        if(productDTOList.getTotal() > 0){
+            page.setList(productDTOList.getList());
+            page.setTotal(productDTOList.getTotal());
+            return Result.success(page);
+        }
+        return Result.success();
+    }
+
+    @ApiOperation(value = "获取全部商品")
+    @GetMapping(path = "/getAllProductList")
+    public Result getAllProductList(Page<ProductDTO> page){
+        PageInfo<ProductDTO> productDTOList = productModuleService.selectAllProductList(page);
+        if(productDTOList.getTotal() > 0){
+            page.setList(productDTOList.getList());
+            page.setTotal(productDTOList.getTotal());
+            return Result.success(page);
+        }
+        return Result.success();
     }
 
     @ApiOperation(value = "根据商品id获取商品属性及其属性值")
