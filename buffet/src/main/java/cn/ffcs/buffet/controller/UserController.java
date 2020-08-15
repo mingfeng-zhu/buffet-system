@@ -8,6 +8,7 @@ import cn.ffcs.buffet.service.UserAddressService;
 import cn.ffcs.buffet.service.UserService;
 import com.zhenzi.sms.ZhenziSmsClient;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class UserController {
      * @param user 用户类
      * @return
      */
+    @ApiOperation(value = "用户登录，登录前请发送手机验证码")
     @PostMapping(path = "/login")
     public Result userLogin(UserPO user,String code, HttpServletRequest request) {
         HttpSession session=request.getSession();
@@ -76,6 +78,7 @@ public class UserController {
      * @param user 用户类
      * @return
      */
+    @ApiOperation(value = "用户注册-请先发送手机验证码，并保证手机号不重复")
     @RequestMapping(path = "/signUp")
     public Result signUpUser(UserPO user,String code,HttpServletRequest request) {
         HttpSession session=request.getSession();
@@ -104,6 +107,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("getCode")
+    @ApiOperation(value = "获取手机验证码")
     public void loginCode(String userTel, HttpServletRequest request) {
         String apiUrl = "https://sms_developer.zhenzikj.com";
         String appSecret = "b32ef9e2-f91e-4d8d-9410-d726fff18b95";
@@ -129,6 +133,7 @@ public class UserController {
      * @param user 用户类
      * @return
      */
+    @ApiOperation(value = "修改用户信息，userId不能为空")
     @RequestMapping(path = "/updateUser")
     public Result updateUser(UserPO user,HttpServletRequest request) {
         Integer num=userService.updateUser(user);
@@ -147,6 +152,7 @@ public class UserController {
      * @param userAddress 用户地址类
      * @return
      */
+    @ApiOperation(value = "新增用户的送货地址")
     @RequestMapping(path = "/addUserAddress")
     public Result addUserAddress(UserAddress userAddress, HttpServletRequest request) {
         Integer num=userAddressService.addUserAddress(userAddress);
@@ -162,6 +168,7 @@ public class UserController {
      * @param userId 用户ID
      * @return
      */
+    @ApiOperation(value = "查询该用户所有的送货地址")
     @RequestMapping(path = "/selectUserAddress")
     public Result selectUserAddress(Integer userId, HttpServletRequest request) {
         List<UserAddress> list =userAddressService.selectUserAddress(userId);
@@ -177,6 +184,7 @@ public class UserController {
      * @param userAddress 用户地址类
      * @return
      */
+    @ApiOperation(value = "修改用户的送货地址")
     @RequestMapping(path = "/updateUserAddress")
     public Result updateUserAddress(UserAddress userAddress, HttpServletRequest request) {
         Integer num=userAddressService.updateUserAddress(userAddress);
@@ -191,6 +199,7 @@ public class UserController {
      * @param session
      * @return
      */
+    @ApiOperation(value = "退出登录")
     @RequestMapping("exit")
     public Result exit(HttpSession session) {
         session.invalidate();
