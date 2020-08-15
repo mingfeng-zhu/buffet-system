@@ -22,6 +22,20 @@
     from t_shop_cart
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="getShopCartById" resultType="java.lang.Integer" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from t_shop_cart
+      where user_id = #{userId,jdbcType=INTEGER}
+      and good_id = #{productId,jdbcType=INTEGER}
+    </select>
+  <select id="listShopCartByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_shop_cart
+    where user_id = #{userId,jdbcType=INTEGER}
+    and pay_status = ${@cn.ffcs.buffet.common.util.Constant$Shop_Cart_STATUS@un_paid.getIndex()}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_shop_cart
     where id = #{id,jdbcType=INTEGER}
@@ -139,4 +153,12 @@
       modifier = #{modifier,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <update id="deleteShopCartByUserId" parameterType="java.lang.Integer">
+    update t_shop_cart
+    set
+    pay_status = ${@cn.ffcs.buffet.common.util.Constant$Shop_Cart_STATUS@paid.getIndex()}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+
 </mapper>

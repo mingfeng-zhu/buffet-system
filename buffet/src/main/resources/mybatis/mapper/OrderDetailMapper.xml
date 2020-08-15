@@ -37,6 +37,19 @@
       #{createTime,jdbcType=TIMESTAMP}, #{changeTime,jdbcType=TIMESTAMP}, #{creator,jdbcType=INTEGER}, 
       #{modifier,jdbcType=INTEGER})
   </insert>
+  <insert id="insertList" parameterType="java.util.List">
+    insert into t_order_detail
+    (order_id, good_id, good_count, money)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.orderId},
+      #{item.goodId},
+      #{item.goodCount},
+      #{item.money}
+      )
+    </foreach>
+  </insert>
   <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.OrderDetail">
     insert into t_order_detail
     <trim prefix="(" suffix=")" suffixOverrides=",">

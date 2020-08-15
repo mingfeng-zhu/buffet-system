@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.spring.web.json.Json;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class OrderController {
      * @param orderStatus 订单状态
      * @return
      */
-    @ApiOperation(value = "修改订单状态，批量形式(用于后台的管理员批量发货等功能)")
+    @ApiOperation(value = "修改订单状态，后台web端使用，批量形式(用于后台的管理员批量派送、批量取消订单等功能)")
     @RequestMapping(value = "/updateOrderByIdList")
     @ResponseBody
     public Result updateOrderByIdList(@RequestParam(required = false, value = "idList[]") Integer[] idList, String orderStatus) {
@@ -85,6 +86,64 @@ public class OrderController {
     @ResponseBody
     public Result getTotalNumberAndMoney() {
         return orderService.getTotalNumberAndMoney();
+    }
+
+    /**
+     * 生成订单，订单未待支付状态
+     * @param idList
+     * @param totalMoney
+     * @param totalMoneyList
+     * @param addressId
+     * @param goodCountList
+     * @return
+     */
+    @ApiOperation(value = "生成订单，订单未待支付状态.商品规格id集合、总价、各类商品价格集合、地址id、各类商品数量集合")
+    @RequestMapping(value = "/addOrder")
+    @ResponseBody
+    public Result addOrder(@RequestParam(required = false, value = "idList[]") Integer[] idList, BigDecimal totalMoney,
+                           @RequestParam(required = false, value = "totalMoneyList[]") BigDecimal[] totalMoneyList, Integer addressId,
+                           @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList) {
+        return orderService.addOrder(idList, totalMoney, totalMoneyList, addressId, goodCountList);
+    }
+
+    /**
+     * 修改订单状态订单
+     * @param id 订单id
+     * @param orderStatus 订单状态
+     * @return
+     */
+    @ApiOperation(value = "修改订单状态，app端使用,传id（订单id）与需要修改成的状态(orderStatus)（String类型）。订单状态：'2'为待接单（待支付的下一个状态）、'3'为制作中、'4'为派送中、'5'为已完成、6为取消申请中")
+    @RequestMapping(value = "/payOrder")
+    @ResponseBody
+    public Result editOrderStatus(Long id, String orderStatus) {
+        return orderService.editOrderStatus(id, orderStatus);
+    }
+
+    /**
+     * 支付订单
+     * @param id 支付订单
+     * @param idList 商品idList
+     * @param goodCountList 商品数量list
+     * @return
+     */
+    @ApiOperation(value = "支付订单，用于app端支付订单操作")
+    @RequestMapping(value = "/payOrder")
+    @ResponseBody
+    public Result payOrder(Long id, @RequestParam(required = false, value = "idList[]") Integer[] idList,
+                                    @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList) {
+        return orderService.payOrder(id, idList, goodCountList);
+    }
+
+    /**
+     * 确认取消订单
+     * @param id 订单id
+     * @return
+     */
+    @ApiOperation(value = "取消订单，用于app端取消订单")
+    @RequestMapping(value = "/cancelOrder")
+    @ResponseBody
+    public Result cancelOrder(Long id) {
+        return orderService.cancelOrder(id);
     }
 
 }

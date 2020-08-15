@@ -2,6 +2,8 @@ package cn.ffcs.buffet.mapper;
 
 import cn.ffcs.buffet.model.po.OrderDetail;
 
+import java.util.List;
+
 public interface OrderDetailMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,6 @@ public interface OrderDetailMapper {
     int updateByPrimaryKeySelective(OrderDetail record);
 
     int updateByPrimaryKey(OrderDetail record);
+
+    Integer insertList(List<OrderDetail> list);
 }

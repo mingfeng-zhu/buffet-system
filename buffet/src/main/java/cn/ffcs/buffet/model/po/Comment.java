@@ -31,6 +31,11 @@ public class Comment implements Serializable {
     private Integer orderDetailId;
 
     /**
+     * 订单id
+     */
+    private Long orderId;
+
+    /**
      * 评论图片
      */
     private String image;
@@ -70,11 +75,12 @@ public class Comment implements Serializable {
     public Comment() {
     }
 
-    public Comment(Integer id, Integer userId, Integer goodId, Integer orderDetailId, String image, BigDecimal commentStar, String commentDescription, Date createTime, Date changeTime, Integer creator, Integer modifier) {
+    public Comment(Integer id, Integer userId, Integer goodId, Integer orderDetailId, Long orderId, String image, BigDecimal commentStar, String commentDescription, Date createTime, Date changeTime, Integer creator, Integer modifier) {
         this.id = id;
         this.userId = userId;
         this.goodId = goodId;
         this.orderDetailId = orderDetailId;
+        this.orderId = orderId;
         this.image = image;
         this.commentStar = commentStar;
         this.commentDescription = commentDescription;
@@ -91,6 +97,7 @@ public class Comment implements Serializable {
                 ", userId=" + userId +
                 ", goodId=" + goodId +
                 ", orderDetailId=" + orderDetailId +
+                ", orderId=" + orderId +
                 ", image='" + image + '\'' +
                 ", commentStar=" + commentStar +
                 ", commentDescription='" + commentDescription + '\'' +
@@ -187,5 +194,13 @@ public class Comment implements Serializable {
 
     public void setModifier(Integer modifier) {
         this.modifier = modifier;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 }
