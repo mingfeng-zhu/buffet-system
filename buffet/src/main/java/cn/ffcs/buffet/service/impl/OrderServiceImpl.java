@@ -12,6 +12,7 @@ import cn.ffcs.buffet.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -94,7 +95,6 @@ public class OrderServiceImpl implements OrderService {
         //为避免在for循环中操作数据库，所以应该先批量查出所有商品规格的数据，再进行库存的判断
         List<Integer> list = Arrays.asList(idList);
         List<ProductSpecificationDTO> productList = productModuleService.selectSpecificationByProductSpecificationIdList(list);
-        List<ProductPO> newProductList = new ArrayList<>();
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
         //对订单所有商品的库存进行检查
@@ -160,11 +160,32 @@ public class OrderServiceImpl implements OrderService {
     public Result payOrder(Long id, @RequestParam(required = false, value = "idList[]") Integer[] idList,
                            @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList) {
         //先二次检查库存是否充足
+        //为避免在for循环中操作数据库，所以应该先批量查出所有商品规格的数据，再进行库存的判断
+        List<Integer> list = Arrays.asList(idList);
+        List<ProductSpecificationDTO> productList = productModuleService.selectSpecificationByProductSpecificationIdList(list);
+
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        //对订单所有商品的库存进行检查
+        for(int num = 0 ;num < idList.length; num++) {
+            ProductSpecificationDTO product = productList.get(num);
+            int newCount = product.getProductStorage() - goodCountList[num];
+            //若是存在商品库存不足的商品
+            if(newCount < Constant.PRODUCT_NUMBER_ZERO) {
+                return Result.fail("购物车中有商品库存不足！");
+            }
+        }
 
         //进行商品库存与销量的更新
-        List<Integer> productSpecificationIdList = Arrays.asList(idList);
         List<Integer> numberList = Arrays.asList(goodCountList);
-        int result = productModuleService.updateProductStorage(productSpecificationIdList, numberList);
-        return null;
+        int result = productModuleService.updateProductStorage(list, numberList);
+        //更新成功，则进行订单的支付状态改变,改成待接单
+        if(result > Constant.RETURN_DATA_COUNT) {
+            int orderResult = orderMapper.editOrderStatus(id, Constant.Order_STATUS.wait_receive.getIndex());
+            //修改状态成功，则进行状态记录的改变
+            if(orderResult > Constant.RETURN_DATA_COUNT) {
+
+            }
+        }
+        return Result.fail("支付失败，请稍后再试");
     }
 }

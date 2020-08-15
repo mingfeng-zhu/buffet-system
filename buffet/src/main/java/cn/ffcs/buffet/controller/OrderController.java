@@ -113,7 +113,7 @@ public class OrderController {
      * @return
      */
     @ApiOperation(value = "修改订单状态，app端使用,传id（订单id）与需要修改成的状态(orderStatus)（String类型）。订单状态：'2'为待接单（待支付的下一个状态）、'3'为制作中、'4'为派送中、'5'为已完成、6为取消申请中")
-    @RequestMapping(value = "/payOrder")
+    @RequestMapping(value = "/editOrderStatus")
     @ResponseBody
     public Result editOrderStatus(Long id, String orderStatus) {
         return orderService.editOrderStatus(id, orderStatus);
