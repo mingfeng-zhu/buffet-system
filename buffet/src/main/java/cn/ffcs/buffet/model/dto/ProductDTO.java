@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.model.dto;
 
+import cn.ffcs.buffet.model.po.Comment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -51,6 +52,8 @@ public class ProductDTO {
     private Integer specificationNumber;
 
     private List<ProductSpecificationDTO> productSpecificationDTOList;
+
+    private List<Comment> commentList;
 
     public Integer getProductId() {
         return productId;
@@ -141,6 +144,14 @@ public class ProductDTO {
         this.productSpecificationDTOList = productSpecificationDTOList;
     }
 
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
     @Override
     public String toString() {
         return "ProductDTO{" +
@@ -155,6 +166,7 @@ public class ProductDTO {
                 ", salesVolume=" + salesVolume +
                 ", specificationNumber=" + specificationNumber +
                 ", productSpecificationDTOList=" + productSpecificationDTOList +
+                ", commentList=" + commentList +
                 '}';
     }
 }

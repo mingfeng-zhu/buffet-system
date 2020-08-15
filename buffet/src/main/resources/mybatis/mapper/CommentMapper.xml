@@ -172,4 +172,11 @@
       modifier = #{modifier,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectCommentByProductId" resultType="cn.ffcs.buffet.model.po.Comment" parameterType="INTEGER">
+    select
+    <include refid="Base_Column_List" />
+    from t_comment
+    where good_id = #{productId,jdbcType=INTEGER}
+  </select>
 </mapper>

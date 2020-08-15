@@ -25,6 +25,21 @@
     <result column="product_specification_picture" property="productSpecificationPicture" jdbcType="VARCHAR"/>
   </resultMap>
 
+  <resultMap id="ProductSpecificationDTOResultMap1" type="cn.ffcs.buffet.model.dto.ProductSpecificationDTO">
+    <id column="product_specification_id" property="productSpecificationId" jdbcType="INTEGER"/>
+    <result column="product_specification" property="productSpecification" jdbcType="VARCHAR"/>
+    <result column="product_id" property="productId" jdbcType="INTEGER"/>
+    <result column="product_storage" property="productStorage" jdbcType="INTEGER"/>
+    <result column="product_price" property="productPrice" jdbcType="DECIMAL"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="product_specification_picture" property="productSpecificationPicture" jdbcType="VARCHAR"/>
+    <collection property="productPO"
+                column="product_id"
+                ofType="cn.ffcs.buffet.model.po.ProductPO"
+                select="cn.ffcs.buffet.mapper.ProductPOMapper.selectByPrimaryKey">
+    </collection>
+  </resultMap>
+
   <sql id="Base_Column_List" >
     product_specification_id, product_specification, product_id, product_storage, product_price,
     status, product_specification_picture, create_by, create_time, update_by, update_time
@@ -193,7 +208,7 @@
     where product_specification_id = #{productSpecificationId, jdbcType=INTEGER}
   </select>
 
-  <select id="selectSpecificationByProductSpecificationIdList" resultMap="ProductSpecificationDTOResultMap">
+  <select id="selectSpecificationByProductSpecificationIdList" resultMap="ProductSpecificationDTOResultMap1">
     select product_specification_id, product_specification, product_id, product_storage,
     product_price, status, product_specification_picture
     from product_specification
@@ -205,7 +220,7 @@
 
   <update id="updateProductStorage">
     update product_specification
-    set product_storage = (product_storage - #{number, jdbcType=INTEGER})
+    set product_storage = (product_storage + #{number, jdbcType=INTEGER})
     where product_specification_id = #{productSpecificationId, jdbcType=INTEGER}
   </update>
 </mapper>
