@@ -203,13 +203,9 @@
     </foreach>
   </select>
 
-  <update id="updateProductStorageToMinusOne">
+  <update id="updateProductStorage">
     update product_specification
-    set product_storage = (product_storage - 1)
-    where product_specification_id in
-    <foreach item="productSpecificationId" collection="productSpecificationIdList" open="(" separator="," close=")">
-      #{productSpecificationId, jdbcType=INTEGER}
-    </foreach>
-
+    set product_storage = (product_storage - #{number, jdbcType=INTEGER})
+    where product_specification_id = #{productSpecificationId, jdbcType=INTEGER}
   </update>
 </mapper>

@@ -68,9 +68,10 @@ public interface ProductModuleService {
     List<ProductSpecificationDTO> selectSpecificationByProductSpecificationIdList(List<Integer> productSpecificationIdList);
 
     /**
-     * 修改商品储存量, 库存量 - 1（订单支付时）
+     * 修改商品储存量, 修改库存量（订单支付时）
      * @param productSpecificationIdList
+     * @param numberList
      * @return
      */
-    Integer updateProductStorageToMinusOne(List<Integer> productSpecificationIdList);
+    Integer updateProductStorage(List<Integer> productSpecificationIdList, List<Integer> numberList);
 }

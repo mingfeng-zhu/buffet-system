@@ -51,9 +51,10 @@ public interface ProductSpecificationPOMapper {
     List<ProductSpecificationDTO> selectSpecificationByProductSpecificationIdList(@Param("productSpecificationIdList") List<Integer> productSpecificationIdList);
 
     /**
-     * 修改商品储存量, 库存量 - 1（订单支付时）
-     * @param productSpecificationIdList
+     * 修改商品储存量, 修改库存量（订单支付时）
+     * @param productSpecificationId
+     * @param number
      * @return
      */
-    Integer updateProductStorageToMinusOne(@Param("productSpecificationIdList") List<Integer> productSpecificationIdList);
+    Integer updateProductStorage(@Param("productSpecificationId") Integer productSpecificationId, @Param("number") Integer number);
 }

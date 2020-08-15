@@ -123,13 +123,17 @@ public class ProductModuleServiceImpl implements ProductModuleService {
     }
 
     /**
-     * 修改商品储存量, 库存量 - 1（订单支付时）
+     * 修改商品储存量, 修改库存量（订单支付时）
      * @param productSpecificationIdList
+     * @param numberList
      * @return
      */
     @Override
-    public Integer updateProductStorageToMinusOne(List<Integer> productSpecificationIdList) {
-        Integer flag = this.productSpecificationPOMapper.updateProductStorageToMinusOne(productSpecificationIdList);
+    public Integer updateProductStorage(List<Integer> productSpecificationIdList, List<Integer> numberList) {
+        Integer flag = 0;
+        for (int i = 0; i < productSpecificationIdList.size(); i++) {
+            flag += this.productSpecificationPOMapper.updateProductStorage(productSpecificationIdList.get(i), numberList.get(i));
+        }
         return flag;
     }
 }
