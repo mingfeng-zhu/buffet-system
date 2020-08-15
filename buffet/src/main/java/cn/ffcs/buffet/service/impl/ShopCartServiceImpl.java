@@ -4,11 +4,15 @@ import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.common.util.Constant;
 import cn.ffcs.buffet.mapper.OrderStatusMapper;
 import cn.ffcs.buffet.mapper.ShopCartMapper;
+import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
+import cn.ffcs.buffet.model.dto.ShopCartDetailDTO;
 import cn.ffcs.buffet.model.po.ShopCart;
+import cn.ffcs.buffet.service.ProductModuleService;
 import cn.ffcs.buffet.service.ShopCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,10 +21,29 @@ public class ShopCartServiceImpl implements ShopCartService {
     @Autowired(required=false)
     private ShopCartMapper shopCartMapper;
 
+    @Autowired(required=false)
+    private ProductModuleService productModuleService;
+
     @Override
     public Result listShopCartByUserId(Integer userId) {
+        //获取购物车信息
         List<ShopCart> shopCartList = shopCartMapper.listShopCartByUserId(userId);
-        return Result.success(shopCartList);
+        List<Integer> idList = new ArrayList<>();
+        for(int count = 0; count < shopCartList.size(); count++) {
+            idList.add(shopCartList.get(count).getGoodId());
+        }
+        //获取商品规则信息
+        List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(idList);
+
+        //组装返回数据集合
+        List<ShopCartDetailDTO> shopCartDetailDTOList = new ArrayList<>();
+        for(int num = 0; num < shopCartList.size(); num++) {
+            ShopCartDetailDTO shopCartDetailDTO = new ShopCartDetailDTO();
+            shopCartDetailDTO.setShopCart(shopCartList.get(num));
+            shopCartDetailDTO.setProductSpecificationDTO(productSpecificationDTOList.get(num));
+            shopCartDetailDTOList.add(shopCartDetailDTO);
+        }
+        return Result.success(shopCartDetailDTOList);
     }
 
     @Override
