@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ffcs.buffet.mapper.UserPOMapper">
+    <resultMap id="BaseResultMap" type="cn.ffcs.buffet.model.po.UserPO">
+        <id column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+        <result column="user_img" jdbcType="VARCHAR" property="userImg" />
+        <result column="user_sex" jdbcType="INTEGER" property="userSex" />
+        <result column="user_tel" jdbcType="VARCHAR" property="userTel" />
+        <result column="user_state" jdbcType="INTEGER" property="userState" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    user_id, user_name, create_time, update_time, user_password, user_img,user_sex,user_tel,user_state
+  </sql>
+    <update id="updateUser">
+        UPDATE USER
+        <set>
+            <if test="userName != null">
+                user_name=#{userName},
+            </if>
+            <if test="userSex != null">
+                user_sex=#{userSex},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime},
+            </if>
+            <if test="userImg != null">
+                userImg=#{userImg},
+            </if>
+            <if test="userPassword != null">
+                user_password#{userPassword},
+            </if>
+            <if test="userTel != null">
+                user_tel=#{userTel},
+            </if>
+        </set>
+        where user_id=#{userId}
+    </update>
+
+    <select id="checkLogin" parameterType="cn.ffcs.buffet.model.po.UserPO" resultMap="BaseResultMap">
+        SELECT * FROM USER WHERE USER_TEL = #{userTel}
+    </select>
+
+    <insert id="signUpUser" parameterType="cn.ffcs.buffet.model.po.UserPO">
+        INSERT INTO USER
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            user_id,
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="userPassword != null">
+                user_password,
+            </if>
+            <if test="userTel != null">
+                user_tel,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{userId},
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="userSex != null">
+                #{userSex},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword},
+            </if>
+            <if test="userTel != null">
+                #{userTel},
+            </if>
+        </trim>
+    </insert>
+</mapper>

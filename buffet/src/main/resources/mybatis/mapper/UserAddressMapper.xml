@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ffcs.buffet.mapper.UserAddressMapper">
+    <resultMap id="BaseResultMap" type="cn.ffcs.buffet.model.po.UserAddress">
+        <id column="address_id" jdbcType="INTEGER" property="addressId" />
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+        <result column="province" jdbcType="VARCHAR" property="province" />
+        <result column="city" jdbcType="VARCHAR" property="city" />
+        <result column="area" jdbcType="VARCHAR" property="area" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    address_id, user_id, address_detail, province, city, area,create_time,update_time
+  </sql>
+    <update id="updateUserAddress9">
+        UPDATE USER_ADDRESS
+        <set>
+            <if test="addressDetail != null">
+                address_detail=#{addressDetail},
+            </if>
+            <if test="province != null">
+                province=#{province},
+            </if>
+            <if test="city != null">
+                city=#{city},
+            </if>
+            <if test="area != null">
+                area=#{area},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime},
+            </if>
+        </set>
+        where address_id=#{addressId}
+    </update>
+
+
+    <select id="selectUserAddress" resultType="cn.ffcs.buffet.model.po.UserAddress">
+        SELECT <include refid="Base_Column_List"></include> FROM USER_ADDRESS WHERE USER_ID=#{userId}
+    </select>
+
+    <insert id="addUserAddress" parameterType="cn.ffcs.buffet.model.po.UserAddress">
+        INSERT INTO USER_ADDRESS
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            address_id,
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="addressDetail != null">
+                address_detail,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="area != null">
+                area,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{addressId},
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="addressDetail != null">
+                #{addressDetail},
+            </if>
+            <if test="province != null">
+                #{province},
+            </if>
+            <if test="city != null">
+                #{city},
+            </if>
+            <if test="area != null">
+                #{area},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+
+</mapper>
