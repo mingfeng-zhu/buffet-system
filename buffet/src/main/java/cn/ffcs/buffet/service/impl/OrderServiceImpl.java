@@ -103,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
             int newCount = product.getProductStorage() - goodCountList[num];
             //若是存在商品库存不足的商品
             if(newCount < Constant.PRODUCT_NUMBER_ZERO) {
-                return Result.fail("购物车中有商品库存不足！");
+                return Result.fail("购物车中"+ product.getProductPO().getProductName() +"库存不足！");
             }
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrderId((long) 90051);
@@ -152,7 +152,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result cancelOrder(Long id) {
-
         return null;
     }
 
@@ -164,14 +163,13 @@ public class OrderServiceImpl implements OrderService {
         List<Integer> list = Arrays.asList(idList);
         List<ProductSpecificationDTO> productList = productModuleService.selectSpecificationByProductSpecificationIdList(list);
 
-        List<OrderDetail> orderDetailList = new ArrayList<>();
         //对订单所有商品的库存进行检查
         for(int num = 0 ;num < idList.length; num++) {
             ProductSpecificationDTO product = productList.get(num);
             int newCount = product.getProductStorage() - goodCountList[num];
             //若是存在商品库存不足的商品
             if(newCount < Constant.PRODUCT_NUMBER_ZERO) {
-                return Result.fail("购物车中有商品库存不足！");
+                return Result.fail("购物车中"+ product.getProductPO().getProductName() +"库存不足！");
             }
         }
 
@@ -181,9 +179,13 @@ public class OrderServiceImpl implements OrderService {
         //更新成功，则进行订单的支付状态改变,改成待接单
         if(result > Constant.RETURN_DATA_COUNT) {
             int orderResult = orderMapper.editOrderStatus(id, Constant.Order_STATUS.wait_receive.getIndex());
-            //修改状态成功，则进行状态记录的改变
+            //修改状态成功，则进行订单状态改变的记录
             if(orderResult > Constant.RETURN_DATA_COUNT) {
-
+                OrderStatus orderStatus = new OrderStatus();
+                orderStatus.setOrderId(id);
+                orderStatus.setStatus(Constant.Order_STATUS.wait_receive.getIndex());
+                orderStatusService.insertOrderStatus(orderStatus);
+                return Result.success();
             }
         }
         return Result.fail("支付失败，请稍后再试");
