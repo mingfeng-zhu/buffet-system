@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.model.dto;
 
+import cn.ffcs.buffet.model.po.ProductPO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -35,6 +36,8 @@ public class ProductSpecificationDTO {
 
     @ApiModelProperty(value = "商品规格图片的路径", name = "productSpecificationPicture", example = "http://127.0.0.1:8082/productPicture/aisdfjaskldfjklasdfjlaskdjf.jpg")
     private String productSpecificationPicture;
+
+    private ProductPO productPO;
 
     public Integer getProductSpecificationId() {
         return productSpecificationId;
@@ -91,6 +94,13 @@ public class ProductSpecificationDTO {
     public void setProductSpecificationPicture(String productSpecificationPicture) {
         this.productSpecificationPicture = productSpecificationPicture;
     }
+    public ProductPO getProductPO() {
+        return productPO;
+    }
+
+    public void setProductPO(ProductPO productPO) {
+        this.productPO = productPO;
+    }
 
     @Override
     public String toString() {
@@ -102,6 +112,7 @@ public class ProductSpecificationDTO {
                 ", productPrice=" + productPrice +
                 ", status=" + status +
                 ", productSpecificationPicture='" + productSpecificationPicture + '\'' +
+                ", productPO=" + productPO +
                 '}';
     }
 }

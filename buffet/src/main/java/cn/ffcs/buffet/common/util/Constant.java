@@ -13,6 +13,15 @@ public class Constant {
     /** 数据未删除状态 */
     public static final String DATA_UN_DELETE = "1";
 
+    /** 数据库影响条数为0 */
+    public static final Integer RETURN_DATA_COUNT = 0;
+
+    /** 购物者商品数量达到删除界限0 */
+    public static final Integer SHOP_CARD_DELETE_ZERO = 0;
+
+    /** 商品库存为0 **/
+    public static final Integer PRODUCT_NUMBER_ZERO = 0;
+
     /**
      * 订单状态
      */
@@ -24,6 +33,27 @@ public class Constant {
         private String name;
         // 构造方法
         private Order_STATUS(String index, String name) {
+            this.name = name;
+            this.index = index;
+        }
+        // get set 方法
+        public String getName() {
+            return name;
+        }
+        public String getIndex() {
+            return index;
+        }
+    }
+
+    /**
+     * 购物车支付状态
+     */
+    public enum Shop_Cart_STATUS {
+        un_paid("0", "未支付"), paid("1", "已支付");
+        private String index;
+        private String name;
+        // 构造方法
+        private Shop_Cart_STATUS(String index, String name) {
             this.name = name;
             this.index = index;
         }

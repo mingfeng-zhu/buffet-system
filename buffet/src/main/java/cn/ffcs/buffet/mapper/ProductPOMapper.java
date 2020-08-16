@@ -45,4 +45,11 @@ public interface ProductPOMapper {
      * @return
      */
     List<ProductDTO> selectAllProductList();
+
+    /**
+     * 根据商品id获取商品详细信息以及商品评价
+     * @param productId
+     * @return
+     */
+    List<ProductDTO> selectProductDetailAndCommentList(@Param("productId") Integer productId);
 }

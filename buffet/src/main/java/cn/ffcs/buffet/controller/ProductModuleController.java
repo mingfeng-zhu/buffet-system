@@ -87,4 +87,11 @@ public class ProductModuleController {
         ProductSpecificationDTO productSpecificationDTO = productModuleService.selectSpecificationByProductIdAndSpecification(productId, productSpecification);
         return Result.success(productSpecificationDTO);
     }
+
+    @ApiOperation(value = "根据商品id获取商品详细信息以及商品评价")
+    @GetMapping(path = "/getProductDetailAndCommentList/{productId}")
+    public Result getProductDetailAndCommentList(@PathVariable Integer productId){
+        List<ProductDTO> productDTOList = productModuleService.selectProductDetailAndCommentList(productId);
+        return Result.success(productDTOList);
+    }
 }

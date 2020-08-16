@@ -1,6 +1,7 @@
 package cn.ffcs.buffet.mapper;
 
 import cn.ffcs.buffet.model.po.OrderPO;
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -53,4 +54,12 @@ public interface OrderMapper {
      * @return
      */
     BigDecimal getTotalMoney();
+
+    /**
+     * 修改订单状态，app端使用
+     * @param id 订单id
+     * @param orderStatus 订单状态
+     * @return
+     */
+    Integer editOrderStatus(Long id, String orderStatus);
 }

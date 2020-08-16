@@ -123,7 +123,7 @@ public class ProductModuleServiceImpl implements ProductModuleService {
     }
 
     /**
-     * 修改商品储存量, 修改库存量（订单支付时）
+     * 修改商品储存量, 修改库存量（订单支付时,订单取消时）
      * @param productSpecificationIdList
      * @param numberList
      * @return
@@ -135,5 +135,16 @@ public class ProductModuleServiceImpl implements ProductModuleService {
             flag += this.productSpecificationPOMapper.updateProductStorage(productSpecificationIdList.get(i), numberList.get(i));
         }
         return flag;
+    }
+
+    /**
+     * 根据商品id获取商品详细信息以及商品评价
+     * @param productId
+     * @return
+     */
+    @Override
+    public List<ProductDTO> selectProductDetailAndCommentList(Integer productId) {
+        List<ProductDTO> productDTOList = productPOMapper.selectProductDetailAndCommentList(productId);
+        return productDTOList;
     }
 }
