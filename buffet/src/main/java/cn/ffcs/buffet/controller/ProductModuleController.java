@@ -2,12 +2,9 @@ package cn.ffcs.buffet.controller;
 
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
-import cn.ffcs.buffet.model.dto.ProductAttributeDTO;
-import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
-import cn.ffcs.buffet.model.dto.ProductDTO;
-import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
-import cn.ffcs.buffet.model.po.ProductPO;
+import cn.ffcs.buffet.model.dto.*;
 import cn.ffcs.buffet.service.ProductModuleService;
+import cn.ffcs.buffet.service.ShopCartService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +28,9 @@ public class ProductModuleController {
     @Autowired
     private ProductModuleService productModuleService;
 
+    @Autowired
+    private ShopCartService shopCartService;
+
     @ApiOperation(value = "获取商品分类列表")
     @GetMapping(path = "/getProductCategoryList")
     public Result getProductCategoryList() {
@@ -41,8 +41,25 @@ public class ProductModuleController {
     @ApiOperation(value = "根据商品分类id获取商品列表")
     @GetMapping(path = "/getProductListByProductCategoryId")
     public Result getProductListByProductCategoryId(Page<ProductDTO> page, Integer productCategoryId) {
+        Integer userId = 1;
+
         PageInfo<ProductDTO> productDTOList = productModuleService.selectProductListByProductCategoryId(page, productCategoryId);
         if(productDTOList.getTotal() > 0){
+
+            List<ProductDTO> list = productDTOList.getList();
+            List<ShopCartDetailDTO> shopCartDetailDTOList = (List<ShopCartDetailDTO>)shopCartService.listShopCartByUserId(userId).getData();
+
+            for (int i = 0; i < list.size(); i++) {
+                for (int j = 0; j < shopCartDetailDTOList.size(); j++) {
+                    if(list.get(i).getProductId() == shopCartDetailDTOList.get(j).getProductSpecificationDTO().getProductId()){
+                        if(list.get(i).getProductNumOfCart() == null){
+                            list.get(i).setProductNumOfCart(0);
+                        }
+                        list.get(i).setProductNumOfCart(list.get(i).getProductNumOfCart() + shopCartDetailDTOList.get(j).getShopCart().getGoodCount());
+                    }
+                }
+            }
+
             page.setList(productDTOList.getList());
             page.setTotal(productDTOList.getTotal());
             return Result.success(page);
