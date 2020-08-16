@@ -51,6 +51,8 @@ public class ProductDTO {
     @ApiModelProperty(value = "商品规格数量", name = "specificationNumber", example = "8")
     private Integer specificationNumber;
 
+    private Integer productNumOfCart;
+
     private List<ProductSpecificationDTO> productSpecificationDTOList;
 
     private List<Comment> commentList;
@@ -136,6 +138,14 @@ public class ProductDTO {
     }
 
 
+    public Integer getProductNumOfCart() {
+        return productNumOfCart;
+    }
+
+    public void setProductNumOfCart(Integer productNumOfCart) {
+        this.productNumOfCart = productNumOfCart;
+    }
+
     public List<ProductSpecificationDTO> getProductSpecificationDTOList() {
         return productSpecificationDTOList;
     }
@@ -165,6 +175,7 @@ public class ProductDTO {
                 ", productStorage=" + productStorage +
                 ", salesVolume=" + salesVolume +
                 ", specificationNumber=" + specificationNumber +
+                ", productNumOfCart=" + productNumOfCart +
                 ", productSpecificationDTOList=" + productSpecificationDTOList +
                 ", commentList=" + commentList +
                 '}';
