@@ -1,11 +1,15 @@
 package cn.ffcs.buffet.controller;
 
+import cn.ffcs.buffet.common.annotation.AvoidRepeatableCommit;
+import cn.ffcs.buffet.common.annotation.PassToken;
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
+import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.model.po.OrderPO;
 import cn.ffcs.buffet.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -38,10 +42,23 @@ public class OrderController {
      * @param orderId 订单流水号
      * @return
      */
-    @ApiOperation(value = "获取订单列表，可选择的条件有用户id、订单流水号、订单状态。查询为分页查询。")
+    @ApiOperation(value = "获取订单列表，可选择的条件有用户id、订单流水号、订单状态。查询为分页查询。(后台使用)")
     @GetMapping(path = "/listOrder")
     public Result listOrder(Integer userId, String orderStatus, Page<OrderPO> page, String orderId) {
         return orderService.listOrder(userId, orderStatus, page, orderId);
+    }
+
+    /**
+     * 获取某个用户的所有订单信息,分页形式
+     * @param page 分页数据
+     * @return
+     */
+    @PassToken
+    @ApiOperation(value = "获取订单列表，可选择的条件有用订单流水号。查询为分页查询。(前台使用)")
+    @GetMapping(path = "/listOrderByCurrentUser")
+    public Result listOrderByCurrentId(Page<OrderPO> page) {
+        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
+        return orderService.listOrderByCurrentId(userId, page);
     }
 
     /**
@@ -49,11 +66,12 @@ public class OrderController {
      * @param idList idList
      * @return
      */
+    @AvoidRepeatableCommit
     @ApiOperation(value = "删除指定订单id的订单，批量形式")
-    @RequestMapping(value = "/deleteOrderByIdList")
+    @PostMapping(path = "/deleteOrderByIdList")
     @ResponseBody
     public Result deleteOrderByIdList(@RequestParam(required = false, value = "idList[]") Integer[] idList) {
-        if(idList == null || idList.length ==0) {
+        if(idList == null || idList.length == 0) {
             return Result.fail("空数组");
         }
         List<Integer> list = java.util.Arrays.asList(idList);
@@ -66,11 +84,12 @@ public class OrderController {
      * @param orderStatus 订单状态
      * @return
      */
+    @AvoidRepeatableCommit
     @ApiOperation(value = "修改订单状态，后台web端使用，批量形式(用于后台的管理员批量派送、批量取消订单等功能)")
-    @RequestMapping(value = "/updateOrderByIdList")
+    @PostMapping(path = "/updateOrderByIdList")
     @ResponseBody
     public Result updateOrderByIdList(@RequestParam(required = false, value = "idList[]") Integer[] idList, String orderStatus) {
-        if(idList == null || idList.length ==0) {
+        if(idList == null || idList.length == 0) {
             return Result.fail("空数组");
         }
         List<Integer> list = java.util.Arrays.asList(idList);
@@ -82,7 +101,7 @@ public class OrderController {
      * @return
      */
     @ApiOperation(value = "查询订单总数、总交易额")
-    @RequestMapping(value = "/getTotalNumberAndMoney")
+    @GetMapping(value = "/getTotalNumberAndMoney")
     @ResponseBody
     public Result getTotalNumberAndMoney() {
         return orderService.getTotalNumberAndMoney();
@@ -97,8 +116,10 @@ public class OrderController {
      * @param goodCountList
      * @return
      */
+    @PassToken
+    @AvoidRepeatableCommit
     @ApiOperation(value = "生成订单，订单未待支付状态.商品规格id集合、总价、各类商品价格集合、地址id、各类商品数量集合")
-    @RequestMapping(value = "/addOrder")
+    @PostMapping(path = "/addOrder")
     @ResponseBody
     public Result addOrder(@RequestParam(required = false, value = "idList[]") Integer[] idList, BigDecimal totalMoney,
                            @RequestParam(required = false, value = "totalMoneyList[]") BigDecimal[] totalMoneyList, Integer addressId,
@@ -112,8 +133,9 @@ public class OrderController {
      * @param orderStatus 订单状态
      * @return
      */
+    @AvoidRepeatableCommit
     @ApiOperation(value = "修改订单状态，app端使用,传id（订单id）与需要修改成的状态(orderStatus)（String类型）。订单状态：'2'为待接单（待支付的下一个状态）、'3'为制作中、'4'为派送中、'5'为已完成、6为取消申请中")
-    @RequestMapping(value = "/editOrderStatus")
+    @PostMapping(path = "/editOrderStatus")
     @ResponseBody
     public Result editOrderStatus(Long id, String orderStatus) {
         return orderService.editOrderStatus(id, orderStatus);
@@ -126,8 +148,9 @@ public class OrderController {
      * @param goodCountList 商品数量list
      * @return
      */
+    @AvoidRepeatableCommit
     @ApiOperation(value = "支付订单，用于app端支付订单操作")
-    @RequestMapping(value = "/payOrder")
+    @PostMapping(path = "/payOrder")
     @ResponseBody
     public Result payOrder(Long id, @RequestParam(required = false, value = "idList[]") Integer[] idList,
                                     @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList) {
@@ -139,8 +162,9 @@ public class OrderController {
      * @param id 订单id
      * @return
      */
+    @AvoidRepeatableCommit
     @ApiOperation(value = "取消订单，用于app端取消订单")
-    @RequestMapping(value = "/cancelOrder")
+    @PostMapping(path = "/cancelOrder")
     @ResponseBody
     public Result cancelOrder(Long id) {
         return orderService.cancelOrder(id);

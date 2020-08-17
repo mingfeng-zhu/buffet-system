@@ -18,4 +18,6 @@ public interface OrderDetailMapper {
     int updateByPrimaryKey(OrderDetail record);
 
     Integer insertList(List<OrderDetail> list);
+
+    List<OrderDetail> listOrderDetailByOrderIdList(List<Long> list);
 }

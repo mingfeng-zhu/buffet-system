@@ -23,14 +23,24 @@
     from t_order_detail
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="listOrderDetailByOrderIdList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_order_detail
+    where id
+    in
+    <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_order_detail
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.ffcs.buffet.model.po.OrderDetail">
-    insert into t_order_detail (id, order_id, good_id, 
-      good_count, comment, money, 
-      create_time, change_time, creator, 
+    insert into t_order_detail (id, order_id, good_id,
+      good_count, comment, money,
+      create_time, change_time, creator,
       modifier)
     values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=BIGINT}, #{goodId,jdbcType=INTEGER}, 
       #{goodCount,jdbcType=INTEGER}, #{comment,jdbcType=CHAR}, #{money,jdbcType=DECIMAL}, 

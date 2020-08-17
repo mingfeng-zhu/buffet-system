@@ -4,7 +4,9 @@ import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.common.util.Constant;
 import cn.ffcs.buffet.common.util.Snowflake;
+import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.mapper.OrderMapper;
+import cn.ffcs.buffet.model.dto.OrderDetailDTO;
 import cn.ffcs.buffet.model.dto.OrderTotalDataDTO;
 import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
 import cn.ffcs.buffet.model.po.*;
@@ -89,7 +91,9 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderId(orderId);
         order.setTotalMoney(totalMoney);
         order.setAddressId(addressId);
-        order.setUserId(1);
+        //获取当前用户id
+        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
+        order.setUserId(userId);
         order.setOrderStatus(Constant.Order_STATUS.wait_pay.getIndex());
 
         //为避免在for循环中操作数据库，所以应该先批量查出所有商品规格的数据，再进行库存的判断
@@ -106,7 +110,6 @@ public class OrderServiceImpl implements OrderService {
                 return Result.fail("购物车中"+ product.getProductPO().getProductName() +"库存不足！");
             }
             OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setOrderId((long) 90051);
             orderDetail.setMoney(totalMoneyList[num]);
             orderDetail.setGoodCount(goodCountList[num]);
             orderDetail.setGoodId(idList[num]);
@@ -189,5 +192,39 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return Result.fail("支付失败，请稍后再试");
+    }
+
+    @Override
+    public Result listOrderByCurrentId(Integer userId, Page<OrderPO> page) {
+        PageHelper.startPage(page.getPageNum(), page.getPageSize());
+        List<OrderPO> orderPOList = orderMapper.listOrderByCurrentId(userId);
+        PageInfo<OrderPO> pageInfo = new PageInfo<>(orderPOList);
+
+        if (pageInfo.getTotal() > 0) {
+            List<Long> idList = new ArrayList<>();
+            for(int count = 0; count < orderPOList.size(); count++) {
+                idList.add(orderPOList.get(count).getId());
+            }
+//            //批量查询订单下的详单信息
+//            List<OrderDetail> orderDetailList = orderDetailService.listOrderDetailByOrderIdList(idList);
+//
+//            List<OrderDetailDTO> orderDetailDTOList = new ArrayList<>();
+//            for(int count = 0; count < orderPOList.size(); count++) {
+//                OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+//                orderDetailDTO.setOrderPO(orderPOList.get(count));
+//                List<OrderDetail> orderDetailList1 = new ArrayList<>();
+//                for(int num = 0; num < orderDetailList.size(); num++) {
+//                    if(orderDetailList.get(count).getOrderId() == orderPOList.get(num).getId()) {
+//                        orderDetailList1.add(orderDetailList.get(num));
+//                    }
+//                }
+//                orderDetailDTO.setOrderDetailList(orderDetailList1);
+//                orderDetailDTOList.add(orderDetailDTO);
+//            }
+            page.setList(pageInfo.getList());
+            page.setTotal(pageInfo.getTotal());
+            return Result.success(page);
+        }
+        return Result.success(null);
     }
 }

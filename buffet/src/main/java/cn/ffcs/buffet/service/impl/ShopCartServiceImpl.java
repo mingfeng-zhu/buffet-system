@@ -38,7 +38,6 @@ public class ShopCartServiceImpl implements ShopCartService {
         for(int count = 0; count < shopCartList.size(); count++) {
             idList.add(shopCartList.get(count).getGoodId());
         }
-
         //获取商品规则信息
         List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(idList);
 

@@ -80,4 +80,12 @@ public interface OrderService {
      */
     Result payOrder(Long id, @RequestParam(required = false, value = "idList[]") Integer[] idList,
                     @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList);
+
+    /**
+     * 获取当前用户的订单信息
+     * @param userId 用户id
+     * @param page 分页信息
+     * @return
+     */
+    Result listOrderByCurrentId(Integer userId, Page<OrderPO> page);
 }

@@ -18,4 +18,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public Integer insertList(List<OrderDetail> list) {
         return orderMapper.insertList(list);
     }
+
+    @Override
+    public List<OrderDetail> listOrderDetailByOrderIdList(List<Long> idList) {
+        return orderMapper.listOrderDetailByOrderIdList(idList);
+    }
 }

@@ -62,4 +62,11 @@ public interface OrderMapper {
      * @return
      */
     Integer editOrderStatus(Long id, String orderStatus);
+
+    /**
+     * 获取当前用户的订单信息
+     * @param userId 用户id
+     * @return
+     */
+    List<OrderPO> listOrderByCurrentId(Integer userId);
 }
