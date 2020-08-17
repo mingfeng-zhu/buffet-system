@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.common.config;
 
+import cn.ffcs.buffet.common.interceptors.AuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,8 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-//    @Autowired
-//    private AuthenticationInterceptor authenticationInterceptor;
+    @Autowired
+    private AuthenticationInterceptor authenticationInterceptor;
 
     /**
      * 这个方法是用来配置静态资源的，比如html，js，css，等等
@@ -33,10 +34,10 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        /*registry.addInterceptor(authenticationInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/user/login", "/user/register","/upload",
-                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");*/
+//        registry.addInterceptor(authenticationInterceptor)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/user/login", "/user/register","/upload",
+//                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
     }
 
 }

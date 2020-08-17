@@ -39,7 +39,12 @@ public enum ExceptionEnum {
     /**
      * token不存在
      */
-    TOKEN_NOT_EXIST(1007, "token不存在");
+    TOKEN_NOT_EXIST(1007, "token不存在"),
+
+    /**
+     * 请勿重复请求
+     */
+    AVOID_REPEATABLE_COMMIT(9000, "请勿重复请求");
 
 
     /**

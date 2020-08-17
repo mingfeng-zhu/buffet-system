@@ -1,5 +1,7 @@
 package cn.ffcs.buffet.controller;
 
+import cn.ffcs.buffet.common.annotation.AvoidRepeatableCommit;
+import cn.ffcs.buffet.common.annotation.PassToken;
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.model.po.CategoryPO;
@@ -49,6 +51,7 @@ public class DemoController {
      * @param name
      * @return
      */
+    @PassToken
     @ApiOperation(value = "获取类别列表", notes = "获取所有类别信息")
     @GetMapping(path = "/list")
     public Result listCategories(Page<CategoryPO> page, String name) {
@@ -70,6 +73,8 @@ public class DemoController {
      * @param categoryPO 类别类
      * @return
      */
+    @AvoidRepeatableCommit
+    @PassToken
     @PostMapping(path = "/add")
     public Result insertCatetory(@RequestBody @Valid CategoryPO categoryPO) {
         System.out.println(categoryPO);

@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8083
 spring:
   datasource:
     #数据源基本配置
@@ -36,7 +36,7 @@ spring:
 #打印日志
 logging:
   level:
-    cn.ffcs.buffet: error
+    cn.ffcs.buffet: info
   file:
     name: log\buffet.log
 
