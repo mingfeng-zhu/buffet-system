@@ -3,6 +3,7 @@ package cn.ffcs.buffet.common.interceptors;
 import cn.ffcs.buffet.common.annotation.PassToken;
 import cn.ffcs.buffet.common.enums.ExceptionEnum;
 import cn.ffcs.buffet.common.exception.BusinessException;
+import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.model.po.UserPO;
 import cn.ffcs.buffet.service.UserService;
 import com.auth0.jwt.JWT;
@@ -46,7 +47,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 从 http 请求头中取出 token
-        String token = request.getHeader("X-Token");
+        String token = request.getHeader(TokenUtil.HEAD_NAME);
         // 如果不是映射到方法直接通过
         if(!(handler instanceof HandlerMethod)){
             return true;
@@ -67,7 +68,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             // 获取 token 中的 userTel
             String userTel;
             try {
-                userTel = JWT.decode(token).getAudience().get(0);
+                userTel = JWT.decode(token).getAudience().get(1);
                 } catch (JWTDecodeException j) {
                 throw new RuntimeException("401");
                 }

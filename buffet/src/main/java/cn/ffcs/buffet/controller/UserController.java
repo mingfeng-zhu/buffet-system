@@ -2,6 +2,8 @@ package cn.ffcs.buffet.controller;
 
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.common.util.CodeUtils;
+import cn.ffcs.buffet.common.util.TokenUtil;
+import cn.ffcs.buffet.model.ao.UserAO;
 import cn.ffcs.buffet.model.po.UserAddress;
 import cn.ffcs.buffet.model.po.UserPO;
 import cn.ffcs.buffet.service.UserAddressService;
@@ -9,6 +11,7 @@ import cn.ffcs.buffet.service.UserService;
 import com.zhenzi.sms.ZhenziSmsClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,13 +52,13 @@ public class UserController {
     @PostMapping(path = "/login")
     public Result userLogin(UserPO user,String code, HttpServletRequest request) {
         HttpSession session=request.getSession();
-        String sessionCode= (String) session.getAttribute("code");
-        if(code==null || sessionCode==null){
-            return Result.fail("请发送验证码");
-        }
-        if(!code.equals(session.getAttribute("code"))){
-            return Result.fail("登录失败!验证码错误");
-        }
+//        String sessionCode= (String) session.getAttribute("code");
+//        if(code==null || sessionCode==null){
+//            return Result.fail("请发送验证码");
+//        }
+//        if(!code.equals(session.getAttribute("code"))){
+//            return Result.fail("登录失败!验证码错误");
+//        }
         UserPO loginUser=userService.checkLogin(user);
         if(loginUser==null){
             return Result.fail("登录失败!账户不存在");
@@ -65,7 +68,10 @@ public class UserController {
         }
         if(loginUser.getUserPassword().equals(user.getUserPassword())){
             session.setAttribute("user",loginUser);
-            return Result.success(loginUser);
+            UserAO userAO = new UserAO();
+            userAO.setUserPO(loginUser);
+            userAO.setToken(TokenUtil.getToken(loginUser));
+            return Result.success(userAO);
         }else{
             return Result.fail("登录失败!密码错误");
         }
