@@ -33,10 +33,10 @@ public class AvoidRepeatableCommitAspect {
     private static final Cache<String, Object> CACHES = CacheBuilder.newBuilder()
             // 设置并发级别为cpu核心数
             .concurrencyLevel(Runtime.getRuntime().availableProcessors())
-            // 设置初始容量为1000
-            .initialCapacity(1000)
-            // 最大缓存10000个  10000之后就会按照LRU最近少使用算法来移除缓存项
-            .maximumSize(10000)
+            // 设置初始容量为100
+            .initialCapacity(100)
+            // 最大缓存1000个  1000之后就会按照LRU最近少使用算法来移除缓存项
+            .maximumSize(1000)
             // 设置缓存写后3秒后过期
             .expireAfterWrite(3, TimeUnit.SECONDS).build();
 
