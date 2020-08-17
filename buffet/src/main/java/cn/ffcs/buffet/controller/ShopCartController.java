@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -34,8 +35,9 @@ public class ShopCartController {
         return shopCartService.listShopCartByUserId(1);
     }
 
-    @ApiOperation(value = "商品加入购物车")
-    @GetMapping(path = "/addShopCartRecord")
+    @ApiOperation(value = "商品加入购物车，productId(商品规格id)、goodCount(商品数量)")
+    @RequestMapping(value = "/addShopCartRecord")
+    @ResponseBody
     public Result addShopCartRecord(Integer productId, Integer goodCount) {
         return shopCartService.addShopCartRecord(1, productId, goodCount);
     }

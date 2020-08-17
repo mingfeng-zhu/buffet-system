@@ -28,15 +28,22 @@ public class ShopCartServiceImpl implements ShopCartService {
     public Result listShopCartByUserId(Integer userId) {
         //获取购物车信息
         List<ShopCart> shopCartList = shopCartMapper.listShopCartByUserId(userId);
+        List<ShopCartDetailDTO> shopCartDetailDTOList = new ArrayList<>();
+
+        if(shopCartList == null || shopCartList.size() == 0) {
+            return Result.success(shopCartDetailDTOList);
+        }
+
         List<Integer> idList = new ArrayList<>();
         for(int count = 0; count < shopCartList.size(); count++) {
             idList.add(shopCartList.get(count).getGoodId());
         }
+
         //获取商品规则信息
         List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(idList);
 
         //组装返回数据集合
-        List<ShopCartDetailDTO> shopCartDetailDTOList = new ArrayList<>();
+
         for(int num = 0; num < shopCartList.size(); num++) {
             ShopCartDetailDTO shopCartDetailDTO = new ShopCartDetailDTO();
             shopCartDetailDTO.setShopCart(shopCartList.get(num));
@@ -53,14 +60,17 @@ public class ShopCartServiceImpl implements ShopCartService {
         ShopCart preShopCart = shopCartMapper.getShopCartById(userId, productId);
         //若是存在该购物车记录，则对其数量进行改变
         if(preShopCart != null) {
-            //若是商品数量为0，则直接将
+            //若是商品数量为0，则直接将购物车记录删除
             if(goodCount == Constant.SHOP_CARD_DELETE_ZERO) {
-
+                int deleteResult = shopCartMapper.deleteRecord(userId, productId);
+            } else {
+                ShopCart shopCart = new ShopCart();
+                preShopCart.setGoodCount(goodCount);
+                int editResult = shopCartMapper.updateByPrimaryKeySelective(preShopCart);
             }
-            return Result.fail("购物");
+            return Result.success();
         }
         //若是不存在，则新增一条记录
-
         ShopCart shopCart = new ShopCart();
         shopCart.setUserId(userId);
         shopCart.setGoodId(productId);

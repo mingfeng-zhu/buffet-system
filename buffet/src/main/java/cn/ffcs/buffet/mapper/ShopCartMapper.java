@@ -22,4 +22,6 @@ public interface ShopCartMapper {
     ShopCart getShopCartById(Integer userId, Integer productId);
 
     Integer deleteShopCartByUserId(Integer userId);
+
+    Integer deleteRecord(Integer userId, Integer goodId);
 }
