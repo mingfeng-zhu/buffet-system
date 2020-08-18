@@ -57,19 +57,32 @@ public class ShopCartServiceImpl implements ShopCartService {
 
         //判断购物车中是否已有这条记录
         ShopCart preShopCart = shopCartMapper.getShopCartById(userId, productId);
+        List<Integer> idList = new ArrayList<>();
         //若是存在该购物车记录，则对其数量进行改变
         if(preShopCart != null) {
             //若是商品数量为0，则直接将购物车记录删除
             if(goodCount == Constant.SHOP_CARD_DELETE_ZERO) {
                 int deleteResult = shopCartMapper.deleteRecord(userId, productId);
             } else {
+                idList.add(productId);
+                List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(idList);
+                //若是商品库存不足
+                if(productSpecificationDTOList.get(0).getProductStorage() < goodCount) {
+                    return Result.fail("该商品库存不足，加入购物车失败。");
+                }
                 ShopCart shopCart = new ShopCart();
                 preShopCart.setGoodCount(goodCount);
                 int editResult = shopCartMapper.updateByPrimaryKeySelective(preShopCart);
             }
             return Result.success();
         }
-        //若是不存在，则新增一条记录
+        //若是不存在，则新增一条记录。但是得先判断库存是否充足
+        idList.add(productId);
+        List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(idList);
+        //若是商品库存不足
+        if(productSpecificationDTOList.get(0).getProductStorage() < goodCount) {
+            return Result.fail("该商品库存不足，加入购物车失败。");
+        }
         ShopCart shopCart = new ShopCart();
         shopCart.setUserId(userId);
         shopCart.setGoodId(productId);

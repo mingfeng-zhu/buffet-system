@@ -116,7 +116,6 @@ public class OrderController {
      * @param goodCountList
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "生成订单，订单未待支付状态.商品规格id集合、总价、各类商品价格集合、地址id、各类商品数量集合")
     @PostMapping(path = "/addOrder")
