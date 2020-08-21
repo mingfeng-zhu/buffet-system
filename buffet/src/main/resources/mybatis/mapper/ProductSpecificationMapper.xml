@@ -216,6 +216,10 @@
     <foreach item="productSpecificationId" collection="productSpecificationIdList" open="(" separator="," close=")">
       #{productSpecificationId, jdbcType=INTEGER}
     </foreach>
+    order by field
+    <foreach item="productSpecificationId" collection="productSpecificationIdList" open="(product_specification_id," separator="," close=")">
+      #{productSpecificationId, jdbcType=INTEGER}
+    </foreach>
   </select>
 
   <update id="updateProductStorage">
