@@ -4,7 +4,7 @@ import cn.ffcs.buffet.common.dto.Result;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,25 +20,31 @@ import java.util.Date;
  * @Author: mingfeng.zhu@ffcs.cn
  * @Date: 2020/8/3 21:29
  */
-@Api(value = "/upload", tags = "图片上传")
+@Api(value = "/api/upload", tags = "图片上传")
 @RestController
-public class UploadDownController{
+public class UploadDownController {
     private static final Logger logger = LoggerFactory.getLogger(UploadDownController.class);
+
     /**
      * 文件上传
+     *
      * @param picture 图片名称
      * @param request HttpServletRequest
      * @return
      */
-    @RequestMapping("/upload")
+    @PostMapping("/api/upload")
     public Result upload(@RequestParam("picture") MultipartFile picture, HttpServletRequest request) throws IOException {
 
         //获取文件的储存位置
         String path = "d:/upload/";
+        Boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
+        if (isLinux) {
+            path = "/upload/";
+        }
         File filePath = new File(path);
-        System.out.println("文件的保存路径：" + path);
+        logger.info("文件的保存路径：" + path);
         if (!filePath.exists() && !filePath.isDirectory()) {
-            System.out.println("目录不存在，创建目录:" + filePath);
+            logger.info("目录不存在，创建目录:" + filePath);
             filePath.mkdir();
         }
 
