@@ -65,4 +65,25 @@ public class Constant {
             return index;
         }
     }
+
+    /**
+     * 用户状态
+     */
+    public enum USER_STATUS {
+        forbidden(0, "禁用"), nomal(1, "正常");
+        private Integer index;
+        private String name;
+        // 构造方法
+        private USER_STATUS(Integer index, String name) {
+            this.name = name;
+            this.index = index;
+        }
+        // get set 方法
+        public String getName() {
+            return name;
+        }
+        public Integer getIndex() {
+            return index;
+        }
+    }
 }

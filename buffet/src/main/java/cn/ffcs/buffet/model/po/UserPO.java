@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.model.po;
 
+import cn.ffcs.buffet.common.util.Constant;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 
@@ -35,7 +36,7 @@ public class UserPO {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Date createTime = new Date();
     /**
      * 修改时间
      */
@@ -44,7 +45,7 @@ public class UserPO {
     /**
      * 修改时间
      */
-    private Integer userState;
+    private Integer userState = Constant.USER_STATUS.nomal.getIndex();
 
     /**
      * 用户头像
@@ -131,5 +132,20 @@ public class UserPO {
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+
+    @Override
+    public String toString() {
+        return "UserPO{" +
+                "userId=" + userId +
+                ", userName='" + userName + '\'' +
+                ", userTel='" + userTel + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", userState=" + userState +
+                ", userImg='" + userImg + '\'' +
+                ", userSex=" + userSex +
+                ", userPassword='" + userPassword + '\'' +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package cn.ffcs.buffet.model.ao;
+package cn.ffcs.buffet.model.vo;
 
 import cn.ffcs.buffet.model.po.UserPO;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @Author: mingfeng.zhu@ffcs.cn
  * @Date: 2020/8/17 17:32
  */
-public class UserAO implements Serializable {
+public class UserVO implements Serializable {
 
     private static final long serialVersionUID = -4453980608626158206L;
 
