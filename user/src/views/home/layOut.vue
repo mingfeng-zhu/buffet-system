@@ -66,14 +66,7 @@
                 // }
             // },
             person() {
-                this.$router.push('/login')
-                // window.sessionStorage.setItem('token', 123)
-                // let token = window.sessionStorage.getItem('token')
-                // if (token) {
-                //     this.$router.push('/person')
-                // } else {
-                //     this.$router.push('/login')
-                // }
+                this.$router.push('/person')
             }
         }
     }

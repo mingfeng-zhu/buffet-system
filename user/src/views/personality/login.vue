@@ -68,8 +68,10 @@
                 // this.params.code=this.verifycode
                 console.log('this.params', this.params)
                 let { data } = await this.$api.login(this.params)
-                console.log(69, data.data.token)
+                console.log(69, data.data.userPO)
                 localStorage.setItem('token', data.data.token)
+                localStorage.setItem('userPo', JSON.stringify(data.data.userPO))
+                this.$router.push('/home')
             },
             onClickLeft() {
                 this.$router.back()

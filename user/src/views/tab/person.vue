@@ -40,10 +40,14 @@
         data() {
             return {
                 name: '123',
-                money: 3000
+                money: 3000,
+                user:{}
             }
         },
         mounted() {
+            this.user = JSON.parse(localStorage.getItem('userPo'))
+            console.log('this.user', this.user)
+            this.name = this.user.userName
         }
     }
 </script>

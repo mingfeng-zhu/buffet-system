@@ -12,7 +12,7 @@ const router = new VueRouter({
             component:() => import('../views/home/home.vue')
         },
         {
-            path:'/login',
+            path:'/',
             name:'login',
             component: () => import('../views/personality/login.vue'),
         },
@@ -33,7 +33,7 @@ const router = new VueRouter({
             // redirect: store.getters['menuPath'],
             children: [
                 {
-                    path: '/',
+                    path: '/home',
                     name:'home',
                     component:() => import('../views/tab/home.vue')
                 },
