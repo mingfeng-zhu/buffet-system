@@ -1,0 +1,23 @@
+{
+  "id": "1968222",
+  "name": "order",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "712434",
+      "name": "sub",
+      "font_class": "sub",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "8476133",
+      "name": "add",
+      "font_class": "add",
+      "unicode": "e750",
+      "unicode_decimal": 59216
+    }
+  ]
+}
