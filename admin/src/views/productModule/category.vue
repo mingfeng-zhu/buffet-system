@@ -30,7 +30,7 @@
           <el-input v-model="category.categoryDesc" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="float: right" @click="addCategory('ruleForm')">确 定</el-button>
+          <el-button type="primary" style="float: right" @click="handleSubmit('ruleForm')">确 定</el-button>
           <el-button style="float: right" @click="dialogFormVisible = false">取 消</el-button>
         </el-form-item>
       </el-form>
@@ -79,7 +79,8 @@ export default {
       },
       visible: false,
       dialogFormVisible: false,
-      updateIndex: null
+      updateIndex: null,
+      submitType: null
     }
   },
   created() {
@@ -92,21 +93,37 @@ export default {
     addCategory(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          console.log('submit!')
+          this.categoryList.push(this.category)
+          this.$message.success('新建商品分类成功！')
         } else {
-          console.log('error submit!!')
-          return false
+          // console.log('error submit!!')
+          this.$message.error('新建商品分类失败！')
         }
+        this.dialogFormVisible = false
       })
     },
     updateCategory() {
+      this.$set(this.categoryList, this.updateIndex, this.category)
+
       this.dialogFormVisible = false
     },
     deleteCategory(index) {
       console.log('shanchu' + this.categoryList[index].productCategoryId)
+      this.categoryList.splice(index, 1)
+      this.$message.success('删除成功！')
       this.visible = false
     },
+    handleSubmit(formName) {
+      if (this.submitType === 'add') {
+        this.addCategory(formName)
+      }
+      if (this.submitType === 'update') {
+        this.updateCategory()
+      }
+    },
     showDialog(type, index) {
+      this.submitType = type
       if (type === 'add') {
         this.category.productCategoryId = null
         this.category.categoryName = null
@@ -115,6 +132,7 @@ export default {
         this.category.updateTime = null
       }
       if (type === 'update') {
+        this.updateIndex = index
         this.category = JSON.parse(JSON.stringify(this.categoryList[index]))
       }
       this.dialogFormVisible = true

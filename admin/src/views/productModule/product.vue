@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-      商品
+    商品
   </div>
 </template>
 
@@ -10,11 +10,13 @@ export default {
 
   data() {
     return {
-        
+      productList: []
     }
   },
   methods: {
-    
+    init() {
+
+    }
   }
 }
 </script>
