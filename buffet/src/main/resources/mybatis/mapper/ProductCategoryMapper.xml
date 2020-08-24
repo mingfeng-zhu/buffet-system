@@ -15,11 +15,11 @@
     <id column="product_category_id" property="productCategoryId" jdbcType="INTEGER" />
     <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
     <result column="category_desc" property="categoryDesc" jdbcType="VARCHAR" />
-    <collection property="productDTOList"
+    <!--<collection property="productDTOList"
                 column="product_category_id"
                 ofType="cn.ffcs.buffet.model.dto.ProductDTO"
                 select="cn.ffcs.buffet.mapper.ProductPOMapper.selectProductByProductCategoryId">
-    </collection>
+    </collection>-->
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -46,7 +46,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductCategoryPO" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="productCategoryId" keyColumn="product_category_id" parameterType="cn.ffcs.buffet.model.po.ProductCategoryPO">
     insert into product_category
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="productCategoryId != null" >
@@ -142,6 +142,12 @@
 
   <select id="selectProductCategoryList" resultMap="CategoryResultMap" parameterType="cn.ffcs.buffet.model.dto.ProductCategoryDTO">
     select product_category_id, category_name, category_desc
+    from product_category
+  </select>
+
+  <select id="getProductCategoryList" resultType="cn.ffcs.buffet.model.po.ProductCategoryPO">
+    select
+    <include refid="Base_Column_List" />
     from product_category
   </select>
 </mapper>
