@@ -168,10 +168,8 @@
             },
             async afterRead(file) {
                 // 此时可以自行将文件上传至服务器
-                let fileparam = {picture: file.file}
-                console.log('fileparam', fileparam)
+                // let fileparam = {picture: file.file}
                 let uploadImg = await upLoaderImg(file.file)//使用上传的方法。file.file
-                console.log(uploadImg.data)
                 this.uploadImg = uploadImg.data
             },
             async onSubmit(values) {
@@ -185,6 +183,7 @@
                 console.log('this.params', this.params)
                 let { data } = await this.$api.signUp(this.params)
                 console.log(196, data)
+                this.$router.push('/login')
             },
             onClickLeft() {
                 this.$router.back()

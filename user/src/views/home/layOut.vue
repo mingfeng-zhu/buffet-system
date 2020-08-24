@@ -24,7 +24,7 @@
     <router-view></router-view>
     <div class="footer">
       <van-tabbar v-model="active" placeholder="true">
-        <van-tabbar-item icon="home-o" @click="$router.push('/')">首页</van-tabbar-item>
+        <van-tabbar-item icon="home-o" @click="$router.push('/home')">首页</van-tabbar-item>
 <!--        <van-tabbar-item icon="apps-o">分类</van-tabbar-item>-->
         <van-tabbar-item icon="shopping-cart-o" :info="info" @click="$router.push('/cart')">购物车</van-tabbar-item>
         <van-tabbar-item icon="user-o" @click="person()">个人中心</van-tabbar-item>

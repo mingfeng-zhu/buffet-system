@@ -59,6 +59,10 @@ const router = new VueRouter({
                     path: '/addressform',
                     name:'addressform',
                     component:() => import('../views/tab/addressform.vue')
+                }, {
+                    path: '/detail',
+                    name:'detail',
+                    component:() => import('../views/tab/detail.vue')
                 },
             ]
         }
