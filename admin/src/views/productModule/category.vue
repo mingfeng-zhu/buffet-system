@@ -39,7 +39,7 @@
 </template>
 
 <script>
-
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -75,7 +75,6 @@ export default {
         categoryDesc: null,
         createTime: null,
         updateTime: null
-
       },
       visible: false,
       dialogFormVisible: false,
@@ -88,31 +87,65 @@ export default {
   },
   methods: {
     init() {
-      console.log('init')
+      const self = this
+      axios.get('http://localhost:8082/admin/product/getProductCategoryList')
+        .then(res => {
+          if (res.data.code === 2000) {
+            self.categoryList = res.data.data
+          }
+          // console.log(res)
+        }).catch(err => {
+          console.log(err)
+        })
     },
     addCategory(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log('submit!')
-          this.categoryList.push(this.category)
-          this.$message.success('新建商品分类成功！')
+          const self = this
+          axios.put('http://localhost:8082/admin/product/productCategory', self.category)
+            .then(res => {
+              if (res.data.code === 2000) {
+                self.categoryList.push(res.data.data)
+                self.$message.success('新建商品分类成功！')
+              }
+            }).catch(err => {
+              console.log(err)
+            })
         } else {
-          // console.log('error submit!!')
           this.$message.error('新建商品分类失败！')
         }
         this.dialogFormVisible = false
       })
     },
     updateCategory() {
-      this.$set(this.categoryList, this.updateIndex, this.category)
-
-      this.dialogFormVisible = false
+      const self = this
+      axios.post('http://localhost:8082/admin/product/productCategory', self.category)
+        .then(res => {
+          if (res.data.code === 2000) {
+            self.$set(self.categoryList, self.updateIndex, res.data.data)
+            self.$message.success('修改商品分类成功！')
+            self.dialogFormVisible = false
+          } else {
+            self.$message.error(res.data.message)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
     },
     deleteCategory(index) {
-      console.log('shanchu' + this.categoryList[index].productCategoryId)
-      this.categoryList.splice(index, 1)
-      this.$message.success('删除成功！')
-      this.visible = false
+      const self = this
+      axios.delete(`http://localhost:8082/admin/product/productCategory/${self.categoryList[index].productCategoryId}`)
+        .then(res => {
+          if (res.data.code === 2000) {
+            self.categoryList.splice(index, 1)
+            self.$message.success('删除成功！')
+            self.visible = false
+          } else {
+            self.$message.error(res.data.message)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
     },
     handleSubmit(formName) {
       if (this.submitType === 'add') {

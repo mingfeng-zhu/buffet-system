@@ -23,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/admin/product")
 @Validated
+@CrossOrigin
 public class ProductManageController {
 
     @Autowired
