@@ -24,6 +24,15 @@ const login = (p) => axios.post(`/user/login`, p)
 const upload = (p) => axios.post(`/upload`, p)
 // 购物车
 const listShopCartByUserId = (p) => axios.get(`shopCart/listShopCartByUserId`, { params: p })
+//生成订单
+const creatOrder = (p) => axios.post('/order/addOrder',p)
+//支付
+const payOrder = (p) => axios.post('/order/payOrder',p)
+//获取订单列表
+const getOrder = (p) => axios.get('/order/listOrderByCurrentUser',p)
+//取消订单
+const cancelOrder = (p) => axios.post('/order/cancelOrder',p)
+
 
 // http://localhost:3000/api/product/getProductAttributeListByProductId/1
 // const getArticleList = p => axios.get('/article-list', { params: p }) // 获取文章列表
@@ -42,5 +51,9 @@ export default {
     upload,
     signUp,
     login,
-    getProductDetailAndCommentList
+    getProductDetailAndCommentList，
+    creatOrder,
+    payOrder,
+    getOrder,
+    cancelOrder
 }
