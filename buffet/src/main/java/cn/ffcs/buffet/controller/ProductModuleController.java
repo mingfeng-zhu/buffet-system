@@ -35,6 +35,7 @@ public class ProductModuleController {
     @Autowired
     private ShopCartService shopCartService;
 
+    @PassToken
     @ApiOperation(value = "获取商品分类列表")
     @GetMapping(path = "/getProductCategoryList")
     public Result getProductCategoryList() {

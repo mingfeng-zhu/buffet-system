@@ -42,6 +42,9 @@ public class ProductManageServiceImpl implements ProductManageService {
 
     @Override
     public Integer updateProductCategory(ProductCategoryPO categoryPO) {
+        Timestamp now = new Timestamp(new Date().getTime());
+        categoryPO.setCreateTime(now);
+        categoryPO.setUpdateTime(now);
         Integer flag = productCategoryPOMapper.updateByPrimaryKeySelective(categoryPO);
         return flag;
     }

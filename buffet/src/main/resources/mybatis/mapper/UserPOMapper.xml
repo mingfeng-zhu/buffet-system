@@ -95,4 +95,10 @@
             </if>
         </trim>
     </insert>
+
+    <select id="selectUserByUserId" resultType="cn.ffcs.buffet.model.po.UserPO" parameterType="INTEGER">
+        select
+        <include refid="Base_Column_List"/>
+        from USER where user_id = #{userId, jdbcType=INTEGER}
+    </select>
 </mapper>
