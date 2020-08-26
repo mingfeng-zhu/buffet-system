@@ -114,7 +114,8 @@
             // checkbox的change事件
             chooseChange(item) {
                 console.log('item116', item)
-                item.isChecked=!item.isChecked
+                //CheckBox自带改变isChecked
+                // item.isChecked=!item.isChecked
                 this.setSelectedData()
                 this.ifCheckAll()
             },
@@ -178,18 +179,20 @@
             // 去结算
             onSubmit() {
                 // 选择购买的商品
-                // var cartgoods = [];
-                // this.goods.forEach(function(item) {
-                //     if (item.isChecked) {
-                //         cartgoods.push({ id: item.id, num: item.num });
-                //     }
-                // });
-                // if (cartgoods.length === 0) {
-                //     Toast("请选择商品购买");
-                // } else {
-                //     this.$router.push("shopBuy");
-                // }
-                // console.log(cartgoods);
+                let cartgoods = [];
+                this.goods.forEach(function(item) {
+                    if (item.isChecked) {
+                        cartgoods.push({ id:item.id,price:item.price,title:item.title,num:item.num});
+                    }
+                });
+                if (cartgoods.length === 0) {
+                    Toast("请选择商品购买");
+                } else {
+                    let info = JSON.stringify(cartgoods)
+                    sessionStorage.setItem('cartgoods',info)
+                    this.$router.push("/orderconfirm");
+                }
+                console.log(cartgoods);
             }
         }
     };

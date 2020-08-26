@@ -53,18 +53,18 @@ public class ShopCartServiceImpl implements ShopCartService {
     }
 
     @Override
-    public Result addShopCartRecord(Integer userId, Integer productId, Integer goodCount) {
+    public Result addShopCartRecord(Integer userId, Integer productSpecificationId, Integer goodCount) {
 
         //判断购物车中是否已有这条记录
-        ShopCart preShopCart = shopCartMapper.getShopCartById(userId, productId);
+        ShopCart preShopCart = shopCartMapper.getShopCartById(userId, productSpecificationId);
         List<Integer> idList = new ArrayList<>();
         //若是存在该购物车记录，则对其数量进行改变
         if(preShopCart != null) {
             //若是商品数量为0，则直接将购物车记录删除
             if(goodCount == Constant.SHOP_CARD_DELETE_ZERO) {
-                int deleteResult = shopCartMapper.deleteRecord(userId, productId);
+                int deleteResult = shopCartMapper.deleteRecord(userId, productSpecificationId);
             } else {
-                idList.add(productId);
+                idList.add(productSpecificationId);
                 List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(idList);
                 //若是商品库存不足
                 if(productSpecificationDTOList.get(0).getProductStorage() < goodCount) {
@@ -77,7 +77,7 @@ public class ShopCartServiceImpl implements ShopCartService {
             return Result.success();
         }
         //若是不存在，则新增一条记录。但是得先判断库存是否充足
-        idList.add(productId);
+        idList.add(productSpecificationId);
         List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(idList);
         //若是商品库存不足
         if(productSpecificationDTOList.get(0).getProductStorage() < goodCount) {
@@ -85,7 +85,7 @@ public class ShopCartServiceImpl implements ShopCartService {
         }
         ShopCart shopCart = new ShopCart();
         shopCart.setUserId(userId);
-        shopCart.setGoodId(productId);
+        shopCart.setGoodId(productSpecificationId);
         shopCart.setGoodCount(goodCount);
         shopCart.setPayStatus(Constant.Shop_Cart_STATUS.un_paid.getIndex());
         int result = shopCartMapper.insertSelective(shopCart);
