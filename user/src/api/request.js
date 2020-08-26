@@ -12,8 +12,10 @@ instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlenco
 instance.interceptors.request.use(config => {
     let passport = localStorage.getItem('token');
     console.log('passport', passport)
+    if(passport) {
+        config.headers['X-token'] = passport
+    }
     // config.headers.Authorization = 'Bearer ' + passport
-    config.headers['X-token'] = passport
     return config;
   }, function (error) {
     return Promise.reject(error);

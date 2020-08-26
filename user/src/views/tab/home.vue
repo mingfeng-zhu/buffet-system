@@ -12,7 +12,7 @@
     <div class="swipe">
       <van-swipe :autoplay="3000" width="300px" height="300px">
         <van-swipe-item v-for="(image, index) in images" :key="index">
-          <img v-lazy="image" />
+          <img v-lazy="image.img" @click="showDetail(image.id)" />
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -33,6 +33,7 @@
                   :desc="item.productDesc"
                   :title="item.productName"
                   :thumb="item.productPicturePath"
+                  @click-thumb = "showDetail(item.productId)"
           >
             <template #footer>
               <div v-if="item.specificationNumber === 1" class="specification">
@@ -51,7 +52,7 @@
                 <van-cell-group>
                   <van-cell>
                   <template #title>
-                    <van-image style="float:left;margin-left: 25px" width="100px" height="100px"  :src="image" />
+                    <van-image style="float:left;margin-left: 25px" width="100px" height="100px"  :src="image"/>
                   </template>
                   <template #default>
                     <p style="float: left">￥{{price}}</p><br>
@@ -114,11 +115,7 @@
         name: 'home',
         data() {
             return {
-                images: [
-                    // img1,
-                    // 'https://img.yzcdn.cn/vant/apple-1.jpg',
-                    // 'https://img.yzcdn.cn/vant/apple-2.jpg',
-                ],
+                images: [],
                 searchValue:'',
                 // 懒加载内容
                 list: [],
@@ -163,6 +160,9 @@
             this.fetch_items(this.id)
         },
         methods: {
+            async showDetail(id) {
+                this.$router.push({name: 'detail', query: {id: id}})
+            },
             onSearch() {
                 console.log('sousuo', this.searchValue)
                 this.$router.push({name: 'search', query: {value: this.searchValue}})
@@ -191,7 +191,11 @@
                     this.list = data.data.list
                     this.images=[]
                     for (let i=0;i<4;i++) {
-                        this.images.push(this.list[i].productPicturePath)
+                        this.images.push({
+                            img:this.list[i].productPicturePath,
+                            id:this.list[i].productId
+                        })
+                        // this.images.push(this.list[i].productPicturePath)
                     }
                     if (this.pageNum > 1) {
                         this.dataList = this.list.concat(this.dataList)
