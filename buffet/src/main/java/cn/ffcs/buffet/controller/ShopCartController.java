@@ -36,12 +36,12 @@ public class ShopCartController {
     }
 
     @AvoidRepeatableCommit
-    @ApiOperation(value = "商品加入购物车，productId(商品规格id)、goodCount(商品数量)。当商品数量参数为0时，默认将该商品从购物车删除")
+    @ApiOperation(value = "商品加入购物车，productSpecificationId(商品规格id)、goodCount(商品数量)。当商品数量参数为0时，默认将该商品从购物车删除")
     @PostMapping(path = "/addShopCartRecord")
     @ResponseBody
-    public Result addShopCartRecord(Integer productId, Integer goodCount) {
+    public Result addShopCartRecord(Integer productSpecificationId, Integer goodCount) {
         Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
-        return shopCartService.addShopCartRecord(userId, productId, goodCount);
+        return shopCartService.addShopCartRecord(userId, productSpecificationId, goodCount);
     }
 
 }

@@ -21,11 +21,11 @@ public interface ShopCartService {
     /**
      * 将商品加入购物车
      * @param userId 用户id
-     * @param productId 商品规格id
+     * @param productSpecificationId 商品规格id
      * @param goodCount 商品数量
      * @return
      */
-    Result addShopCartRecord(Integer userId, Integer productId, Integer goodCount);
+    Result addShopCartRecord(Integer userId, Integer productSpecificationId, Integer goodCount);
 
     /**
      * 清空某个用户的购物车数据
