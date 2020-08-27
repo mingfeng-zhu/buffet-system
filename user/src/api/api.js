@@ -51,7 +51,7 @@ export default {
     upload,
     signUp,
     login,
-    getProductDetailAndCommentList，
+    getProductDetailAndCommentList,
     creatOrder,
     payOrder,
     getOrder,
