@@ -26,6 +26,4 @@ public interface ProductCategoryPOMapper {
     int updateByPrimaryKey(ProductCategoryPO record);
 
     List<ProductCategoryDTO> selectProductCategoryList();
-
-    List<ProductCategoryPO> getProductCategoryList();
 }

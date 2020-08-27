@@ -35,13 +35,18 @@ export default {
       orderid:'', //订单id
       ordertitle:'',
       totalprice: 0,
-      paystate:'', //支付结果
+      paycode:'', //支付结果
+      idlist:[],
+      goodcountlist:[]
+
     }
   },
   mounted() {
     this.orderid = sessionStorage.getItem('orderid')
     this.ordertitle = sessionStorage.getItem('ordertitle')
     this.totalprice = sessionStorage.getItem('totalprice')
+    this.idlist = JSON.parse(sessionStorage.getItem('idlist'))
+    this.goodcountlist = JSON.parse(sessionStorage.getItem('goodcountlist'))
   },
   methods:{
     onClickLeft() {
@@ -51,8 +56,18 @@ export default {
        sessionStorage.setItem('orderid','')
        sessionStorage.setItem('ordertitle','')
        sessionStorage.setItem('totalprice','')
+       sessionStorage.setItem('idlist','')
+       sessionStorage.setItem('goodcountlist','')
        //调用支付接口，返回支付结果
-       if(this.paystate === '0') {
+       this.params = {}
+       this.params.id = this.orderid
+       this.params.idList = this.idlist
+       this.params.goodCountList = this.goodcountlist
+      let that = this
+       this.$api.payOrder(this.params).then(function (response){
+         that.paycode = response.data.code
+       })
+       if(this.paycode === '2000') {
          this.$router.push("/success")
        }else {
          this.$router.push("/faild")
