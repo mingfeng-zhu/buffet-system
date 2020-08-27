@@ -94,12 +94,14 @@ export default {
           price: '20.00',
           title:'标题1',
           num:4,
+          cartprice:0
         },
         {
           id:1,
           price: '30.00',
           title:'标题2',
           num:4,
+          cartprice:0
         }
       ],
     }
@@ -127,8 +129,17 @@ export default {
     //订单提交
     orderSubmit(){
       //调用订单生成接口  post方法 返回订单id
+      this.params = {}
+      this.params.addressId = this.address.id
+      this.params.totalMoney = this.totalprice
+      let idlist = []
+      let goodcountlist = []
+      let totalmoneylist = []
       let ordertitle = ''
       this.cartgoods.forEach(function (item,index){
+        idlist.push(item.id)
+        goodcountlist.push(item.num)
+        totalmoneylist.push(item.cartprice)
         if (index > 0 ){
           if(item.num>1) {
             ordertitle += '+' + item.title + '*' + item.num
@@ -143,9 +154,18 @@ export default {
           }
         }
       })
+      this.params.idList = idlist
+      this.params.goodCountList = goodcountlist
+      this.params.totalMoneyList = totalmoneylist
+      let that = this
+      this.$api.creatOrder(this.params).then(function (response){
+        that.orderid = response.data.data
+      })
       sessionStorage.setItem('orderid',this.orderid)
       sessionStorage.setItem('ordertitle',ordertitle)
       sessionStorage.setItem('totalprice',this.totalprice)
+      sessionStorage.setItem('idlist',JSON.stringify(idlist))
+      sessionStorage.setItem('goodcountlist',JSON.stringify(goodcountlist))
       this.$router.push("/pay")
     },
     // 计算价格

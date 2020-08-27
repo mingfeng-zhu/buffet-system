@@ -16,10 +16,14 @@
             </div>
             <div class="orderStatus">
               <div class="status">
-                <div class="orderStatus" v-if="item.status === 0">待付款</div>
-                <div class="orderStatus" v-if="item.status === 1">待收货</div>
-                <div class="orderStatus" v-if="item.status === 2">待评价</div>
-                <div class="orderStatus" v-if="item.status === 3">已评价</div>
+                <div class="orderStatus" v-if="item.status === 0">已取消</div>
+                <div class="orderStatus" v-if="item.status === 1">待支付</div>
+                <div class="orderStatus" v-if="item.status === 2">待接单</div>
+                <div class="orderStatus" v-if="item.status === 3">制作中</div>
+                <div class="orderStatus" v-if="item.status === 4">派送中，待收货</div>
+                <div class="orderStatus" v-if="item.status === 5">已确认收货，待评价</div>
+                <div class="orderStatus" v-if="item.status === 6">已评价</div>
+                <div class="orderStatus" v-if="item.status === 7">取消中</div>
               </div>
               <van-button v-if="item.status === 0" round type="danger" text="取消订单" @click="cancle(item.orderid)"/>
               <van-button v-if="item.status === 0" round type="danger" text="去支付" @click="Submit(item.orderid,item.ordertitle,item.totalprice)"/>
@@ -38,6 +42,7 @@ export default {
   name: "allorder",
   data(){
     return{
+      userId: '',
       orders:[
         {
           orderid:'1',
@@ -97,8 +102,12 @@ export default {
     onClickLeft(){
       this.$router.back()
     },
-    cancle(){
+    cancle(orderid){
       //调用订单取消接口
+      this.params = {}
+      this.params.id = orderid
+      this.$api.cancelOrder(this.params)
+      location.reload()
       location.reload()
     },
     Submit(id,title,price){
@@ -118,9 +127,17 @@ export default {
       location.reload()
     },
     //获取待支付订单列表
-    // getOrders(){
-    //调用订单获取接口
-    // },
+    getOrders(){
+      //调用订单获取接口
+      this.params = {}
+      let list = []
+      let that = this
+      list.push({userId:this.userId})
+      this.params.list = list
+      this.$api.getOrder(this.params).then(function (response){
+        that.orders = response.data.data
+      })
+    },
   }
 }
 </script>
