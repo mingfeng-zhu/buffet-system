@@ -30,24 +30,26 @@ export default {
   name: "unpaid",
   data(){
     return{
+      userId: '',
+      orderStatus:'',
       orders:[
         {
           orderid:'1',
           ordertitle:'标题1',
           totalprice: 110,
-          status:0
+          status:'待支付'
         },
         {
           orderid:'2',
           ordertitle:'标题2',
           totalprice: 210,
-          status:0
+          status:'待支付'
         },
         {
           orderid:'3',
           ordertitle:'标题3',
           totalprice: 310,
-          status:0
+          status:'待支付'
         },
       ],
     }
@@ -59,8 +61,11 @@ export default {
     onClickLeft() {
       this.$router.push('/person')
     },
-    cancle(){
+    cancle(orderid){
       //调用订单取消接口
+      this.params = {}
+      this.params.id = orderid
+      this.$api.cancelOrder(this.params)
       location.reload()
     },
     Submit(id,title,price){
@@ -70,9 +75,18 @@ export default {
       this.$router.push('/pay')
     },
     //获取待支付订单列表
-    // getOrders(){
-      //调用订单获取接口   status=0 待支付状态
-    // },
+    getOrders(){
+      // 调用订单获取接口   status=0 待支付状态
+      this.params = {}
+      this.params.orderStatus = this.orderStatus
+      let list = []
+      let that = this
+      list.push({userId:this.userId})
+      this.params.list = list
+      this.$api.getOrder(this.params).then(function (response){
+         that.orders = response.data.data
+      })
+    },
   }
 }
 </script>
