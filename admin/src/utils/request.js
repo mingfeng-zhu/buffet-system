@@ -13,8 +13,8 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    // do something before request is sent
-
+    // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
+    // 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key

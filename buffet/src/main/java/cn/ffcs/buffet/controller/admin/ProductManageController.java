@@ -36,12 +36,9 @@ public class ProductManageController {
     @PassToken
     public Result getProductCategoryList(Page page, String categoryName) {
         PageInfo<ProductCategoryPO> productCategoryPOList = productManageService.getProductCategoryList(page, categoryName);
-        if (productCategoryPOList.getTotal() > 0) {
-            page.setList(productCategoryPOList.getList());
-            page.setTotal(productCategoryPOList.getTotal());
-            return Result.success(page);
-        }
-        return Result.success();
+        page.setList(productCategoryPOList.getList());
+        page.setTotal(productCategoryPOList.getTotal());
+        return Result.success(page);
     }
 
     @ApiOperation(value = "查询商品分类")
@@ -53,7 +50,7 @@ public class ProductManageController {
     }
 
     @ApiOperation(value = "修改商品分类")
-    @PostMapping(path = "/productCategory")
+    @PutMapping(path = "/productCategory")
     @PassToken
     public Result updateProductCategory(@RequestBody ProductCategoryPO categoryPO) {
         Integer flag = productManageService.updateProductCategory(categoryPO);
@@ -61,7 +58,7 @@ public class ProductManageController {
     }
 
     @ApiOperation(value = "新建商品分类")
-    @PutMapping(path = "/productCategory")
+    @PostMapping(path = "/productCategory")
     @PassToken
     public Result addProductCategory(@RequestBody ProductCategoryPO categoryPO) {
         Integer flag = productManageService.addProductCategory(categoryPO);

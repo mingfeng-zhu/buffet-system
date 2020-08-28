@@ -27,11 +27,20 @@
       >
     </div>
     <el-table :data="categoryList" border style="width: 100%; margin-top:10px">
-      <el-table-column fixed prop="productCategoryId" label="分类ID" />
+      <el-table-column fixed label="序号" width="50px" type="index" align="center" />
+      <!-- <el-table-column fixed prop="productCategoryId" label="分类ID" /> -->
       <el-table-column fixed prop="categoryName" label="分类名" />
       <el-table-column fixed prop="categoryDesc" label="分类描述" />
-      <el-table-column fixed prop="createTime" label="创建时间" />
-      <el-table-column fixed prop="updateTime" label="更新时间" />
+      <el-table-column fixed prop="createTime" label="创建时间">
+        <template scope="scope">
+          {{ scope.row.createTime | parseTime }}
+        </template>
+      </el-table-column>
+      <el-table-column fixed prop="updateTime" label="更新时间">
+        <template scope="scope">
+          {{ scope.row.updateTime | parseTime }}
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
           <el-button
@@ -63,7 +72,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" style="float: right" @click="handleSubmit('ruleForm')">确 定</el-button>
-          <el-button style="float: right" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button style="float: right;margin-right:10px" @click="dialogFormVisible = false">取 消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -72,7 +81,7 @@
 
 <script>
 import axios from 'axios'
-import { getProductCategoryList } from '@/api/product/product'
+import { getProductCategoryList,updateProductCategory,addProductCategory,deleteProductCategory } from '@/api/product/product'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves'
 import { parseTime } from '@/utils'
@@ -147,62 +156,57 @@ export default {
       getProductCategoryList(this.listQuery).then(response => {
         this.categoryList = response.data.list
         this.listQuery.total = response.data.total
-        console.log(response)
       })
     },
+    /**
+     * 搜索
+     */
     handleFilter() {
       this.listQuery.pageNum = 1
       this.getList()
     },
+    /**
+     * 添加
+     */
     addCategory(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const self = this
-          axios.put('http://localhost:8082/admin/product/productCategory', self.category)
-            .then(res => {
-              if (res.data.code === 2000) {
-                self.categoryList.push(res.data.data)
-                self.$message.success('新建商品分类成功！')
-              }
-            }).catch(err => {
-              console.log(err)
-            })
+          addProductCategory(this.category).then(response => {
+            this.categoryList.push(response.data)
+            this.$message.success('新建商品分类成功！')
+          })
         } else {
           this.$message.error('新建商品分类失败！')
         }
         this.dialogFormVisible = false
       })
     },
+    /**
+     * 更新
+     */
     updateCategory() {
       const self = this
-      axios.post('http://localhost:8082/admin/product/productCategory', self.category)
-        .then(res => {
-          if (res.data.code === 2000) {
-            self.$set(self.categoryList, self.updateIndex, res.data.data)
-            self.$message.success('修改商品分类成功！')
-            self.dialogFormVisible = false
-          } else {
-            self.$message.error(res.data.message)
-          }
-        }).catch(err => {
-          console.log(err)
-        })
+      updateProductCategory(self.category).then(response => {
+        console.log
+        self.$set(self.categoryList, self.updateIndex, response.data)
+        self.$message.success('修改商品分类成功！')
+        self.dialogFormVisible = false
+      })
     },
+    /**
+     * 删除
+     */
     deleteCategory(index) {
       const self = this
-      axios.delete(`http://localhost:8082/admin/product/productCategory/${self.categoryList[index].productCategoryId}`)
-        .then(res => {
-          if (res.data.code === 2000) {
-            self.categoryList.splice(index, 1)
+      deleteProductCategory(self.categoryList[index].productCategoryId).then(response => {
+        self.categoryList.splice(index, 1)
             self.$message.success('删除成功！')
             self.visible = false
-          } else {
-            self.$message.error(res.data.message)
-          }
-        }).catch(err => {
-          console.log(err)
-        })
+      })
     },
+    /**
+     * 提交dialog
+     */
     handleSubmit(formName) {
       if (this.submitType === 'add') {
         this.addCategory(formName)
@@ -211,6 +215,9 @@ export default {
         this.updateCategory()
       }
     },
+    /**
+     * 打开dialog
+     */
     showDialog(type, index) {
       this.submitType = type
       if (type === 'add') {
@@ -222,10 +229,9 @@ export default {
       }
       if (type === 'update') {
         this.updateIndex = index
-        this.category = JSON.parse(JSON.stringify(this.categoryList[index]))
+        this.category = Object.assign({}, this.categoryList[index])
       }
       this.dialogFormVisible = true
-      // console.log('type: ' + type + ', index: ' + index)
     }
   }
 }
