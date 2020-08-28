@@ -72,6 +72,8 @@ public class Comment implements Serializable {
      */
     private Integer modifier;
 
+    private UserPO userPO;
+
     public Comment() {
     }
 
@@ -202,5 +204,13 @@ public class Comment implements Serializable {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public UserPO getUserPO() {
+        return userPO;
+    }
+
+    public void setUserPO(UserPO userPO) {
+        this.userPO = userPO;
     }
 }

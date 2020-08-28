@@ -14,6 +14,20 @@
     <result column="change_time" jdbcType="TIMESTAMP" property="changeTime" />
     <result column="creator" jdbcType="INTEGER" property="creator" />
     <result column="modifier" jdbcType="INTEGER" property="modifier" />
+    <association property="userPO"
+                 column="user_id"
+                 javaType="cn.ffcs.buffet.model.po.UserPO"
+                 select="cn.ffcs.buffet.mapper.UserPOMapper.selectUserByUserId">
+      <id column="user_id" jdbcType="INTEGER" property="userId" />
+      <result column="user_name" jdbcType="VARCHAR" property="userName" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+      <result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+      <result column="user_img" jdbcType="VARCHAR" property="userImg" />
+      <result column="user_sex" jdbcType="INTEGER" property="userSex" />
+      <result column="user_tel" jdbcType="VARCHAR" property="userTel" />
+      <result column="user_state" jdbcType="INTEGER" property="userState" />
+    </association>
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, good_id, order_detail_id, order_id, image, comment_star, comment_description,
@@ -173,7 +187,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="selectCommentByProductId" resultType="cn.ffcs.buffet.model.po.Comment" parameterType="INTEGER">
+  <select id="selectCommentByProductId" resultMap="BaseResultMap" parameterType="INTEGER">
     select
     <include refid="Base_Column_List" />
     from t_comment

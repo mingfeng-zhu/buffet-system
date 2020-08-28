@@ -30,7 +30,7 @@
           <el-input v-model="category.categoryDesc" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="float: right" @click="addCategory('ruleForm')">确 定</el-button>
+          <el-button type="primary" style="float: right" @click="handleSubmit('ruleForm')">确 定</el-button>
           <el-button style="float: right" @click="dialogFormVisible = false">取 消</el-button>
         </el-form-item>
       </el-form>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -75,11 +75,11 @@ export default {
         categoryDesc: null,
         createTime: null,
         updateTime: null
-
       },
       visible: false,
       dialogFormVisible: false,
-      updateIndex: null
+      updateIndex: null,
+      submitType: null
     }
   },
   created() {
@@ -87,26 +87,76 @@ export default {
   },
   methods: {
     init() {
-      console.log('init')
+      const self = this
+      axios.get('http://localhost:8082/admin/product/getProductCategoryList')
+        .then(res => {
+          if (res.data.code === 2000) {
+            self.categoryList = res.data.data
+          }
+          // console.log(res)
+        }).catch(err => {
+          console.log(err)
+        })
     },
     addCategory(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          const self = this
+          axios.put('http://localhost:8082/admin/product/productCategory', self.category)
+            .then(res => {
+              if (res.data.code === 2000) {
+                self.categoryList.push(res.data.data)
+                self.$message.success('新建商品分类成功！')
+              }
+            }).catch(err => {
+              console.log(err)
+            })
         } else {
-          console.log('error submit!!')
-          return false
+          this.$message.error('新建商品分类失败！')
         }
+        this.dialogFormVisible = false
       })
     },
     updateCategory() {
-      this.dialogFormVisible = false
+      const self = this
+      axios.post('http://localhost:8082/admin/product/productCategory', self.category)
+        .then(res => {
+          if (res.data.code === 2000) {
+            self.$set(self.categoryList, self.updateIndex, res.data.data)
+            self.$message.success('修改商品分类成功！')
+            self.dialogFormVisible = false
+          } else {
+            self.$message.error(res.data.message)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
     },
     deleteCategory(index) {
-      console.log('shanchu' + this.categoryList[index].productCategoryId)
-      this.visible = false
+      const self = this
+      axios.delete(`http://localhost:8082/admin/product/productCategory/${self.categoryList[index].productCategoryId}`)
+        .then(res => {
+          if (res.data.code === 2000) {
+            self.categoryList.splice(index, 1)
+            self.$message.success('删除成功！')
+            self.visible = false
+          } else {
+            self.$message.error(res.data.message)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+    },
+    handleSubmit(formName) {
+      if (this.submitType === 'add') {
+        this.addCategory(formName)
+      }
+      if (this.submitType === 'update') {
+        this.updateCategory()
+      }
     },
     showDialog(type, index) {
+      this.submitType = type
       if (type === 'add') {
         this.category.productCategoryId = null
         this.category.categoryName = null
@@ -115,6 +165,7 @@ export default {
         this.category.updateTime = null
       }
       if (type === 'update') {
+        this.updateIndex = index
         this.category = JSON.parse(JSON.stringify(this.categoryList[index]))
       }
       this.dialogFormVisible = true
