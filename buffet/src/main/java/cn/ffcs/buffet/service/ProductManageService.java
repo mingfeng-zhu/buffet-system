@@ -1,6 +1,8 @@
 package cn.ffcs.buffet.service;
 
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.model.po.ProductCategoryPO;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -13,10 +15,12 @@ import java.util.List;
 public interface ProductManageService {
 
     /**
-     * 获取商品分类
+     * 分页获取商品分类
+     * @param page
+     * @param categoryName
      * @return
      */
-    List<ProductCategoryPO> getProductCategoryList();
+    PageInfo<ProductCategoryPO> getProductCategoryList(Page page, String categoryName);
 
     /**
      * 根据分类id获取商品分类

@@ -1,10 +1,12 @@
 package cn.ffcs.buffet.controller.admin;
 
 import cn.ffcs.buffet.common.annotation.PassToken;
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
 import cn.ffcs.buffet.model.po.ProductCategoryPO;
 import cn.ffcs.buffet.service.ProductManageService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,14 @@ public class ProductManageController {
     @ApiOperation(value = "获取商品分类列表")
     @GetMapping(path = "/getProductCategoryList")
     @PassToken
-    public Result getProductCategoryList() {
-        List<ProductCategoryPO> productCategoryPOList = productManageService.getProductCategoryList();
-        return Result.success(productCategoryPOList);
+    public Result getProductCategoryList(Page page, String categoryName) {
+        PageInfo<ProductCategoryPO> productCategoryPOList = productManageService.getProductCategoryList(page, categoryName);
+        if (productCategoryPOList.getTotal() > 0) {
+            page.setList(productCategoryPOList.getList());
+            page.setTotal(productCategoryPOList.getTotal());
+            return Result.success(page);
+        }
+        return Result.success();
     }
 
     @ApiOperation(value = "查询商品分类")

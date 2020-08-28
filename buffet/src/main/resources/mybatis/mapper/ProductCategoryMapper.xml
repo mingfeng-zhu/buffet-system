@@ -149,5 +149,10 @@
     select
     <include refid="Base_Column_List" />
     from product_category
+    <where>
+      <if test="categoryName != null and categoryName != ''">
+        and category_name like concat(#{categoryName},'%')
+      </if>
+    </where>
   </select>
 </mapper>

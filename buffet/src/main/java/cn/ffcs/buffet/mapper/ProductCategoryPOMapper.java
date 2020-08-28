@@ -2,6 +2,7 @@ package cn.ffcs.buffet.mapper;
 
 import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
 import cn.ffcs.buffet.model.po.ProductCategoryPO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,5 +28,10 @@ public interface ProductCategoryPOMapper {
 
     List<ProductCategoryDTO> selectProductCategoryList();
 
-    List<ProductCategoryPO> getProductCategoryList();
+    /**
+     * 获取商品分类
+     * @param categoryName
+     * @return
+     */
+    List<ProductCategoryPO> getProductCategoryList(@Param("categoryName") String categoryName);
 }

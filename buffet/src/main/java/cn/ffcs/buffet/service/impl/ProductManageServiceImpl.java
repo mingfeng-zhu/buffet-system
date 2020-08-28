@@ -1,11 +1,14 @@
 package cn.ffcs.buffet.service.impl;
 
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.mapper.ProductCategoryPOMapper;
 import cn.ffcs.buffet.mapper.UserPOMapper;
 import cn.ffcs.buffet.model.dto.UserDTO;
 import cn.ffcs.buffet.model.po.ProductCategoryPO;
 import cn.ffcs.buffet.service.ProductManageService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +32,18 @@ public class ProductManageServiceImpl implements ProductManageService {
     private UserPOMapper userPOMapper;
 
 
+    /**
+     * 获取商品分类
+     * @param page
+     * @param categoryName
+     * @return
+     */
     @Override
-    public List<ProductCategoryPO> getProductCategoryList() {
-        return productCategoryPOMapper.getProductCategoryList();
+    public PageInfo<ProductCategoryPO> getProductCategoryList(Page page, String categoryName) {
+        PageHelper.startPage(page.getPageNum(), page.getPageSize());
+        List<ProductCategoryPO> list = productCategoryPOMapper.getProductCategoryList(categoryName);
+        PageInfo<ProductCategoryPO> pageInfo = new PageInfo<>(list);
+        return pageInfo;
     }
 
     @Override

@@ -1,7 +1,32 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" size="small" style="margin: 10px 0" @click="showDialog(type = 'add')">新增</el-button>
-    <el-table :data="categoryList" border style="width: 100%">
+    <div class="filter-container">
+      <el-input
+        v-model="listQuery.categoryName"
+        placeholder="类别名"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        style="margin-left: 10px;"
+        icon="el-icon-search"
+        @click="handleFilter"
+        >搜索</el-button
+      >
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="showDialog(type = 'add')"
+        >新增</el-button
+      >
+    </div>
+    <el-table :data="categoryList" border style="width: 100%; margin-top:10px">
       <el-table-column fixed prop="productCategoryId" label="分类ID" />
       <el-table-column fixed prop="categoryName" label="分类名" />
       <el-table-column fixed prop="categoryDesc" label="分类描述" />
@@ -10,18 +35,25 @@
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
           <el-button
+            class="el-icon-edit"
             type="primary"
             size="small"
             @click="showDialog(type = 'update', scope.$index)"
           >修改</el-button>
           <el-popconfirm title="确定要删除吗？" @onConfirm="deleteCategory(scope.$index)">
-            <el-button slot="reference" type="danger" size="small">删除</el-button>
+            <el-button slot="reference" class="el-icon-delete" type="danger" size="small" style="margin-left:10px">删除</el-button>
           </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
-
-    <el-dialog title="创建商品分类" :visible.sync="dialogFormVisible" width="30%">
+    <pagination
+      v-show="listQuery.total > 0"
+      :total="listQuery.total"
+      :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+    />
+    <el-dialog title="创建商品分类" :loading="loading" :visible.sync="dialogFormVisible" width="30%">
       <el-form ref="ruleForm" :model="category" :rules="rules">
         <el-form-item label="分类名称" prop="categoryName">
           <el-input v-model="category.categoryName" />
@@ -40,7 +72,19 @@
 
 <script>
 import axios from 'axios'
+import { getProductCategoryList } from '@/api/product/product'
+import Pagination from '@/components/Pagination'
+import waves from '@/directive/waves'
+import { parseTime } from '@/utils'
 export default {
+  components: { Pagination },
+  directives: { waves },
+  filters: {
+    parseTime(time) {
+      var date = new Date(time)
+      return parseTime(date, '{y}-{m}-{d} {h}:{i}')
+    }
+  },
   data() {
     return {
       categoryList: [
@@ -79,7 +123,14 @@ export default {
       visible: false,
       dialogFormVisible: false,
       updateIndex: null,
-      submitType: null
+      submitType: null,
+      loading: false,
+      listQuery: {
+        total: 0,
+        pageNum: 1,
+        pageSize: 10,
+        categoryName: ''
+      }
     }
   },
   created() {
@@ -87,16 +138,21 @@ export default {
   },
   methods: {
     init() {
-      const self = this
-      axios.get('http://localhost:8082/admin/product/getProductCategoryList')
-        .then(res => {
-          if (res.data.code === 2000) {
-            self.categoryList = res.data.data
-          }
-          // console.log(res)
-        }).catch(err => {
-          console.log(err)
-        })
+      this.getList()
+    },
+    /**
+     * 获取商品分类列表
+     */
+    getList(){
+      getProductCategoryList(this.listQuery).then(response => {
+        this.categoryList = response.data.list
+        this.listQuery.total = response.data.total
+        console.log(response)
+      })
+    },
+    handleFilter() {
+      this.listQuery.pageNum = 1
+      this.getList()
     },
     addCategory(formName) {
       this.$refs[formName].validate((valid) => {
