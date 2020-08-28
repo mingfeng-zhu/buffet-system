@@ -80,7 +80,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { getProductCategoryList,updateProductCategory,addProductCategory,deleteProductCategory } from '@/api/product/product'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves'
