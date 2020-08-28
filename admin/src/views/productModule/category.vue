@@ -19,7 +19,7 @@
       >
       <el-button
         class="filter-item"
-        style="margin-left: 10px;"
+        style="float: right;margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
         @click="showDialog(type = 'add')"
@@ -96,22 +96,7 @@ export default {
   },
   data() {
     return {
-      categoryList: [
-        {
-          productCategoryId: 1,
-          categoryName: '分类1',
-          categoryDesc: '分类描述1',
-          createTime: '2019-09-18 02:54:35',
-          updateTime: '2019-09-18 02:54:35'
-        },
-        {
-          productCategoryId: 2,
-          categoryName: '分类2',
-          categoryDesc: '分类描述2',
-          createTime: '2019-09-18 02:54:35',
-          updateTime: '2019-09-18 02:54:35'
-        }
-      ],
+      categoryList: [],
       rules: {
         categoryName: [
           { required: true, message: '请输入分类名称', trigger: 'blur' },
