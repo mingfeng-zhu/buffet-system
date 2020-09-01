@@ -14,6 +14,7 @@ import cn.ffcs.buffet.service.UserService;
 import com.zhenzi.sms.ZhenziSmsClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -62,7 +63,6 @@ public class UserController {
 //        if(!code.equals(session.getAttribute("code"))){
 //            return Result.fail("登录失败!验证码错误");
 //        }
-        System.out.println(user.toString());
         UserPO checkUser = new UserPO();
         checkUser.setUserTel(user.getUserTel());
         checkUser.setUserPassword(user.getUserPassword());
@@ -83,6 +83,42 @@ public class UserController {
             return Result.fail("登录失败!密码错误");
         }
 
+    }
+
+    /**
+     * 登录 通过手机号
+     *
+     * @param user 用户类
+     * @return
+     */
+    @ApiOperation(value = "用户登录，登录前请发送手机验证码 ,填写验证码登录")
+    @ApiParam(name = "userTel",value = "userTel 用户手机号",required = true)
+    @PostMapping(path = "/loginByPhoneNumber")
+    public Result loginByPhoneNumber(@RequestBody LoginUserAO user, HttpServletRequest request) {
+        // TODO 得改成用redis
+        HttpSession session = request.getSession();
+        String sessionCode= (String) session.getAttribute("code");
+        if(user.getCode()==null || sessionCode==null){
+            return Result.fail("请发送验证码");
+        }
+        if(!user.getCode().equals(session.getAttribute("code"))){
+            return Result.fail("登录失败!验证码错误");
+        }
+        UserPO checkUser = new UserPO();
+        checkUser.setUserTel(user.getUserTel());
+        checkUser.setUserPassword(user.getUserPassword());
+        UserPO loginUser = userService.checkLogin(checkUser);
+        if (loginUser == null) {
+            return Result.fail("登录失败!账户不存在");
+        }
+        if (loginUser.getUserState().equals(Constant.USER_STATUS.forbidden.getIndex())) {
+            return Result.fail("登录失败!用户被禁用");
+        }
+        session.setAttribute("user", loginUser);
+        UserVO userVO = new UserVO();
+        userVO.setUserPO(loginUser);
+        userVO.setToken(TokenUtil.getToken(loginUser));
+        return Result.success(userVO);
     }
 
     /**

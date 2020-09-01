@@ -3,6 +3,7 @@ package cn.ffcs.buffet.model.dto;
 import cn.ffcs.buffet.model.po.ProductPO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -38,6 +39,8 @@ public class ProductSpecificationDTO {
     private String productSpecificationPicture;
 
     private ProductPO productPO;
+
+    private Integer numberOfCart;
 
     public Integer getProductSpecificationId() {
         return productSpecificationId;
@@ -102,6 +105,14 @@ public class ProductSpecificationDTO {
         this.productPO = productPO;
     }
 
+    public Integer getNumberOfCart() {
+        return numberOfCart;
+    }
+
+    public void setNumberOfCart(Integer numberOfCart) {
+        this.numberOfCart = numberOfCart;
+    }
+
     @Override
     public String toString() {
         return "ProductSpecificationDTO{" +
@@ -113,6 +124,7 @@ public class ProductSpecificationDTO {
                 ", status=" + status +
                 ", productSpecificationPicture='" + productSpecificationPicture + '\'' +
                 ", productPO=" + productPO +
+                ", numberOfCart=" + numberOfCart +
                 '}';
     }
 }

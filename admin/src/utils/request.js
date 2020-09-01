@@ -7,14 +7,14 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 50000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
-    // do something before request is sent
-
+    // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
+    // 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -46,7 +46,7 @@ service.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.code !== 20000  && res.code !== 2000) {
       Message({
         message: res.message || 'Error',
         type: 'error',

@@ -19,6 +19,11 @@
     <result column="product_desc" property="productDesc" jdbcType="VARCHAR" />
     <result column="product_category_id" property="productCategoryId" jdbcType="INTEGER" />
     <result column="product_picture_path" property="productPicturePath" jdbcType="VARCHAR" />
+    <collection property="productSpecificationDTOList"
+                column="product_id"
+                ofType="cn.ffcs.buffet.model.dto.ProductSpecificationDTO"
+                select="cn.ffcs.buffet.mapper.ProductSpecificationPOMapper.selectSpecificationByProductId">
+    </collection>
   </resultMap>
 
   <resultMap id="ProductDTOResultMap1" type="cn.ffcs.buffet.model.dto.ProductDTO">
@@ -27,6 +32,11 @@
     <result column="product_desc" property="productDesc" jdbcType="VARCHAR" />
     <result column="product_category_id" property="productCategoryId" jdbcType="INTEGER" />
     <result column="product_picture_path" property="productPicturePath" jdbcType="VARCHAR" />
+    <collection property="productSpecificationDTOList"
+                column="product_id"
+                ofType="cn.ffcs.buffet.model.dto.ProductSpecificationDTO"
+                select="cn.ffcs.buffet.mapper.ProductSpecificationPOMapper.selectSpecificationByProductId">
+    </collection>
     <collection property="commentList"
                 column="product_id"
                 ofType="cn.ffcs.buffet.model.po.Comment"

@@ -160,6 +160,28 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/product-module',
+    component: Layout,
+    redirect: '/example/table',
+    name: 'ProductModule',
+    meta: { title: '商品模块管理', icon: 'el-icon-shopping-bag-2' },
+    children: [
+      {
+        path: 'category',
+        name: 'Category',
+        component: () => import('@/views/productModule/category'),
+        meta: { title: '商品分类管理', icon: 'el-icon-menu' }
+      },
+      {
+        path: 'product',
+        name: 'Product',
+        component: () => import('@/views/productModule/product'),
+        meta: { title: '商品管理', icon: 'el-icon-finished' }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

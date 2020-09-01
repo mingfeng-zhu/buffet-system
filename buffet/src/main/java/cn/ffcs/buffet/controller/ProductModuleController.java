@@ -35,6 +35,7 @@ public class ProductModuleController {
     @Autowired
     private ShopCartService shopCartService;
 
+    @PassToken
     @ApiOperation(value = "获取商品分类列表")
     @GetMapping(path = "/getProductCategoryList")
     public Result getProductCategoryList() {
@@ -46,7 +47,6 @@ public class ProductModuleController {
     @ApiOperation(value = "根据商品分类id获取商品列表")
     @GetMapping(path = "/getProductListByProductCategoryId")
     public Result getProductListByProductCategoryId(Page<ProductDTO> page, Integer productCategoryId, HttpServletRequest request) {
-        Object user = request.getSession().getAttribute("user");
         UserDTO userIdAndUserTelOfToken = TokenUtil.getUserIdAndUserTelOfToken();
 
         PageInfo<ProductDTO> productDTOList = productModuleService.selectProductListByProductCategoryId(page, productCategoryId);
@@ -71,7 +71,6 @@ public class ProductModuleController {
     @ApiOperation(value = "根据商品名称查询商品")
     @GetMapping(path = "/getProductListByProductName")
     public Result getProductListByProductName(Page<ProductDTO> page, String productName, HttpServletRequest request){
-        Object user = request.getSession().getAttribute("user");
         UserDTO userIdAndUserTelOfToken = TokenUtil.getUserIdAndUserTelOfToken();
 
         PageInfo<ProductDTO> productDTOList = productModuleService.selectProductListByProductName(page, productName);
@@ -95,7 +94,6 @@ public class ProductModuleController {
     @ApiOperation(value = "获取全部商品")
     @GetMapping(path = "/getAllProductList")
     public Result getAllProductList(Page<ProductDTO> page, HttpServletRequest request){
-        Object user = request.getSession().getAttribute("user");
         UserDTO userIdAndUserTelOfToken = TokenUtil.getUserIdAndUserTelOfToken();
 
         PageInfo<ProductDTO> productDTOList = productModuleService.selectAllProductList(page);
@@ -128,6 +126,16 @@ public class ProductModuleController {
     @GetMapping(path = "/getSpecificationByProductIdAndSpecification")
     public Result getSpecificationByProductIdAndSpecification(@RequestParam(name = "productId") Integer productId, @RequestParam(name = "productSpecification") String productSpecification){
         ProductSpecificationDTO productSpecificationDTO = productModuleService.selectSpecificationByProductIdAndSpecification(productId, productSpecification);
+        UserDTO userIdAndUserTelOfToken = TokenUtil.getUserIdAndUserTelOfToken();
+        if (userIdAndUserTelOfToken != null && productSpecificationDTO != null) {
+            Integer userId = userIdAndUserTelOfToken.getUserId();
+            List<ShopCartDetailDTO> shopCartDetailDTOList = (List<ShopCartDetailDTO>)shopCartService.listShopCartByUserId(userId).getData();
+            for (int i = 0; i < shopCartDetailDTOList.size(); i++) {
+                if (productSpecificationDTO.getProductSpecificationId() == shopCartDetailDTOList.get(i).getShopCart().getGoodId()) {
+                    productSpecificationDTO.setNumberOfCart(shopCartDetailDTOList.get(i).getShopCart().getGoodCount());
+                }
+            }
+        }
         return Result.success(productSpecificationDTO);
     }
 
