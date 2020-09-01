@@ -214,11 +214,11 @@
     from product_specification
     where product_specification_id in
     <foreach item="productSpecificationId" collection="productSpecificationIdList" open="(" separator="," close=")">
-      #{productSpecificationId, jdbcType=INTEGER}
+      #{productSpecificationId}
     </foreach>
     order by field
     <foreach item="productSpecificationId" collection="productSpecificationIdList" open="(product_specification_id," separator="," close=")">
-      #{productSpecificationId, jdbcType=INTEGER}
+      #{productSpecificationId}
     </foreach>
   </select>
 

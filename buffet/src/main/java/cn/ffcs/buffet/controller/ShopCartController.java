@@ -10,6 +10,7 @@ import cn.ffcs.buffet.service.OrderService;
 import cn.ffcs.buffet.service.ShopCartService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class ShopCartController {
         return shopCartService.listShopCartByUserId(userId);
     }
 
+    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "商品加入购物车，productSpecificationId(商品规格id)、goodCount(商品数量)。当商品数量参数为0时，默认将该商品从购物车删除")
     @PostMapping(path = "/addShopCartRecord")

@@ -88,4 +88,11 @@ public interface OrderService {
      * @return
      */
     Result listOrderByCurrentId(Integer userId, Page<OrderPO> page);
+
+    /**
+     * 获取指定订单信息
+     * @param id 订单id
+     * @return
+     */
+    Result getOrderById(Long id);
 }

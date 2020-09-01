@@ -53,12 +53,23 @@ public class OrderController {
      * @param page 分页数据
      * @return
      */
-    @PassToken
     @ApiOperation(value = "获取订单列表，可选择的条件有用订单流水号。查询为分页查询。(前台使用)")
     @GetMapping(path = "/listOrderByCurrentUser")
     public Result listOrderByCurrentId(Page<OrderPO> page) {
         Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
         return orderService.listOrderByCurrentId(userId, page);
+    }
+
+    /**
+     * 获取指定订单信息
+     * @param id 订单id
+     * @return
+     */
+    @ApiOperation(value = "获取指定订单信息， 参数： 订单orderPO的id。(前台使用)")
+    @GetMapping(path = "/getOrderById")
+    public Result getOrderById(Long id) {
+        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
+        return orderService.getOrderById(id);
     }
 
     /**
@@ -116,7 +127,6 @@ public class OrderController {
      * @param goodCountList
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "生成订单，订单未待支付状态.商品规格id集合、总价、各类商品价格集合、地址id、各类商品数量集合")
     @PostMapping(path = "/addOrder")
@@ -133,7 +143,6 @@ public class OrderController {
      * @param orderStatus 订单状态
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "修改订单状态，app端使用,传id（订单id）与需要修改成的状态(orderStatus)（String类型）。订单状态：'2'为待接单（待支付的下一个状态）、'3'为制作中、'4'为派送中、'5'为已完成、6为取消申请中")
     @PostMapping(path = "/editOrderStatus")

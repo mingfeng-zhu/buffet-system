@@ -6,6 +6,7 @@ import cn.ffcs.buffet.common.util.Constant;
 import cn.ffcs.buffet.common.util.Snowflake;
 import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.mapper.OrderMapper;
+import cn.ffcs.buffet.model.dto.OrderDetailAndProductDTO;
 import cn.ffcs.buffet.model.dto.OrderDetailDTO;
 import cn.ffcs.buffet.model.dto.OrderTotalDataDTO;
 import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
@@ -13,6 +14,7 @@ import cn.ffcs.buffet.model.po.*;
 import cn.ffcs.buffet.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -155,6 +157,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result cancelOrder(Long id) {
+
         return null;
     }
 
@@ -165,7 +168,7 @@ public class OrderServiceImpl implements OrderService {
         //为避免在for循环中操作数据库，所以应该先批量查出所有商品规格的数据，再进行库存的判断
         List<Integer> list = Arrays.asList(idList);
         List<ProductSpecificationDTO> productList = productModuleService.selectSpecificationByProductSpecificationIdList(list);
-
+        List<Integer> countList = new ArrayList<>();
         //对订单所有商品的库存进行检查
         for(int num = 0 ;num < idList.length; num++) {
             ProductSpecificationDTO product = productList.get(num);
@@ -174,11 +177,12 @@ public class OrderServiceImpl implements OrderService {
             if(newCount < Constant.PRODUCT_NUMBER_ZERO) {
                 return Result.fail("购物车中"+ product.getProductPO().getProductName() +"库存不足！");
             }
+            countList.add(0 - goodCountList[num]);
         }
 
         //进行商品库存与销量的更新
-        List<Integer> numberList = Arrays.asList(goodCountList);
-        int result = productModuleService.updateProductStorage(list, numberList);
+//        List<Integer> numberList = Arrays.asList(goodCountList);
+        int result = productModuleService.updateProductStorage(list, countList);
         //更新成功，则进行订单的支付状态改变,改成待接单
         if(result > Constant.RETURN_DATA_COUNT) {
             int orderResult = orderMapper.editOrderStatus(id, Constant.Order_STATUS.wait_receive.getIndex());
@@ -200,31 +204,86 @@ public class OrderServiceImpl implements OrderService {
         List<OrderPO> orderPOList = orderMapper.listOrderByCurrentId(userId);
         PageInfo<OrderPO> pageInfo = new PageInfo<>(orderPOList);
 
-        if (pageInfo.getTotal() > 0) {
+        if (orderPOList.size() > 0) {
             List<Long> idList = new ArrayList<>();
             for(int count = 0; count < orderPOList.size(); count++) {
                 idList.add(orderPOList.get(count).getId());
             }
-//            //批量查询订单下的详单信息
-//            List<OrderDetail> orderDetailList = orderDetailService.listOrderDetailByOrderIdList(idList);
-//
-//            List<OrderDetailDTO> orderDetailDTOList = new ArrayList<>();
-//            for(int count = 0; count < orderPOList.size(); count++) {
-//                OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
-//                orderDetailDTO.setOrderPO(orderPOList.get(count));
-//                List<OrderDetail> orderDetailList1 = new ArrayList<>();
-//                for(int num = 0; num < orderDetailList.size(); num++) {
-//                    if(orderDetailList.get(count).getOrderId() == orderPOList.get(num).getId()) {
-//                        orderDetailList1.add(orderDetailList.get(num));
-//                    }
-//                }
-//                orderDetailDTO.setOrderDetailList(orderDetailList1);
-//                orderDetailDTOList.add(orderDetailDTO);
-//            }
-            page.setList(pageInfo.getList());
-            page.setTotal(pageInfo.getTotal());
-            return Result.success(page);
+            //批量查询订单下的详单信息
+            List<OrderDetail> orderDetailList = orderDetailService.listOrderDetailByOrderIdList(idList);
+
+            List<Integer> productSpecificationIdList = new ArrayList<>();
+            for(int i = 0; i < orderDetailList.size(); i++) {
+                productSpecificationIdList.add(orderDetailList.get(i).getGoodId());
+            }
+
+            List<OrderDetailAndProductDTO> orderDetailAndProductDTOList = new ArrayList<>();
+            //查询所有详单的商品规格信息
+            List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(productSpecificationIdList);
+            for(int count = 0; count < orderDetailList.size(); count++) {
+                for(int num = 0; num < productSpecificationDTOList.size(); num++) {
+                    if(orderDetailList.get(count).getGoodId() == productSpecificationDTOList.get(num).getProductSpecificationId()) {
+                        OrderDetailAndProductDTO orderDetailAndProductDTO = new OrderDetailAndProductDTO();
+                        orderDetailAndProductDTO.setOrderDetail(orderDetailList.get(count));
+                        orderDetailAndProductDTO.setProductSpecificationDTO(productSpecificationDTOList.get(num));
+                        orderDetailAndProductDTOList.add(orderDetailAndProductDTO);
+                    }
+                }
+            }
+
+            List<OrderDetailDTO> orderDetailDTOList = new ArrayList<>();
+            for(int count = 0; count < orderPOList.size(); count++) {
+                OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                orderDetailDTO.setOrderPO(orderPOList.get(count));
+                List<OrderDetailAndProductDTO> orderDetailAndProductDTOList1 = new ArrayList<>();
+
+
+                for(int num = 0; num < orderDetailAndProductDTOList.size(); num++) {
+                    if(orderDetailAndProductDTOList.get(num).getOrderDetail().getOrderId().longValue() == orderPOList.get(count).getId().longValue()) {
+                        orderDetailAndProductDTOList1.add(orderDetailAndProductDTOList.get(num));
+                    }
+                }
+                orderDetailDTO.setOrderDetailAndProductDTO(orderDetailAndProductDTOList1);
+                orderDetailDTOList.add(orderDetailDTO);
+            }
+//            page.setList(pageInfo.getList());
+//            page.setTotal(pageInfo.getTotal());
+            return Result.success(orderDetailDTOList);
         }
         return Result.success(null);
+    }
+
+    @Override
+    public Result getOrderById(Long id) {
+        OrderPO orderPO = orderMapper.selectByPrimaryKey(id);
+
+        List<Long> idList = new ArrayList<>();
+        idList.add(orderPO.getId());
+        List<OrderDetail> orderDetailList = orderDetailService.listOrderDetailByOrderIdList(idList);
+
+        List<Integer> productSpecificationIdList = new ArrayList<>();
+        for(int i = 0; i < orderDetailList.size(); i++) {
+            productSpecificationIdList.add(orderDetailList.get(i).getGoodId());
+        }
+
+        List<OrderDetailAndProductDTO> orderDetailAndProductDTOList = new ArrayList<>();
+        //查询所有详单的商品规格信息
+        List<ProductSpecificationDTO> productSpecificationDTOList = productModuleService.selectSpecificationByProductSpecificationIdList(productSpecificationIdList);
+        for(int count = 0; count < orderDetailList.size(); count++) {
+            for(int num = 0; num < productSpecificationDTOList.size(); num++) {
+                if(orderDetailList.get(count).getGoodId() == productSpecificationDTOList.get(num).getProductSpecificationId()) {
+                    OrderDetailAndProductDTO orderDetailAndProductDTO = new OrderDetailAndProductDTO();
+                    orderDetailAndProductDTO.setOrderDetail(orderDetailList.get(count));
+                    orderDetailAndProductDTO.setProductSpecificationDTO(productSpecificationDTOList.get(num));
+                    orderDetailAndProductDTOList.add(orderDetailAndProductDTO);
+                }
+            }
+        }
+
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+        orderDetailDTO.setOrderPO(orderPO);
+        orderDetailDTO.setOrderDetailAndProductDTO(orderDetailAndProductDTOList);
+
+        return Result.success(orderDetailDTO);
     }
 }
