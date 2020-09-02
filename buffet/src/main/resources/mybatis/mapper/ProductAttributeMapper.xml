@@ -132,5 +132,6 @@
     select product_attribute_id, product_attribute_name, product_id
     from product_attribute
     where product_id = #{productId, jdbcType=INTEGER}
+    order by product_attribute_id asc
   </select>
 </mapper>

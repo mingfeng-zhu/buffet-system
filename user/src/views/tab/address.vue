@@ -11,6 +11,7 @@
             default-tag-text="默认"
             @add="onAdd"
             @edit="onEdit"
+            @click-item="select"
     />
   </div>
 </template>
@@ -19,6 +20,7 @@
     export default {
         data() {
             return {
+                selected:'0',
                 chosenAddressId: '1',
                 list: [
                     {
@@ -37,6 +39,10 @@
                 ]
             };
         },
+      mounted() {
+            this.selected = sessionStorage.getItem('selected')
+            sessionStorage.setItem('selected','0')
+      },
         methods: {
             onClickLeft() {
                 this.$router.back()
@@ -49,6 +55,14 @@
                 console.log(12, item, index)
                 // Toast('编辑地址:' + index);
             },
+            select(){
+              //只有从订单确认界面发起的才会返回地址
+              if(this.selected === '1') {
+                let info = JSON.stringify(this.list[this.chosenAddressId - 1])
+                sessionStorage.setItem('address', info)
+                this.$router.back()
+              }
+            }
         },
     };
 </script>

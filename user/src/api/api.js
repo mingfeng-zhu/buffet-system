@@ -30,6 +30,14 @@ const addOrder = (p) => axios.post(`/order/addOrder`, p)
 const upload = (p) => axios.post(`/upload`, p)
 // 获取购物车列表
 const listShopCartByUserId = (p) => axios.get(`shopCart/listShopCartByUserId`, { params: p })
+//生成订单
+const creatOrder = (p) => axios.post('/order/addOrder',p)
+//支付
+const payOrder = (p) => axios.post('/order/payOrder',p)
+//获取订单列表
+const getOrder = (p) => axios.get('/order/listOrderByCurrentUser',p)
+//取消订单
+const cancelOrder = (p) => axios.post('/order/cancelOrder',p)
 
 
 // http://localhost:3000/api/product/getProductAttributeListByProductId/1
@@ -50,7 +58,10 @@ export default {
     signUp,
     login,
     getProductDetailAndCommentList,
-    addShopCartRecord,
+ 	addShopCartRecord,
     loginByPhoneNumber,
-    addOrder
+    creatOrder,
+    payOrder,
+    getOrder,
+    cancelOrder
 }

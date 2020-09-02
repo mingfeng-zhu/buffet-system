@@ -27,11 +27,16 @@
     select
     <include refid="Base_Column_List" />
     from t_order_detail
-    where id
+    where order_id
     in
     <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
       #{item}
     </foreach>
+    order by field
+    <foreach collection="list" item="item" index="index" open="(order_id," separator="," close=")">
+      #{item}
+    </foreach>
+
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_order_detail

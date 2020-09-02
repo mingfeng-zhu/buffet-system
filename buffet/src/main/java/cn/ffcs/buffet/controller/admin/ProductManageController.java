@@ -1,10 +1,12 @@
 package cn.ffcs.buffet.controller.admin;
 
 import cn.ffcs.buffet.common.annotation.PassToken;
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
 import cn.ffcs.buffet.model.po.ProductCategoryPO;
 import cn.ffcs.buffet.service.ProductManageService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/admin/product")
 @Validated
+@CrossOrigin
 public class ProductManageController {
 
     @Autowired
@@ -31,9 +34,11 @@ public class ProductManageController {
     @ApiOperation(value = "获取商品分类列表")
     @GetMapping(path = "/getProductCategoryList")
     @PassToken
-    public Result getProductCategoryList() {
-        List<ProductCategoryPO> productCategoryPOList = productManageService.getProductCategoryList();
-        return Result.success(productCategoryPOList);
+    public Result getProductCategoryList(Page page, String categoryName) {
+        PageInfo<ProductCategoryPO> productCategoryPOList = productManageService.getProductCategoryList(page, categoryName);
+        page.setList(productCategoryPOList.getList());
+        page.setTotal(productCategoryPOList.getTotal());
+        return Result.success(page);
     }
 
     @ApiOperation(value = "查询商品分类")
@@ -45,7 +50,7 @@ public class ProductManageController {
     }
 
     @ApiOperation(value = "修改商品分类")
-    @PostMapping(path = "/productCategory")
+    @PutMapping(path = "/productCategory")
     @PassToken
     public Result updateProductCategory(@RequestBody ProductCategoryPO categoryPO) {
         Integer flag = productManageService.updateProductCategory(categoryPO);
@@ -53,7 +58,7 @@ public class ProductManageController {
     }
 
     @ApiOperation(value = "新建商品分类")
-    @PutMapping(path = "/productCategory")
+    @PostMapping(path = "/productCategory")
     @PassToken
     public Result addProductCategory(@RequestBody ProductCategoryPO categoryPO) {
         Integer flag = productManageService.addProductCategory(categoryPO);

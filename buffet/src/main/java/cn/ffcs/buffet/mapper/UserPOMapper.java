@@ -1,6 +1,7 @@
 package cn.ffcs.buffet.mapper;
 
 import cn.ffcs.buffet.model.po.UserPO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 
@@ -17,4 +18,6 @@ public interface UserPOMapper {
     int signUpUser(UserPO user);
 
     int updateUser(UserPO user);
+
+    UserPO selectUserByUserId(@Param("userId") Integer userId);
 }

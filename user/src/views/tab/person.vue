@@ -22,10 +22,10 @@
       </van-cell>
       <div class="title">我的订单</div>
       <van-grid>
-        <van-grid-item icon="balance-o" text="待支付" />
-        <van-grid-item icon="envelop-o" text="待收货" />
-        <van-grid-item icon="photo-o" text="待评价" />
-        <van-grid-item icon="todo-list-o" text="全部订单" />
+        <van-grid-item icon="balance-o" text="待支付" @click="$router.push('/unpaid')"/>
+        <van-grid-item icon="envelop-o" text="待收货" @click="$router.push('/unreceived')"/>
+        <van-grid-item icon="photo-o" text="待评价" @click="$router.push('/unevaluated')"/>
+        <van-grid-item icon="todo-list-o" text="全部订单" @click="$router.push('/allorder')"/>
       </van-grid>
     </van-cell-group>
     <div class="title">服务帮助</div>

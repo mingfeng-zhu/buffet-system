@@ -12,21 +12,21 @@ public class OrderDetailDTO {
 
     private OrderPO orderPO;
 
-    private List<OrderDetail> orderDetailList;
+    private List<OrderDetailAndProductDTO> orderDetailAndProductDTO;
 
     public OrderDetailDTO() {
     }
 
-    public OrderDetailDTO(OrderPO orderPO, List<OrderDetail> orderDetailList) {
+    public OrderDetailDTO(OrderPO orderPO, List<OrderDetailAndProductDTO> orderDetailAndProductDTO) {
         this.orderPO = orderPO;
-        this.orderDetailList = orderDetailList;
+        this.orderDetailAndProductDTO = orderDetailAndProductDTO;
     }
 
     @Override
     public String toString() {
         return "OrderDetailDTO{" +
                 "orderPO=" + orderPO +
-                ", orderDetailList=" + orderDetailList +
+                ", orderDetailAndProductDTO=" + orderDetailAndProductDTO +
                 '}';
     }
 
@@ -38,11 +38,11 @@ public class OrderDetailDTO {
         this.orderPO = orderPO;
     }
 
-    public List<OrderDetail> getOrderDetailList() {
-        return orderDetailList;
+    public List<OrderDetailAndProductDTO> getOrderDetailAndProductDTO() {
+        return orderDetailAndProductDTO;
     }
 
-    public void setOrderDetailList(List<OrderDetail> orderDetailList) {
-        this.orderDetailList = orderDetailList;
+    public void setOrderDetailAndProductDTO(List<OrderDetailAndProductDTO> orderDetailAndProductDTO) {
+        this.orderDetailAndProductDTO = orderDetailAndProductDTO;
     }
 }

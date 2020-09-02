@@ -38,6 +38,29 @@ const router = new VueRouter({
                     component:() => import('../views/tab/cart.vue')
                 },
                 {
+                    path: '/orderconfirm',
+                    name:'orderconfirm',
+                    component:() => import('../views/tab/orderconfirm.vue'),
+                    meta:{
+                        keepAlive:true
+                    }
+                },
+                {
+                    path: '/pay',
+                    name:'pay',
+                    component:() => import('../views/tab/pay.vue')
+                },
+                {
+                    path: '/success',
+                    name:'paysuccess',
+                    component:() => import('../views/tab/success.vue')
+                },
+                {
+                    path: '/faild',
+                    name:'paufaild',
+                    component:() => import('../views/tab/faild.vue')
+                },
+                {
                     path: '/search',
                     name:'search',
                     component:() => import('../views/tab/search.vue')
@@ -46,7 +69,28 @@ const router = new VueRouter({
                     path: '/person',
                     name:'person',
                     component:() => import('../views/tab/person.vue')
-                },{
+                },
+                {
+                    path:  '/unpaid',
+                    name: 'unpaid',
+                    component:() => import('../views/tab/unpaid.vue')
+                },
+                {
+                    path:  '/unreceived',
+                    name: 'unreceived',
+                    component:() => import('../views/tab/unreceived.vue')
+                },
+                {
+                    path:  '/unevaluated',
+                    name: 'unevaluated',
+                    component:() => import('../views/tab/unevaluated.vue')
+                },
+                {
+                    path:  '/allorder',
+                    name: 'allorder',
+                    component:() => import('../views/tab/allorder.vue')
+                },
+                {
                     path: '/address',
                     name:'address',
                     component:() => import('../views/tab/address.vue')
