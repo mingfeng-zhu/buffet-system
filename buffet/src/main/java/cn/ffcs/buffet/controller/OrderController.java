@@ -5,6 +5,9 @@ import cn.ffcs.buffet.common.annotation.PassToken;
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.common.util.TokenUtil;
+import cn.ffcs.buffet.model.ao.AddOrderAO;
+import cn.ffcs.buffet.model.ao.EditOrderStatusAO;
+import cn.ffcs.buffet.model.ao.PayOrderAO;
 import cn.ffcs.buffet.model.po.OrderPO;
 import cn.ffcs.buffet.service.OrderService;
 import io.swagger.annotations.Api;
@@ -78,7 +81,7 @@ public class OrderController {
      * @return
      */
     @AvoidRepeatableCommit
-    @ApiOperation(value = "删除指定订单id的订单，批量形式")
+    @ApiOperation(value = "删除指定订单id的订单，批量形式(后台使用)")
     @PostMapping(path = "/deleteOrderByIdList")
     @ResponseBody
     public Result deleteOrderByIdList(@RequestParam(required = false, value = "idList[]") Integer[] idList) {
@@ -120,64 +123,54 @@ public class OrderController {
 
     /**
      * 生成订单，订单未待支付状态
-     * @param idList
-     * @param totalMoney
-     * @param totalMoneyList
-     * @param addressId
-     * @param goodCountList
+     * @param addOrderAO 订单生成实体类
      * @return
      */
     @AvoidRepeatableCommit
     @ApiOperation(value = "生成订单，订单未待支付状态.商品规格id集合、总价、各类商品价格集合、地址id、各类商品数量集合")
     @PostMapping(path = "/addOrder")
-    @ResponseBody
-    public Result addOrder(@RequestParam(required = false, value = "idList[]") Integer[] idList, BigDecimal totalMoney,
-                           @RequestParam(required = false, value = "totalMoneyList[]") BigDecimal[] totalMoneyList, Integer addressId,
-                           @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList) {
-        return orderService.addOrder(idList, totalMoney, totalMoneyList, addressId, goodCountList);
+    public Result addOrder(@RequestBody AddOrderAO addOrderAO) {
+        return orderService.addOrder(addOrderAO.getIdList(), addOrderAO.getTotalMoney(), addOrderAO.getTotalMoneyList()
+                , addOrderAO.getAddressId(), addOrderAO.getGoodCountList());
     }
 
     /**
      * 修改订单状态订单
-     * @param id 订单id
-     * @param orderStatus 订单状态
+     * @param editOrderStatusAO 订单状态改变AO
      * @return
      */
     @AvoidRepeatableCommit
-    @ApiOperation(value = "修改订单状态，app端使用,传id（订单id）与需要修改成的状态(orderStatus)（String类型）。订单状态：'2'为待接单（待支付的下一个状态）、'3'为制作中、'4'为派送中、'5'为已完成、6为取消申请中")
+    @ApiOperation(value = "修改订单状态，app端使用,传id（订单id）与需要修改成的状态(orderStatus)（String类型）。订单状态：'2'为待接单（待支付的下一个状态）、" +
+            "'3'为制作中、'4'为派送中、'5'为已收货、6为已评价, 7为取消中, 8:超时未接单")
     @PostMapping(path = "/editOrderStatus")
-    @ResponseBody
-    public Result editOrderStatus(Long id, String orderStatus) {
-        return orderService.editOrderStatus(id, orderStatus);
+    public Result editOrderStatus(@RequestBody EditOrderStatusAO editOrderStatusAO) {
+        return orderService.editOrderStatus(editOrderStatusAO.getId(), editOrderStatusAO.getOrderStatus());
     }
 
     /**
      * 支付订单
-     * @param id 支付订单
-     * @param idList 商品idList
-     * @param goodCountList 商品数量list
+     * @param payOrderAO 支付订单AO
      * @return
      */
     @AvoidRepeatableCommit
-    @ApiOperation(value = "支付订单，用于app端支付订单操作")
+    @ApiOperation(value = "支付订单，用于app端支付订单操作, id:订单的id； idList：商品规格idList； goodCountList： 商品对应数量List")
     @PostMapping(path = "/payOrder")
     @ResponseBody
-    public Result payOrder(Long id, @RequestParam(required = false, value = "idList[]") Integer[] idList,
-                                    @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList) {
-        return orderService.payOrder(id, idList, goodCountList);
+    public Result payOrder(@RequestBody PayOrderAO payOrderAO) {
+        return orderService.payOrder(payOrderAO.getId(), payOrderAO.getIdList(), payOrderAO.getGoodCountList());
     }
 
-    /**
-     * 确认取消订单
-     * @param id 订单id
-     * @return
-     */
-    @AvoidRepeatableCommit
-    @ApiOperation(value = "取消订单，用于app端取消订单")
-    @PostMapping(path = "/cancelOrder")
-    @ResponseBody
-    public Result cancelOrder(Long id) {
-        return orderService.cancelOrder(id);
-    }
+//    /**
+//     * 确认取消订单
+//     * @param id 订单id
+//     * @return
+//     */
+//    @AvoidRepeatableCommit
+//    @ApiOperation(value = "取消订单，用于app端取消订单")
+//    @PostMapping(path = "/cancelOrder")
+//    @ResponseBody
+//    public Result cancelOrder(Long id) {
+//        return orderService.cancelOrder(id);
+//    }
 
 }

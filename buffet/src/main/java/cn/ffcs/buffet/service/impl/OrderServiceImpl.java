@@ -138,7 +138,7 @@ public class OrderServiceImpl implements OrderService {
         orderStatus.setOrderId(order.getId());
         orderStatus.setStatus(Constant.Order_STATUS.wait_pay.getIndex());
         int orderStatusResult = orderStatusService.insertOrderStatus(orderStatus);
-        return Result.success(orderId);
+        return Result.success(order.getId());
     }
 
     @Override
