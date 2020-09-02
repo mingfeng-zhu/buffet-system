@@ -7,17 +7,17 @@
                   round
                   width="50px"
                   height="50px"
-                  src="https://img.yzcdn.cn/vant/cat.jpeg"
+                  :src="img"
           />
           <div class="name">{{name}}</div>
-          <div class="yue" >
-            <van-grid :border =false style="height: 28px;">
-              <van-grid-item style="height: 20px;">
-                <span>{{money}}</span>
-              </van-grid-item>
-            </van-grid>
-            <p>余额·充值</p>
-          </div>
+<!--          <div class="yue" >-->
+<!--            <van-grid :border =false style="height: 28px;">-->
+<!--              <van-grid-item style="height: 20px;">-->
+<!--                <span>{{money}}</span>-->
+<!--              </van-grid-item>-->
+<!--            </van-grid>-->
+<!--            <p>余额·充值</p>-->
+<!--          </div>-->
         </template>
       </van-cell>
       <div class="title">我的订单</div>
@@ -32,22 +32,44 @@
     <van-grid>
       <van-grid-item icon="location-o" text="地址管理" @click="$router.push('/address')"/>
     </van-grid>
+    <van-button type="primary" v-if="user" size="large" color="linear-gradient(to right, #ff6034, #ee0a24)" @click="loginout">退出登录</van-button>
   </div>
 </template>
 <script>
+    import { Dialog } from 'vant'
     export default {
         name: 'person',
         data() {
             return {
                 name: '123',
                 money: 3000,
-                user:{}
+                user:{},
+                img:''
             }
         },
         mounted() {
             this.user = JSON.parse(localStorage.getItem('userPo'))
-            console.log('this.user', this.user)
             this.name = this.user.userName
+            if (this.user.userImg) {
+                this.img = 'http://121.199.49.199:8082'+this.user.userImg
+            } else {
+                this.img = 'https://img.yzcdn.cn/vant/cat.jpeg'
+            }
+        },
+        methods:{
+            loginout() {
+                Dialog.confirm({
+                    message: '确定退出登录吗',
+                })
+                    .then(() => {
+                        localStorage.removeItem('token')
+                        localStorage.removeItem('userPo')
+                        this.$router.push('/login')
+                    })
+                    .catch(() => {
+                        // on cancel
+                    });
+            }
         }
     }
 </script>
@@ -56,8 +78,10 @@
     position: relative;
   }
   .name {
+    font-size: 16px;
+    font-weight: 600;
     position: absolute;
-    top: 30px;
+    top: 26px;
     left: 100px;
   }
   .yue {

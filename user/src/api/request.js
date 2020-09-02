@@ -6,14 +6,13 @@ var instance = axios.create({
     timeout: 60000, // 请求超时 10s
 });
 // 头部
-instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+// instance.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // instance.defaults.headers.post['Content-Type'] = 'multipart/form-data;charset=UTF-8';
 // 请求拦截
 instance.interceptors.request.use(config => {
     let passport = localStorage.getItem('token');
-    console.log('passport', passport)
     if(passport) {
-        config.headers['X-token'] = passport
+        config.headers['X-Token'] = passport
     }
     // config.headers.Authorization = 'Bearer ' + passport
     return config;

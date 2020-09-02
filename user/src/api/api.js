@@ -20,10 +20,17 @@ const getCode = (p) => axios.get(`/user/getCode`,{ params: p })
 const signUp = (p) => axios.post(`/user/signUp`, p)
 // 登录
 const login = (p) => axios.post(`/user/login`, p)
+// 通过手机号登录
+const loginByPhoneNumber = (p) => axios.post(`/user/loginByPhoneNumber`, p)
+// 加入购物车
+const addShopCartRecord = (p) => axios.post(`/shopCart/addShopCartRecord`, p)
+// 添加订单
+const addOrder = (p) => axios.post(`/order/addOrder`, p)
 // 上传图片
 const upload = (p) => axios.post(`/upload`, p)
-// 购物车
+// 获取购物车列表
 const listShopCartByUserId = (p) => axios.get(`shopCart/listShopCartByUserId`, { params: p })
+
 
 // http://localhost:3000/api/product/getProductAttributeListByProductId/1
 // const getArticleList = p => axios.get('/article-list', { params: p }) // 获取文章列表
@@ -42,5 +49,8 @@ export default {
     upload,
     signUp,
     login,
-    getProductDetailAndCommentList
+    getProductDetailAndCommentList,
+    addShopCartRecord,
+    loginByPhoneNumber,
+    addOrder
 }

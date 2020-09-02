@@ -53,7 +53,8 @@
                 action:'',
                 // 操作面板
                 show:false,
-                actions: [{ name: '找回密码' }, { name: '短信验证通过' }],
+                // actions: [{ name: '找回密码' }, { name: '短信验证通过' }],
+                actions: [ { name: '短信验证通过' }],
             }
         },
         methods: {
@@ -68,10 +69,9 @@
                 // this.params.code=this.verifycode
                 console.log('this.params', this.params)
                 let { data } = await this.$api.login(this.params)
-                console.log(69, data.data.userPO)
                 localStorage.setItem('token', data.data.token)
                 localStorage.setItem('userPo', JSON.stringify(data.data.userPO))
-                this.$router.push('/home')
+                this.$router.push('/')
             },
             onClickLeft() {
                 this.$router.back()

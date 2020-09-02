@@ -8,7 +8,7 @@
     <van-form @submit="onSubmit">
       <van-field
               v-model="tel"
-              name="手机号"
+              name="tel"
               label="手机号"
               placeholder="手机号"
               type="number"
@@ -17,10 +17,12 @@
       <van-field
               v-model="sms"
               center
+              name="code"
               clearable
               type="number"
               label="短信验证码"
               placeholder="请输入短信验证码"
+              :rules="[{ required: true, message: '请输入验证码' }]"
       >
         <template #button>
           <van-button size="small" type="info" v-if = "flag === false" @click="changeFlag()">发送验证码</van-button>
@@ -37,6 +39,8 @@
 </template>
 
 <script>
+    import {Dialog} from "vant";
+
     export default {
         name: 'LoginByTel',
         data() {
@@ -46,6 +50,7 @@
                 flag: false,
                 count: '',
                 timer: null,
+                params:{}
             }
         },
         methods: {
@@ -53,31 +58,45 @@
             validator(val) {
                 return /^1[3456789]\d{9}$/.test(val)
             },
-            onSubmit(values) {
+            async onSubmit(values) {
                 console.log('submit', values);
+                this.params.userTel=values.tel
+                this.params.code=values.code
+                console.log('this.params', this.params)
+                let { data } = await this.$api.loginByPhoneNumber(this.params)
+                console.log(196, data)
+                this.$router.push('/')
             },
             onClickLeft() {
                 this.$router.back()
             },
             changeFlag() {
                 if (this.validator(this.tel)) {
-                    // 验证码倒计时
-                    const TIME_COUNT = 5;
-                    if (!this.timer) {
-                        this.count = TIME_COUNT;
-                        this.flag = true;
-                        this.timer = setInterval(() => {
-                            if (this.count > 1 && this.count <= TIME_COUNT) {
-                                this.count--;
-                            } else {
-                                this.flag = false;
-                                clearInterval(this.timer);
-                                this.timer = null;
-                            }
-                        }, 1000)
-                    }
+                    Dialog.alert({
+                        title: '已发送验证码',
+                        message: '已向该手机发送验证码，请注意查收',
+                    }).then(async () => {
+                        const TIME_COUNT = 5;
+                        if (!this.timer) {
+                            this.getcodeshow = false
+                            this.count = TIME_COUNT;
+                            this.timer = setInterval(() => {
+                                if (this.count > 1 && this.count <= TIME_COUNT) {
+                                    this.count--;
+                                } else {
+                                    this.getcodeshow = true
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }
+                            }, 1000)
+                        }
+                        this.$api.getCode({userTel: this.tel})
+                    })
                 } else {
-                    console.log('weitg')
+                    Dialog.alert({
+                        message: '请先输入手机号',
+                    }).then(() => {
+                    });
                 }
             }
         }

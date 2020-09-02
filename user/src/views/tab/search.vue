@@ -30,7 +30,8 @@
             <svg class="icon" aria-hidden="true" @click="sub(item)" v-if="item.productNumOfCart>0">
               <use xlink:href="#iconsub"></use>
             </svg>
-            <span>{{item.productNumOfCart}}</span>
+            <span v-if="!item.productNumOfCart">0</span>
+            <span v-else>{{item.productNumOfCart}}</span>
             <svg class="icon" aria-hidden="true" @click="add(item)">
               <use xlink:href="#iconadd"></use>
             </svg>
@@ -67,8 +68,10 @@
                 </template>
               </van-cell>
             </van-cell-group>
-            <div style="float: left;margin-left: 20px">数量<van-stepper v-model="num" style="float:left;margin-left: 40px" :disable-plus="num===item.productStorage"/></div>
-            <van-button round type="danger" @click="onAddCartClicked">加入购物车</van-button>
+            <div>
+              <van-stepper v-model="num" style="float: left;margin-left: 20px;margin-top: 14px" :disable-plus="num===item.productStorage"/>
+              <van-button round type="danger" @click="onAddCartClicked(productId)" style="margin-top: 10px;margin-right:20px;float:right;">加入购物车</van-button>
+            </div>
           </van-popup>
         </template>
       </van-card>
@@ -77,7 +80,7 @@
 </template>
 <script>
     import Vue from 'vue';
-    import {Lazyload, Toast} from 'vant';
+    import {Dialog, Lazyload, Toast} from 'vant';
     Vue.use(Lazyload);
     export default {
         name: 'search',
@@ -102,15 +105,20 @@
                 // 根据商品分类id获取列表
                 id:0,
                 selectall:false,
-                num:1
+                num:1,
+                productId:'',
+                user:''
             }
         },
         mounted() {
+            this.dataList = []
             this.value = this.$route.query.value
+            this.user = JSON.parse(localStorage.getItem('userPo'))
+            // this.load_more_items()
         },
         methods:{
             selectSpecification(item) {
-                console.log('item', item)
+                this.productId = item.productId
                 this.specificationShow = true
                 this.getProductAttributeList(item.productId)
                 this.price = item.minPrice
@@ -122,14 +130,40 @@
                 this.specificationShow=true
                 let { data } = await this.$api.getProductAttributeListByProductId(id)
                 this.attributeList=data.data
-                console.log('3333', data.data)
-                // this.attributeList = data.data
-                // console.log('规格列表', this.attributeList)
             },
-            onAddCartClicked() {
-                console.log('加入购物车')
+            async onAddCartClicked(item) {
+                console.log('item', item)
+                if (this.user) {
+                    let {data} = await this.$api.getSpecificationByProductIdAndSpecification({
+                        productId: item,
+                        productSpecification: this.productSpecification
+                    })
+                    console.log('data186', data)
+                    let productSpecificationId = data.data.productSpecificationId
+                    let param = {
+                        productSpecificationId: productSpecificationId,
+                        goodCount: this.num
+                    }
+                    let {postdata} = await this.$api.addShopCartRecord(param)
+                    this.$router.push('/cart')
+                    console.log('添加到购物车', postdata)
+                }
+                else {
+                    Dialog.confirm({
+                        title: '尚未登录',
+                        message: '跳转到登录页？',
+                    })
+                        .then(() => {
+                            this.$router.push('/login')
+                        })
+                        .catch(() => {
+
+                        });
+                }
             },
             async select(id, name, item) {
+                console.log('id', id)
+                console.log('item', item)
                 this.attributeList.forEach(item2 => {
                     if (item2.productAttributeName === name) {
                         this.$set(item2,'selected',item.productAttributeValue)
@@ -142,49 +176,109 @@
                     this.attributeList.forEach(item2 => {
                         this.queryspe[item2.productAttributeName]=item2.selected
                     })
-                    console.log('this.queryspe', this.queryspe)
                     let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:id,productSpecification:this.queryspe})
-                    console.log('data273', data.data)
+                    console.log('data327', data)
+                    if (data.data.numberOfCart) {
+                        this.num = data.data.numberOfCart
+                    } else {
+                        this.num = 1
+                    }
                     this.price=data.data.productPrice
                     this.storage = data.data.productStorage
                     this.image = data.data.productSpecificationPicture
+                    this.productSpecification = data.data.productSpecification
                 }
             },
-            load_more_items: function() {
-                this.onSearch();
+            load_more_items: async function() {
+                   let {data} = await this.$api.getProductListByProductName({productName:this.value,pageSize:this.pageSize, pageNum:1})
+                    let total = data.data.total
+                    console.log(204, total)
+                    this.dataList = []
+                    for (let i=1;i<= Math.ceil(total / 10);i++) {
+                        let { data } = await this.$api.getProductListByProductName({productName:this.value,pageSize:this.pageSize, pageNum:i})
+                        this.list = data.data.list
+                        this.dataList = this.dataList.concat(this.list)
+                    }
+                    this.finished = true
+                    this.loading = false
             },
-            sub(item) {
+            async sub(item) {
                 if (item.productNumOfCart>0){
                     item.productNumOfCart--
+                    let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:item.productId,productSpecification:{}})
+                    let productSpecificationId = data.data.productSpecificationId
+                    let param = {
+                        productSpecificationId: productSpecificationId,
+                        goodCount: item.productNumOfCart
+                    }
+                    console.log('sub购物车', param)
+                    let { postdata } = await this.$api.addShopCartRecord(param)
+                    console.log('添加到购物车', postdata)
                 }
             },
-            add(item) {
-                if (item.productNumOfCart<item.productStorage){
-                    item.productNumOfCart++
+            async add(item) {
+                if (this.user) {
+                    if (item.productNumOfCart<item.productStorage){
+                        item.productNumOfCart++
+                        let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:item.productId,productSpecification:{}})
+                        console.log('data186', data)
+                        let productSpecificationId = data.data.productSpecificationId
+                        let param = {
+                            productSpecificationId: productSpecificationId,
+                            goodCount: item.productNumOfCart
+                        }
+                        let { postdata } = await this.$api.addShopCartRecord(param)
+                        console.log('添加到购物车', postdata)
+                    } else {
+                        Toast(`该商品仅剩${item.productStorage}件`);
+                    }
                 } else {
-                    Toast(`该商品仅剩${item.productStorage}件`);
+                    Dialog.confirm({
+                        title: '尚未登录',
+                        message: '跳转到登录页？',
+                    })
+                        .then(() => {
+                            this.$router.push('/login')
+                        })
+                        .catch(() => {
+
+                        });
                 }
             },
             async onSearch() {
-                let { data } = await this.$api.getProductListByProductName({productName:this.value})
-                this.list = data.data.list
-                console.log(1, this.list)
-                if (this.pageNum > 1) {
-                    this.dataList = this.list.concat(this.dataList)
-                    // this.dateList = [...this.dateList, ...this.list]
-                } else {
-                    this.dataList = this.list
-                }
-                // 如果当前页数 = 总页数，则已经没有数据
-                if (this.pageNum === Math.ceil(data.data.total / 10)) {
-                    this.finished = true
-                }
-                // 如果总页数大于当前页码，页码+1
-                if (Math.ceil(data.data.total / 10) > this.pageNum) {
-                    this.pageNum++
-                }
-                this.loading = false
+                this.load_more_items()
+                // let { data } = await this.$api.getProductListByProductName({productName:this.value})
+                // if (data.data) {
+                //     let { data } = await this.$api.getProductListByProductName({productName:this.value})
+                //     let total = data.data?data.data.total:0
+                //     this.dataList = []
+                //     for (let i=1;i<= Math.ceil(total / 10);i++) {
+                //         let { data } = await this.$api.getProductListByProductName({productName:this.value,pageSize:10,pageNum:i})
+                //         this.list = data.data.list
+                //         this.dataList = this.dataList.concat(this.list)
+                //     }
+                //     this.finished = true
+                //     this.loading = false
+                // } else {
+                //         this.dataList = []
+                //         this.list = []
+                //         this.finished = true
+                //     }
             }
         }
     }
 </script>
+<style scoped>
+  .icon {
+    /*height: 1.2em;*/
+    color: #E62F2D;
+  }
+  .specification{
+    position: absolute;
+    right: 20px;
+    bottom: 8px;
+  }
+  /deep/.van-cell__title {
+    width: 105px;
+  }
+</style>

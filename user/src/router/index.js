@@ -7,12 +7,7 @@ const router = new VueRouter({
     base: process.env.BASE_URL,
     routes:[
         {
-            path:'/test',
-            name:'home',
-            component:() => import('../views/home/home.vue')
-        },
-        {
-            path:'/',
+            path:'/login',
             name:'login',
             component: () => import('../views/personality/login.vue'),
         },
@@ -33,7 +28,7 @@ const router = new VueRouter({
             // redirect: store.getters['menuPath'],
             children: [
                 {
-                    path: '/home',
+                    path: '/',
                     name:'home',
                     component:() => import('../views/tab/home.vue')
                 },

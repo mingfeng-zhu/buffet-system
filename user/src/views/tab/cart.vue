@@ -3,8 +3,8 @@
     <!-- <cartNav></cartNav> -->
     <div class="cartList">
       <ul v-if="goods.length > 0">
-        <van-swipe-cell>
         <li v-for="(item, index) in goods" :key="index">
+          <van-swipe-cell>
           <van-checkbox
                   :value="item.shopCart.id"
                   v-model="item.isChecked"
@@ -22,6 +22,15 @@
               <p class="stock">
                 仅剩{{item.productSpecificationDTO.productStorage}}件
               </p>
+              <div style="line-height: 1px">
+                 <span
+                         v-for="(item2, index) in Object.values(JSON.parse(item.productSpecificationDTO.productSpecification))"
+                         :key="index"
+                         style="font-size: 12px"
+                 >
+                {{item2}}
+              </span>
+              </div>
               <div class="shoppricenum">
                 <p class="shopprice">
                   ¥{{ item.productSpecificationDTO.productPrice }}
@@ -30,6 +39,7 @@
                   <van-stepper
                           integer
                           min=0
+                          :max="item.productSpecificationDTO.productStorage"
                           v-model="item.shopCart.goodCount"
                           @change="onChange(item)"
                           :disable-plus="item.shopCart.goodCount === item.productSpecificationDTO.productStorage"
@@ -38,11 +48,11 @@
               </div>
             </div>
           </div>
+            <template #right>
+              <van-button square text="删除" type="danger" class="delete-button" @click="deleteCart(item)"/>
+            </template>
+          </van-swipe-cell>
         </li>
-          <template #right>
-            <van-button square text="删除" type="danger" class="delete-button" />
-          </template>
-        </van-swipe-cell>
       </ul>
       <div class="nohaveshop" v-else>
         <van-icon name="shopping-cart-o" />
@@ -69,24 +79,7 @@
     export default {
         data() {
             return {
-                goods: [
-                    {
-                        id:0,
-                        isChecked:true,
-                        price: '20.00',
-                        title:'标题',
-                        num:2,
-                        stock:4
-                    },
-                    {
-                        id:1,
-                        isChecked:true,
-                        price: '40.00',
-                        title:'标题2',
-                        num:2,
-                        stock:4
-                    }
-                ],
+                goods: [],
                 allchecked: false,
                 selectedData: [],
                 // 总价
@@ -94,26 +87,35 @@
                 num: 0
             };
         },
-        mounted() {
-            this.listShopCartByUserId()
+        async mounted() {
+            await this.listShopCartByUserId()
             this.setSelectedData()
             this.ifCheckAll()
             this.count()
         },
         computed: {},
         methods: {
+            async deleteCart(value) {
+                console.log('item99', value)
+                let param = {
+                    productSpecificationId: value.productSpecificationDTO.productSpecificationId,
+                    goodCount: 0
+                }
+                await this.$api.addShopCartRecord(param)
+                console.log('删除购物车')
+                this.goods = this.goods.filter(item2=> {
+                    return item2.shopCart.id !==value.shopCart.id
+                })
+            },
             async listShopCartByUserId() {
                const {data} = await this.$api.listShopCartByUserId({userId:1})
-                console.log('data106', data.data)
                 this.goods=data.data
-                console.log(108, this.goods)
                 this.goods.forEach(item=> {
-                    item.isChecked=false
+                    item.isChecked=true
                 })
             },
             // checkbox的change事件
             chooseChange(item) {
-                console.log('item116', item)
                 item.isChecked=!item.isChecked
                 this.setSelectedData()
                 this.ifCheckAll()
@@ -137,22 +139,32 @@
                     }
             },
             // 商品数量改变
-            onChange(item) {
+            async onChange(item) {
+                let param = {
+                    productSpecificationId: item.productSpecificationDTO.productSpecificationId,
+                    goodCount: item.shopCart.goodCount
+                }
+                let { postdata } = await this.$api.addShopCartRecord(param)
+                console.log('添加到购物车', postdata)
                 // Toast(item.num);
-                if (item.num===0) {
+                if (item.shopCart.goodCount === 0) {
                     this.goods = this.goods.filter(item2=> {
-                        return item2.id !==item.id
+                        return item2.shopCart.id !==item.shopCart.id
                     })
                 }
-                this.count();
+                // this.count();
             },
             // 计算价格
             count: function() {
                 console.log('计算价格')
                 let totalPrice = 0; //临时总价
+                console.log('this.good', this.goods)
                 this.goods.forEach(function(val) {
                     if (val.isChecked) {
-                        totalPrice += Number(val.shopCart.goodCount) * Number(val.productSpecificationDTO.productPrice); //累计总价
+                        // console.log(136, val.shopCart.goodCount, val.productSpecificationDTO.productPrice)
+                        totalPrice += val.shopCart.goodCount * val.productSpecificationDTO.productPrice//累计总价
+                        totalPrice=Number(totalPrice.toFixed(2))
+                        // console.log('totalPrice', Number(totalPrice.toFixed(2)))
                     }
                 });
                 this.totalprice = totalPrice;
@@ -167,6 +179,7 @@
                         this.selectedData.push(item.shopCart.id)
                     })
                 } else {
+                    console.log(222)
                     this.allchecked = false
                     this.selectedData=[]
                     this.goods.forEach(item=>{
@@ -224,6 +237,8 @@
           margin-bottom: 12px;
           .van-checkbox {
             margin-left: 17px;
+            display:inline-block;
+            margin-top: 20px;
             ::v-deep .van-checkbox__icon {
               height: 14px;
               line-height: 14px;
@@ -239,7 +254,8 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            margin-left: 13px;
+            margin-left: 65px;
+            margin-top: -50px;
             .detailimg {
               width: 64px;
               height: 64px;
@@ -253,10 +269,11 @@
             }
             .detailtext {
               width: 230px;
-              height: 60px;
+              height: 50px;
               display: flex;
               flex-direction: column;
               margin-left: 8px;
+              margin-top: -14px;
               position: relative;
               .shoptitle {
                 width: 180px;
@@ -280,11 +297,12 @@
                 align-items: center;
                 justify-content: space-between;
                 position: absolute;
-                bottom: 0px;
+                bottom: -12px;
                 .shopprice {
                   font-size: 12px;
                   color: #15c481;
                   font-weight: 600;
+                  margin-top: 28px;
                 }
                 .shopnum {
                   display: flex;

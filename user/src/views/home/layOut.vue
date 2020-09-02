@@ -24,9 +24,9 @@
     <router-view></router-view>
     <div class="footer">
       <van-tabbar v-model="active" placeholder="true">
-        <van-tabbar-item icon="home-o" @click="$router.push('/home')">首页</van-tabbar-item>
+        <van-tabbar-item icon="home-o" @click="$router.push('/')">首页</van-tabbar-item>
 <!--        <van-tabbar-item icon="apps-o">分类</van-tabbar-item>-->
-        <van-tabbar-item icon="shopping-cart-o" :info="info" @click="$router.push('/cart')">购物车</van-tabbar-item>
+        <van-tabbar-item icon="shopping-cart-o" :info="info" @click="toCart()">购物车</van-tabbar-item>
         <van-tabbar-item icon="user-o" @click="person()">个人中心</van-tabbar-item>
       </van-tabbar>
     </div>
@@ -50,13 +50,22 @@
             }
         },
         methods: {
+            toCart() {
+                this.user = JSON.parse(localStorage.getItem('userPo'))
+                console.log('user', this.user)
+                if (this.user) {
+                    this.$router.push('/cart')
+                } else {
+                    this.$router.push('/login')
+                }
+            },
             // 获取购物车总数
             getinfo() {
-                if (window.sessionStorage.getItem('num') == 0) {
-                    this.info = null
-                } else {
-                    this.info = window.sessionStorage.getItem('num')
-                }
+                // if (window.sessionStorage.getItem('num') == 0) {
+                //     this.info = null
+                // } else {
+                //     this.info = window.sessionStorage.getItem('num')
+                // }
             },
             // showPopup() {
                 // if (!this.username){
@@ -66,7 +75,13 @@
                 // }
             // },
             person() {
-                this.$router.push('/person')
+                this.user = JSON.parse(localStorage.getItem('userPo'))
+                console.log('user', this.user)
+                if (this.user) {
+                    this.$router.push('/person')
+                } else {
+                    this.$router.push('/login')
+                }
             }
         }
     }
