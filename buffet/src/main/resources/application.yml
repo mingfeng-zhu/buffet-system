@@ -36,7 +36,7 @@ spring:
 #打印日志
 logging:
   level:
-    cn.ffcs.buffet: info
+    cn.ffcs.buffet: error
   file:
     name: log\buffet.log
 

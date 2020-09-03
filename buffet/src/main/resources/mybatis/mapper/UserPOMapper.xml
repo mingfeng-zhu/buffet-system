@@ -11,6 +11,7 @@
         <result column="user_sex" jdbcType="INTEGER" property="userSex" />
         <result column="user_tel" jdbcType="VARCHAR" property="userTel" />
         <result column="user_state" jdbcType="INTEGER" property="userState" />
+        <result column="default_address_id" jdbcType="INTEGER" property="defaultAddressId" />
     </resultMap>
     <sql id="Base_Column_List">
     user_id, user_name, create_time, update_time, user_password, user_img,user_sex,user_tel,user_state
@@ -33,8 +34,11 @@
             <if test="userPassword != null">
                 user_password#{userPassword},
             </if>
-            <if test="userTel != null">
-                user_tel=#{userTel},
+<!--            <if test="userTel != null">-->
+<!--                user_tel=#{userTel},-->
+<!--            </if>-->
+            <if test="defaultAddressId != null">
+                default_address_id = #{defaultAddressId,jdbcType=INTEGER},
             </if>
         </set>
         where user_id=#{userId}
