@@ -191,14 +191,14 @@
   <select id="selectSpecificationByProductId" resultMap="ProductSpecificationDTOResultMap" parameterType="INTEGER">
     select product_specification_id, product_specification, product_id, product_storage,
     product_price, status, product_specification_picture
-    from product_specification where product_id = #{productId, jdbcType=INTEGER} and status = 1
+    from product_specification where product_id = #{productId, jdbcType=INTEGER} and status = 2
   </select>
 
   <select id="selectSpecificationByProductIdAndSpecification" resultMap="ProductSpecificationDTOResultMap">
     select product_specification_id, product_specification, product_id, product_storage,
     product_price, status, product_specification_picture
     from product_specification
-    where product_id = #{productId, jdbcType=INTEGER} and product_specification = #{productSpecification, jdbcType=VARCHAR}
+    where product_id = #{productId, jdbcType=INTEGER} and product_specification = #{productSpecification, jdbcType=VARCHAR} and status = 2
   </select>
 
   <select id="selectSpecificationByProductSpecificationId" resultMap="ProductSpecificationDTOResultMap" parameterType="INTEGER">
@@ -227,4 +227,14 @@
     set product_storage = (product_storage + #{number, jdbcType=INTEGER})
     where product_specification_id = #{productSpecificationId, jdbcType=INTEGER}
   </update>
+
+  <update id="updateStatusByProductId">
+    update product_specification
+    set status = #{status, jdbcType=INTEGER}
+    where product_id = #{productId, jdbcType=INTEGER}
+  </update>
+
+  <select id="selectStatusByProductId" resultType="INTEGER">
+    select max(status) from product_specification where product_id = #{productId}
+  </select>
 </mapper>

@@ -15,16 +15,14 @@
         style="margin-left: 10px;"
         icon="el-icon-search"
         @click="handleFilter"
-        >搜索</el-button
-      >
+      >搜索</el-button>
       <el-button
         class="filter-item"
         style="float: right;margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
         @click="showDialog(type = 'add')"
-        >新增</el-button
-      >
+      >新增</el-button>
     </div>
     <el-table :data="categoryList" border style="width: 100%; margin-top:10px">
       <el-table-column fixed label="序号" width="50px" type="index" align="center" />
@@ -62,13 +60,13 @@
       :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
-    <el-dialog title="创建商品分类" :loading="loading" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog title="商品分类" :loading="loading" :visible.sync="dialogFormVisible" width="30%">
       <el-form ref="ruleForm" :model="category" :rules="rules">
         <el-form-item label="分类名称" prop="categoryName">
-          <el-input v-model="category.categoryName" />
+          <el-input v-model="category.categoryName" placeholder="请输入分类名称" />
         </el-form-item>
         <el-form-item label="分类描述" prop="categoryDesc">
-          <el-input v-model="category.categoryDesc" />
+          <el-input v-model="category.categoryDesc" type="textarea" placeholder="请输入分类描述" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" style="float: right" @click="handleSubmit('ruleForm')">确 定</el-button>
@@ -80,7 +78,7 @@
 </template>
 
 <script>
-import { getProductCategoryList,updateProductCategory,addProductCategory,deleteProductCategory } from '@/api/product/product'
+import { getProductCategoryList, updateProductCategory, addProductCategory, deleteProductCategory } from '@/api/product/product'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves'
 import { parseTime } from '@/utils'
@@ -102,8 +100,8 @@ export default {
           { min: 2, max: 20, message: '长度在2~10个字符', trigger: 'blur' }
         ],
         categoryDesc: [
-          { required: true, message: '请输入分类描述', trriger: 'blur' },
-          { max: 100, message: '不能超过100个字符', trriger: 'blur' }
+          { required: true, message: '请输入分类描述', trigger: 'blur' },
+          { max: 100, message: '不能超过100个字符', trigger: 'blur' }
         ]
       },
       category: {
@@ -136,7 +134,7 @@ export default {
     /**
      * 获取商品分类列表
      */
-    getList(){
+    getList() {
       getProductCategoryList(this.listQuery).then(response => {
         this.categoryList = response.data.list
         this.listQuery.total = response.data.total
@@ -156,7 +154,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           addProductCategory(this.category).then(response => {
-            this.categoryList.push(response.data)
+            this.getList()
             this.$message.success('新建商品分类成功！')
           })
         } else {
@@ -184,8 +182,8 @@ export default {
       const self = this
       deleteProductCategory(self.categoryList[index].productCategoryId).then(response => {
         self.categoryList.splice(index, 1)
-            self.$message.success('删除成功！')
-            self.visible = false
+        self.$message.success('删除成功！')
+        self.visible = false
       })
     },
     /**

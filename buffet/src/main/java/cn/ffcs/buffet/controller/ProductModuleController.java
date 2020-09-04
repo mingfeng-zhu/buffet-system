@@ -143,7 +143,16 @@ public class ProductModuleController {
     @ApiOperation(value = "根据商品id获取商品详细信息以及商品评价")
     @GetMapping(path = "/getProductDetailAndCommentList/{productId}")
     public Result getProductDetailAndCommentList(@PathVariable Integer productId){
+        UserDTO userIdAndUserTelOfToken = TokenUtil.getUserIdAndUserTelOfToken();
+
         List<ProductDTO> productDTOList = productModuleService.selectProductDetailAndCommentList(productId);
+
+        if (userIdAndUserTelOfToken != null){   //能获取到用户信息，就设置商品加入购物车的数量
+            Integer userId = userIdAndUserTelOfToken.getUserId();
+            List<ShopCartDetailDTO> shopCartDetailDTOList = (List<ShopCartDetailDTO>)shopCartService.listShopCartByUserId(userId).getData();
+            productDTOList = setProductNumOfCart(productDTOList, shopCartDetailDTOList);
+        }
+
         return Result.success(productDTOList);
     }
 

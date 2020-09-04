@@ -26,6 +26,11 @@ public interface ProductSpecificationPOMapper {
 
     int updateByPrimaryKey(ProductSpecificationPO record);
 
+    /**
+     * 根据商品id获取规格，状态不为删除或者下架的规格
+     * @param productId
+     * @return
+     */
     List<ProductSpecificationDTO> selectSpecificationByProductId(@Param("productId") Integer productId);
 
     /**
@@ -57,4 +62,19 @@ public interface ProductSpecificationPOMapper {
      * @return
      */
     Integer updateProductStorage(@Param("productSpecificationId") Integer productSpecificationId, @Param("number") Integer number);
+
+    /**
+     * 根据productId修改商品规格状态
+     * @param productId
+     * @param status
+     * @return
+     */
+    Integer updateStatusByProductId(@Param("productId") Integer productId, @Param("status") Integer status);
+
+    /**
+     * 根据商品id获取商品状态
+     * @param productId
+     * @return
+     */
+    Integer selectStatusByProductId(@Param("productId") Integer productId);
 }

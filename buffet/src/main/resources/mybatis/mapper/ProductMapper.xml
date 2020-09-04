@@ -175,7 +175,7 @@
     max(b.product_price) as max_price, min(b.product_price) as min_price, sum(b.product_storage) as product_storage,
     count(b.product_specification_id) as specification_number
     from product a, product_specification b
-    where a.product_category_id = #{productCategoryId, jdbcType=INTEGER} and a.product_id = b.product_id
+    where a.product_category_id = #{productCategoryId, jdbcType=INTEGER} and a.product_id = b.product_id and b.status = 2
     group by a.product_id
   </select>
 
@@ -184,7 +184,7 @@
     max(b.product_price) as max_price, min(b.product_price) as min_price, sum(b.product_storage) as product_storage,
     count(b.product_specification_id) as specification_number
     from product a, product_specification b
-    where a.product_id = b.product_id
+    where a.product_id = b.product_id and b.status = 2
     <if test="productName != null and productName != ''">
       and a.product_Name like concat('%', #{productName, jdbcType=VARCHAR}, '%')
     </if>
@@ -196,7 +196,7 @@
     max(b.product_price) as max_price, min(b.product_price) as min_price, sum(b.product_storage) as product_storage,
     count(b.product_specification_id) as specification_number
     from product a, product_specification b
-    where a.product_id = b.product_id
+    where a.product_id = b.product_id and b.status = 2
     group by a.product_id
   </select>
 
@@ -207,5 +207,15 @@
     from product a, product_specification b
     where a.product_id = b.product_id and a.product_id = #{productId, jdbcType=INTEGER}
     group by a.product_id
+  </select>
+
+  <select id="getProductList" resultType="cn.ffcs.buffet.model.dto.ProductManagerDTO">
+    select
+    <include refid="Base_Column_List" />
+    from product
+    where product_id in (select product_id from product_specification where status in(1,2))
+    <if test="productName != null and productName != ''">
+      and product_name like concat(#{productName},'%')
+    </if>
   </select>
 </mapper>

@@ -3,7 +3,7 @@ package cn.ffcs.buffet.controller.admin;
 import cn.ffcs.buffet.common.annotation.PassToken;
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
-import cn.ffcs.buffet.model.dto.ProductCategoryDTO;
+import cn.ffcs.buffet.model.dto.ProductManagerDTO;
 import cn.ffcs.buffet.model.po.ProductCategoryPO;
 import cn.ffcs.buffet.service.ProductManageService;
 import com.github.pagehelper.PageInfo;
@@ -12,8 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @ClassName: ProductManageController
@@ -25,7 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/admin/product")
 @Validated
-@CrossOrigin
 public class ProductManageController {
 
     @Autowired
@@ -44,7 +41,7 @@ public class ProductManageController {
     @ApiOperation(value = "查询商品分类")
     @GetMapping(path = "/productCategory/{productCategoryId}")
     @PassToken
-    public Result updateProductCategory(@PathVariable Integer productCategoryId) {
+    public Result getProductCategory(@PathVariable Integer productCategoryId) {
         ProductCategoryPO productCategoryPO = productManageService.getProductCategoryByproductCategoryId(productCategoryId);
         return Result.success(productCategoryPO);
     }
@@ -65,7 +62,7 @@ public class ProductManageController {
         return Result.success(categoryPO);
     }
 
-    @ApiOperation(value = "新建商品分类")
+    @ApiOperation(value = "删除商品分类")
     @DeleteMapping(path = "/productCategory/{productCategoryId}")
     @PassToken
     public Result deleteProductCategory(@PathVariable Integer productCategoryId) {
@@ -73,5 +70,38 @@ public class ProductManageController {
         return Result.success(flag);
     }
 
+    @ApiOperation(value = "获取商品列表")
+    @GetMapping(path = "/getProductList")
+    @PassToken
+    public Result getProductList(Page page, String productName) {
+        PageInfo<ProductManagerDTO> productManagerDTOPageInfo = productManageService.getProductList(page, productName);
+        page.setList(productManagerDTOPageInfo.getList());
+        page.setTotal(productManagerDTOPageInfo.getTotal());
+        return Result.success(page);
+    }
+
+    @ApiOperation(value = "删除商品")
+    @DeleteMapping(path = "/deleteProduct/{productId}")
+    @PassToken
+    public Result deleteProduct(@PathVariable Integer productId) {
+        Integer flag = productManageService.deleteProduct(productId);
+        return Result.success(flag);
+    }
+
+    @ApiOperation(value = "下架商品")
+    @PutMapping(path = "/dropProduct/{productId}")
+    @PassToken
+    public Result dropProduct(@PathVariable Integer productId) {
+        Integer flag = productManageService.dropProduct(productId);
+        return Result.success(flag);
+    }
+
+    @ApiOperation(value = "上架商品")
+    @PutMapping(path = "/upProduct/{productId}")
+    @PassToken
+    public Result upProduct(@PathVariable Integer productId) {
+        Integer flag = productManageService.upProduct(productId);
+        return Result.success(flag);
+    }
 
 }

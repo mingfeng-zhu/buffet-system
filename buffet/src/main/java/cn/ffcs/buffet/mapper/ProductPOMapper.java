@@ -1,6 +1,7 @@
 package cn.ffcs.buffet.mapper;
 
 import cn.ffcs.buffet.model.dto.ProductDTO;
+import cn.ffcs.buffet.model.dto.ProductManagerDTO;
 import cn.ffcs.buffet.model.po.ProductPO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
@@ -52,4 +53,11 @@ public interface ProductPOMapper {
      * @return
      */
     List<ProductDTO> selectProductDetailAndCommentList(@Param("productId") Integer productId);
+
+    /**
+     * 获取商品
+     * @param productName
+     * @return
+     */
+    List<ProductManagerDTO> getProductList(@Param("productName") String productName);
 }
