@@ -77,4 +77,19 @@ public interface ProductSpecificationPOMapper {
      * @return
      */
     Integer selectStatusByProductId(@Param("productId") Integer productId);
+
+    /**
+     * 根据商品id和属性模糊查询
+     * @param productId
+     * @param specification
+     * @return
+     */
+    List<ProductSpecificationPO> selectBySpecification(@Param("productId") Integer productId, @Param("productSpecification") String specification);
+
+    /**
+     * 根据商品id获取规格
+     * @param productId
+     * @return
+     */
+    List<ProductSpecificationPO> selectByProductId(@Param("productId") Integer productId);
 }

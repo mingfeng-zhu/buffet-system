@@ -3,15 +3,23 @@ package cn.ffcs.buffet.controller.admin;
 import cn.ffcs.buffet.common.annotation.PassToken;
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
+import cn.ffcs.buffet.model.dto.ProductAttrManagerDTO;
 import cn.ffcs.buffet.model.dto.ProductManagerDTO;
-import cn.ffcs.buffet.model.po.ProductCategoryPO;
+import cn.ffcs.buffet.model.po.*;
 import cn.ffcs.buffet.service.ProductManageService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: ProductManageController
@@ -80,6 +88,27 @@ public class ProductManageController {
         return Result.success(page);
     }
 
+    @PassToken
+    @ApiOperation(value = "添加商品")
+    @PutMapping(path = "/addProduct")
+    public Result addProduct(@RequestBody Map<String, Object> map) throws JsonProcessingException {
+        Object product = map.get("product");
+        Object productSpecification = map.get("productSpecification");
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductPO productPO = objectMapper.readValue(objectMapper.writeValueAsString(product), ProductPO.class);
+        ProductSpecificationPO productSpecificationPO = objectMapper.readValue(objectMapper.writeValueAsString(productSpecification), ProductSpecificationPO.class);
+        productPO = productManageService.addProduct(productPO, productSpecificationPO);
+        return Result.success(productPO);
+    }
+
+    @PassToken
+    @ApiOperation(value = "修改商品")
+    @PostMapping(path = "/updateProduct")
+    public Result updateProduct(@RequestBody ProductPO productPO) {
+        int i = productManageService.updateProduct(productPO);
+        return Result.success(i);
+    }
+
     @ApiOperation(value = "删除商品")
     @DeleteMapping(path = "/deleteProduct/{productId}")
     @PassToken
@@ -104,4 +133,64 @@ public class ProductManageController {
         return Result.success(flag);
     }
 
+    @PassToken
+    @ApiOperation(value = "根据商品id获取商品属性及其属性值")
+    @GetMapping(path = "/getProductAttributeListByProductId/{productId}")
+    public Result getProductAttributeListByProductId(@PathVariable Integer productId){
+        List<ProductAttrManagerDTO> productAttrManagerDTOList = productManageService.selectProductAttributeByProductId(productId);
+        return Result.success(productAttrManagerDTOList);
+    }
+
+    @ApiOperation(value = "新建商品规格属性")
+    @PostMapping(path = "/productAttribute")
+    @PassToken
+    public Result addProductAttribute(@RequestBody ProductAttributePO productAttributePO) {
+        Integer flag = productManageService.addProductAttribute(productAttributePO);
+        return Result.success(productAttributePO);
+    }
+
+    @ApiOperation(value = "修改商品规格属性")
+    @PutMapping(path = "/productAttribute")
+    @PassToken
+    public Result updateProductAttribute(@RequestBody ProductAttributePO productAttributePO) {
+        Integer flag = productManageService.updateProductAttribute(productAttributePO);
+        return Result.success(productAttributePO);
+    }
+
+    @ApiOperation(value = "删除商品规格属性")
+    @DeleteMapping(path = "/productAttribute/{productAttributeId}")
+    @PassToken
+    public Result deleteProductAttribute(@PathVariable Integer productAttributeId) {
+        Integer flag = productManageService.deleteProductAttribute(productAttributeId);
+        return Result.success(flag);
+    }
+
+    @ApiOperation(value = "删除商品规格属性值")
+    @DeleteMapping(path = "/productAttributeValue")
+    @PassToken
+    public Result deleteAttrValue(@RequestBody Map<String, Object> map) {
+        Integer productId = (Integer) map.get("productId");
+        Integer productAttributeId = (Integer) map.get("productAttributeId");
+        Integer productAttributeValueId = (Integer) map.get("productAttributeValueId");
+        Integer flag = productManageService.deleteAttrValue(productId, productAttributeId, productAttributeValueId);
+        return Result.success(flag);
+    }
+
+    @ApiOperation(value = "新建商品规格属性值")
+    @PutMapping(path = "/productAttributeValue")
+    @PassToken
+    public Result addAttrValue(@RequestBody ProductAttributeValuePO productAttributeValuePO) {
+        productAttributeValuePO.setCreateTime(new Timestamp(new Date().getTime()));
+        productAttributeValuePO.setUpdateTime(new Timestamp(new Date().getTime()));
+        productAttributeValuePO = productManageService.addAttrValue(productAttributeValuePO);
+        return Result.success(productAttributeValuePO);
+    }
+
+    @PassToken
+    @ApiOperation(value = "根据商品id获取商品规格")
+    @GetMapping(path = "/getProductSpecificationByProductId/{productId}")
+    public Result getProductSpecificationByProductId(@PathVariable Integer productId){
+        List<ProductSpecificationPO> productSpecificationPOList = productManageService.getProductSpecificationByProductId(productId);
+        return Result.success(productSpecificationPOList);
+    }
 }

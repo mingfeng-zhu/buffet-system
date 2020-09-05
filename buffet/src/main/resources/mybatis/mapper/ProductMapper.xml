@@ -66,7 +66,7 @@
       #{productCategoryId,jdbcType=INTEGER}, #{productPicturePath, jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductPO" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="productId" keyColumn="product_id" parameterType="cn.ffcs.buffet.model.po.ProductPO" >
     insert into product
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="productId != null" >

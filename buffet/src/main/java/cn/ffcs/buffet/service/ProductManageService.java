@@ -1,8 +1,10 @@
 package cn.ffcs.buffet.service;
 
 import cn.ffcs.buffet.common.dto.Page;
+import cn.ffcs.buffet.model.dto.ProductAttrManagerDTO;
+import cn.ffcs.buffet.model.dto.ProductAttributeDTO;
 import cn.ffcs.buffet.model.dto.ProductManagerDTO;
-import cn.ffcs.buffet.model.po.ProductCategoryPO;
+import cn.ffcs.buffet.model.po.*;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -61,6 +63,21 @@ public interface ProductManageService {
     PageInfo<ProductManagerDTO> getProductList(Page page, String productName);
 
     /**
+     * 添加商品
+     * @param productPO
+     * @param productSpecificationPO
+     * @return
+     */
+    ProductPO addProduct(ProductPO productPO, ProductSpecificationPO productSpecificationPO);
+
+    /**
+     * 修改商品
+     * @param productPO
+     * @return
+     */
+    int updateProduct(ProductPO productPO);
+
+    /**
      * 删除商品
      * @param productId
      * @return
@@ -80,4 +97,55 @@ public interface ProductManageService {
      * @return
      */
     Integer upProduct(Integer productId);
+
+    /**
+     * 根据商品id获取属性及其属性值
+     * @param productId
+     * @return
+     */
+    List<ProductAttrManagerDTO> selectProductAttributeByProductId(Integer productId);
+
+    /**
+     * 添加商品规格属性
+     * @param productAttributePO
+     * @return
+     */
+    Integer addProductAttribute(ProductAttributePO productAttributePO);
+
+    /**
+     * 修改商品规格属性
+     * @param productAttributePO
+     * @return
+     */
+    Integer updateProductAttribute(ProductAttributePO productAttributePO);
+
+    /**
+     * 删除规格属性
+     * @param productAttributeId
+     * @return
+     */
+    Integer deleteProductAttribute(Integer productAttributeId);
+
+    /**
+     * 删除规格属性值
+     * @param productId
+     * @param productAttributeId
+     * @param productAttributeValueId
+     * @return
+     */
+    Integer deleteAttrValue(Integer productId, Integer productAttributeId, Integer productAttributeValueId);
+
+    /**
+     * 新建商品属性值
+     * @param productAttributeValuePO
+     * @return
+     */
+    ProductAttributeValuePO addAttrValue(ProductAttributeValuePO productAttributeValuePO);
+
+    /**
+     * 获取商品规格集合
+     * @param productId
+     * @return
+     */
+    List<ProductSpecificationPO> getProductSpecificationByProductId(Integer productId);
 }
