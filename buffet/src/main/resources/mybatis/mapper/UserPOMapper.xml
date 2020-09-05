@@ -29,10 +29,10 @@
                 update_time=#{updateTime},
             </if>
             <if test="userImg != null">
-                userImg=#{userImg},
+                user_img=#{userImg},
             </if>
             <if test="userPassword != null">
-                user_password#{userPassword},
+                user_password=#{userPassword},
             </if>
 <!--            <if test="userTel != null">-->
 <!--                user_tel=#{userTel},-->
