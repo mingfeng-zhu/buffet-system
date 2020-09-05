@@ -38,13 +38,10 @@ const payOrder = (p) => axios.post('/order/payOrder',p)
 const getOrder = (p) => axios.get('/order/listOrderByCurrentUser',p)
 //取消订单
 const cancelOrder = (p) => axios.post('/order/cancelOrder',p)
-
-
-// http://localhost:3000/api/product/getProductAttributeListByProductId/1
-// const getArticleList = p => axios.get('/article-list', { params: p }) // 获取文章列表
-// const modifyArticle = (id, p) => axios.put(`/article-modify/${id}`, p) // 修改文章
-// const writeArticle = p => axios.post(`/article-write`, p) // 写文章
-// const deleteArticle = id => axios.post(`/article-delete/${id}`) // 删除文章
+// 获取用户信息
+const getUserInfo = (p) => axios.get('/user/getUserInfo', { params: p })
+//修改用户信息
+const updateUser = (p) => axios.post('/user/updateUser',p)
 export default {
     getProductCategoryList,
     getAllProductList,
@@ -58,10 +55,13 @@ export default {
     signUp,
     login,
     getProductDetailAndCommentList,
- 	addShopCartRecord,
+    addOrder,
+    addShopCartRecord,
     loginByPhoneNumber,
     creatOrder,
     payOrder,
     getOrder,
-    cancelOrder
+    cancelOrder,
+    getUserInfo,
+    updateUser
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <van-cell-group class = "namecell">
-      <van-cell>
+      <van-cell @click="personInform">
         <template #title>
           <van-image
                   round
@@ -18,6 +18,9 @@
 <!--            </van-grid>-->
 <!--            <p>余额·充值</p>-->
 <!--          </div>-->
+        </template>
+        <template #right-icon>
+          <van-icon name="arrow" style="top:20px"/>
         </template>
       </van-cell>
       <div class="title">我的订单</div>
@@ -57,6 +60,9 @@
             }
         },
         methods:{
+            personInform() {
+                this.$router.push('/personInfo')
+            },
             loginout() {
                 Dialog.confirm({
                     message: '确定退出登录吗',

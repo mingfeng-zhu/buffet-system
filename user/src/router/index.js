@@ -22,6 +22,16 @@ const router = new VueRouter({
             component:() => import('../views/personality/register.vue')
         },
         {
+            path: '/personInfo',
+            name:'personInfo',
+            component:() => import('../views/tab/personInfo.vue')
+        },
+        {
+            path: '/changeInfo',
+            name:'changeInfo',
+            component:() => import('../views/tab/changeInfo.vue')
+        },
+        {
             path: '/',
             name: 'layOut',
             component: () => import('../views/home/layOut.vue'),
@@ -102,6 +112,10 @@ const router = new VueRouter({
                     path: '/detail',
                     name:'detail',
                     component:() => import('../views/tab/detail.vue')
+                },{
+                    path: '/editAddress',
+                    name:'editAddress',
+                    component:() => import('../views/tab/editAddress.vue')
                 },
             ]
         }

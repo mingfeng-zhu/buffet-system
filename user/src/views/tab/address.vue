@@ -1,7 +1,7 @@
 <template>
   <div>
     <van-nav-bar
-            title="收获地址管理"
+            title="收货地址管理"
             left-arrow
             @click-left="onClickLeft"
     />
@@ -53,6 +53,7 @@
             },
             onEdit(item, index) {
                 console.log(12, item, index)
+                this.$router.push({name: 'editAddress', query: {id: item.id}})
                 // Toast('编辑地址:' + index);
             },
             select(){
