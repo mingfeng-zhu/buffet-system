@@ -5,6 +5,7 @@
       <ul v-if="goods.length > 0">
         <li v-for="(item, index) in goods" :key="index">
           <van-swipe-cell>
+            <div style="overflow: hidden">
           <van-checkbox
                   :value="item.shopCart.id"
                   v-model="item.isChecked"
@@ -15,14 +16,15 @@
             <div class="detailimg">
               <img
                       :src="item.productSpecificationDTO.productSpecificationPicture"
+                      @click="showDetail(item.productSpecificationDTO.productId)"
               />
             </div>
             <div class="detailtext">
-              <div class="shoptitle van-multi-ellipsis--l2">{{ item.productSpecificationDTO.productPO.productName }}</div>
+              <div class="shoptitle">{{ item.productSpecificationDTO.productPO.productName }}</div>
               <p class="stock">
                 仅剩{{item.productSpecificationDTO.productStorage}}件
               </p>
-              <div style="line-height: 1px">
+              <div style="font-size: 14px">
                  <span
                          v-for="(item2, index) in Object.values(JSON.parse(item.productSpecificationDTO.productSpecification))"
                          :key="index"
@@ -46,8 +48,10 @@
                   />
                 </div>
               </div>
+<!--            fz-->
             </div>
           </div>
+            </div>
             <template #right>
               <van-button square text="删除" type="danger" class="delete-button" @click="deleteCart(item)"/>
             </template>
@@ -76,6 +80,7 @@
     import Vue from 'vue';
     import { Toast } from 'vant';
     Vue.use(Toast)
+    // window.location.reload()
     export default {
         data() {
             return {
@@ -87,7 +92,7 @@
                 num: 0
             };
         },
-        async mounted() {
+        async created() {
             await this.listShopCartByUserId()
             this.setSelectedData()
             this.ifCheckAll()
@@ -95,6 +100,10 @@
         },
         computed: {},
         methods: {
+            async showDetail(id) {
+                console.log('dianji ')
+                this.$router.push({name: 'detail', query: {id: id}})
+            },
             async deleteCart(value) {
                 console.log('item99', value)
                 let param = {
@@ -162,10 +171,8 @@
                 console.log('this.good', this.goods)
                 this.goods.forEach(function(val) {
                     if (val.isChecked) {
-                        // console.log(136, val.shopCart.goodCount, val.productSpecificationDTO.productPrice)
                         totalPrice += val.shopCart.goodCount * val.productSpecificationDTO.productPrice//累计总价
                         totalPrice=Number(totalPrice.toFixed(2))
-                        // console.log('totalPrice', Number(totalPrice.toFixed(2)))
                     }
                 });
                 this.totalprice = totalPrice;
@@ -240,8 +247,10 @@
           margin-bottom: 12px;
           .van-checkbox {
             margin-left: 17px;
+            margin-right: 26px;
             display:inline-block;
             margin-top: 20px;
+            float:left;
             ::v-deep .van-checkbox__icon {
               height: 14px;
               line-height: 14px;
@@ -254,11 +263,12 @@
             }
           }
           .shopdetail {
+            float: left;
             display: flex;
             flex-direction: row;
             align-items: center;
-            margin-left: 65px;
-            margin-top: -50px;
+            //margin-left: 65px;
+            //margin-top: -50px;
             .detailimg {
               width: 64px;
               height: 64px;

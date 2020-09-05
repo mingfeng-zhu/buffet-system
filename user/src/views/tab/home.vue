@@ -41,7 +41,7 @@
                   <use xlink:href="#iconsub"></use>
                 </svg>
                 <span v-if="!item.productNumOfCart">0</span>
-                <span v-else>{{item.productNumOfCart}}</span>
+                <span v-else style=" display: inline-block;min-width: 18px;text-align: center;">{{item.productNumOfCart}}</span>
                 <svg class="icon" aria-hidden="true" @click="add(item)">
                   <use xlink:href="#iconadd"></use>
                 </svg>
@@ -348,6 +348,7 @@
     position: absolute;
     right: 20px;
     bottom: 8px;
+    font-size: 14px;
   }
   /deep/.van-cell__title {
     width: 105px;
