@@ -46,3 +46,48 @@ export function deleteProductCategory(id) {
     method: 'delete',
   })
 }
+
+/**
+ * 分页获取商品列表
+ * @param {*} params 
+ */
+export function getProductList(params) {
+  return request({
+    url: '/admin/product/getProductList',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 删除商品信息
+ * @param {*} id 
+ */
+export function deleteProduct(id) {
+  return request({
+    url: `/admin/product/deleteProduct/${id}`,
+    method: 'delete',
+  })
+}
+
+/**
+ * 下架商品
+ * @param {*} id 
+ */
+export function dropProduct(id) {
+  return request({
+    url: `/admin/product/dropProduct/${id}`,
+    method: 'put',
+  })
+}
+
+/**
+ * 上架商品
+ * @param {*} id 
+ */
+export function upProduct(id) {
+  return request({
+    url: `/admin/product/upProduct/${id}`,
+    method: 'put',
+  })
+}

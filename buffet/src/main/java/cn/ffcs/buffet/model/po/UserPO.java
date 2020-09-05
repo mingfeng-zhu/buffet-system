@@ -62,6 +62,11 @@ public class UserPO {
      */
     private String userPassword;
 
+    /**
+     * 默认地址
+     */
+    private Integer defaultAddressId;
+
     public Integer getUserId() {
         return userId;
     }
@@ -132,6 +137,14 @@ public class UserPO {
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+
+    public Integer getDefaultAddressId() {
+        return defaultAddressId;
+    }
+
+    public void setDefaultAddressId(Integer defaultAddressId) {
+        this.defaultAddressId = defaultAddressId;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.service.impl;
 
+import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.mapper.UserPOMapper;
 import cn.ffcs.buffet.model.po.UserPO;
 import cn.ffcs.buffet.service.UserService;
@@ -35,5 +36,14 @@ public class UserServiceImpl implements UserService {
     public Integer updateUser(UserPO user) {
         user.setUpdateTime(new Date());
         return mapper.updateUser(user);
+    }
+
+    /**
+     * 获取登录用户信息
+     * @return
+     */
+    @Override
+    public UserPO getUserInfo() {
+        return mapper.selectUserByUserId(TokenUtil.getUserIdAndUserTelOfToken().getUserId());
     }
 }

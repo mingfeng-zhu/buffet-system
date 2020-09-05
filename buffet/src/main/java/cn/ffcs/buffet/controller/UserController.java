@@ -1,6 +1,8 @@
 package cn.ffcs.buffet.controller;
 
 import cn.ffcs.buffet.common.dto.Result;
+import cn.ffcs.buffet.common.redis.constant.StaticValue;
+import cn.ffcs.buffet.common.redis.utils.RedisCommands;
 import cn.ffcs.buffet.common.util.CodeUtils;
 import cn.ffcs.buffet.common.util.Constant;
 import cn.ffcs.buffet.common.util.TokenUtil;
@@ -15,6 +17,7 @@ import com.zhenzi.sms.ZhenziSmsClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import jdk.nashorn.internal.parser.Token;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -45,6 +48,12 @@ public class UserController {
     @Autowired
     UserAddressService userAddressService;
 
+    /**
+     * redis
+     */
+    @Autowired
+    private RedisCommands redisCommands;
+
 
     /**
      * 登录
@@ -55,7 +64,7 @@ public class UserController {
     @ApiOperation(value = "用户登录，登录前请发送手机验证码（目前可先不发，之后用作密码找回？）")
     @PostMapping(path = "/login")
     public Result userLogin(@RequestBody LoginUserAO user, HttpServletRequest request) {
-        HttpSession session = request.getSession();
+//        HttpSession session = request.getSession();
 //        String sessionCode= (String) session.getAttribute("code");
 //        if(code==null || sessionCode==null){
 //            return Result.fail("请发送验证码");
@@ -74,7 +83,7 @@ public class UserController {
             return Result.fail("登录失败!用户被禁用");
         }
         if (loginUser.getUserPassword().equals(user.getUserPassword())) {
-            session.setAttribute("user", loginUser);
+//            session.setAttribute("user", loginUser);
             UserVO userVO = new UserVO();
             userVO.setUserPO(loginUser);
             userVO.setToken(TokenUtil.getToken(loginUser));
@@ -92,16 +101,15 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "用户登录，登录前请发送手机验证码 ,填写验证码登录")
-    @ApiParam(name = "userTel",value = "userTel 用户手机号",required = true)
+    @ApiParam(name = "userTel", value = "userTel 用户手机号", required = true)
     @PostMapping(path = "/loginByPhoneNumber")
     public Result loginByPhoneNumber(@RequestBody LoginUserAO user, HttpServletRequest request) {
         // TODO 得改成用redis
-        HttpSession session = request.getSession();
-        String sessionCode= (String) session.getAttribute("code");
-        if(user.getCode()==null || sessionCode==null){
+        String sessionCode = (String) redisCommands.get(StaticValue.USER_CODE, user.getUserTel());
+        if (user.getCode() == null || sessionCode == null) {
             return Result.fail("请发送验证码");
         }
-        if(!user.getCode().equals(session.getAttribute("code"))){
+        if (!user.getCode().equals(sessionCode)) {
             return Result.fail("登录失败!验证码错误");
         }
         UserPO checkUser = new UserPO();
@@ -114,7 +122,6 @@ public class UserController {
         if (loginUser.getUserState().equals(Constant.USER_STATUS.forbidden.getIndex())) {
             return Result.fail("登录失败!用户被禁用");
         }
-        session.setAttribute("user", loginUser);
         UserVO userVO = new UserVO();
         userVO.setUserPO(loginUser);
         userVO.setToken(TokenUtil.getToken(loginUser));
@@ -130,12 +137,13 @@ public class UserController {
     @ApiOperation(value = "用户注册-请先发送手机验证码，并保证手机号不重复")
     @PostMapping(path = "/signUp")
     public Result signUpUser(@RequestBody SignUserAO user, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String sessionCode = (String) session.getAttribute("code");
+//        HttpSession session = request.getSession();
+//        String sessionCode = (String) session.getAttribute("code");
+        String sessionCode = (String) redisCommands.get(StaticValue.USER_CODE, user.getUserTel());
         if (user.getCode() == null || sessionCode == null) {
             return Result.fail("请发送验证码");
         }
-        if (session.getAttribute("code").equals(user.getCode())) {
+        if (sessionCode.equals(user.getCode())) {
             UserPO signUser = new UserPO();
             BeanUtils.copyProperties(user, signUser);
             UserPO checkuser = userService.checkLogin(signUser);
@@ -163,13 +171,16 @@ public class UserController {
         String apiUrl = "https://sms_developer.zhenzikj.com";
         String appSecret = "b32ef9e2-f91e-4d8d-9410-d726fff18b95";
         String appId = "104131";
-        HttpSession session = request.getSession();
+//        HttpSession session = request.getSession();
         ZhenziSmsClient client = new ZhenziSmsClient(apiUrl, appId, appSecret);
         Map<String, String> params = new HashMap<String, String>();
         String code = CodeUtils.getCode(4, CodeUtils.NUMBER_CODE);
-        session.setAttribute("code", code);
-        session.setAttribute("tel", userTel);
-        params.put("message", "验证码为: " + code);
+//        session.setAttribute("code", code);
+//        session.setAttribute("tel", userTel);
+        // 放入redis, 10分钟后过期
+        Boolean set = redisCommands.set(StaticValue.USER_CODE, userTel, code, 10 * 60);
+        System.out.println("set:" + set);
+        params.put("message", "验证码为: " + code + "；10分钟后过期。");
         params.put("number", userTel);
         try {
             client.send(params);
@@ -184,9 +195,10 @@ public class UserController {
      * @param user 用户类
      * @return
      */
-    @ApiOperation(value = "修改用户信息，userId不能为空")
+    @ApiOperation(value = "【登录状态】修改用户信息，1.修改用户基本信息 2.修改默认地址 3.修改密码")
     @PostMapping(path = "/updateUser")
     public Result updateUser(@RequestBody UserPO user, HttpServletRequest request) {
+        user.setUserId(TokenUtil.getUserIdAndUserTelOfToken().getUserId());
         Integer num = userService.updateUser(user);
         if (user.getUserId() == null) {
             return Result.fail("缺少用户id");
@@ -198,52 +210,68 @@ public class UserController {
     }
 
     /**
-     * 新增用户送货地址
+     * 用户名获取用户所有信息
      *
-     * @param userAddress 用户地址类
      * @return
      */
-    @ApiOperation(value = "新增用户的送货地址")
-    @PostMapping(path = "/addUserAddress")
-    public Result addUserAddress(@RequestBody UserAddress userAddress, HttpServletRequest request) {
-        Integer num = userAddressService.addUserAddress(userAddress);
-        if (num > 0) {
-            return Result.success();
+    @ApiOperation(value = "一个用户", notes = "【登录状态】用户id获取用户所有信息")
+    @GetMapping(path = "/getUserInfo")
+    public Result getUserInfo() {
+
+        UserPO user = userService.getUserInfo();
+        if (user != null) {
+            return Result.success(user);
         }
-        return Result.fail("新增失败");
+        return Result.success();
     }
 
-    /**
-     * 查询当前用户的送货地址
-     *
-     * @param userId 用户ID
-     * @return
-     */
-    @ApiOperation(value = "查询该用户所有的送货地址")
-    @GetMapping(path = "/selectUserAddress")
-    public Result selectUserAddress(@RequestParam Integer userId, HttpServletRequest request) {
-        List<UserAddress> list = userAddressService.selectUserAddress(userId);
-        if (list != null) {
-            return Result.success(list);
-        }
-        return Result.fail("查询失败");
-    }
-
-    /**
-     * 修改用户送货地址
-     *
-     * @param userAddress 用户地址类
-     * @return
-     */
-    @ApiOperation(value = "修改用户的送货地址")
-    @PostMapping(path = "/updateUserAddress")
-    public Result updateUserAddress(@RequestBody UserAddress userAddress, HttpServletRequest request) {
-        Integer num = userAddressService.updateUserAddress(userAddress);
-        if (num > 0) {
-            return Result.success();
-        }
-        return Result.fail("修改失败");
-    }
+//    /**
+//     * 新增用户送货地址
+//     *
+//     * @param userAddress 用户地址类
+//     * @return
+//     */
+//    @ApiOperation(value = "新增用户的送货地址")
+//    @PostMapping(path = "/addUserAddress")
+//    public Result addUserAddress(@RequestBody UserAddress userAddress, HttpServletRequest request) {
+//        Integer num = userAddressService.addUserAddress(userAddress);
+//        if (num > 0) {
+//            return Result.success();
+//        }
+//        return Result.fail("新增失败");
+//    }
+//
+//    /**
+//     * 查询当前用户的送货地址
+//     *
+//     * @param userId 用户ID
+//     * @return
+//     */
+//    @ApiOperation(value = "查询该用户所有的送货地址")
+//    @GetMapping(path = "/selectUserAddress")
+//    public Result selectUserAddress(@RequestParam Integer userId, HttpServletRequest request) {
+//        List<UserAddress> list = userAddressService.selectUserAddress(userId);
+//        if (list != null) {
+//            return Result.success(list);
+//        }
+//        return Result.fail("查询失败");
+//    }
+//
+//    /**
+//     * 修改用户送货地址
+//     *
+//     * @param userAddress 用户地址类
+//     * @return
+//     */
+//    @ApiOperation(value = "修改用户的送货地址")
+//    @PostMapping(path = "/updateUserAddress")
+//    public Result updateUserAddress(@RequestBody UserAddress userAddress, HttpServletRequest request) {
+//        Integer num = userAddressService.updateUserAddress(userAddress);
+//        if (num > 0) {
+//            return Result.success();
+//        }
+//        return Result.fail("修改失败");
+//    }
 
     /**
      * 退出登录 前端删除token即可

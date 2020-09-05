@@ -34,4 +34,9 @@ public interface UserService {
      */
     Integer updateUser(UserPO user);
 
+    /**
+     * 获取登录用户信息
+     * @return
+     */
+    UserPO getUserInfo();
 }
