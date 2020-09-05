@@ -145,7 +145,7 @@ public class ProductManageController {
     @PostMapping(path = "/productAttribute")
     @PassToken
     public Result addProductAttribute(@RequestBody ProductAttributePO productAttributePO) {
-        Integer flag = productManageService.addProductAttribute(productAttributePO);
+        productAttributePO = productManageService.addProductAttribute(productAttributePO);
         return Result.success(productAttributePO);
     }
 
@@ -180,9 +180,15 @@ public class ProductManageController {
     @PutMapping(path = "/productAttributeValue")
     @PassToken
     public Result addAttrValue(@RequestBody ProductAttributeValuePO productAttributeValuePO) {
-        productAttributeValuePO.setCreateTime(new Timestamp(new Date().getTime()));
-        productAttributeValuePO.setUpdateTime(new Timestamp(new Date().getTime()));
         productAttributeValuePO = productManageService.addAttrValue(productAttributeValuePO);
+        return Result.success(productAttributeValuePO);
+    }
+
+    @ApiOperation(value = "修改商品规格属性值")
+    @PostMapping(path = "/productAttributeValue")
+    @PassToken
+    public Result updateAttrValue(@RequestBody ProductAttributeValuePO productAttributeValuePO) {
+        int i = productManageService.updateAttrValue(productAttributeValuePO);
         return Result.success(productAttributeValuePO);
     }
 
@@ -192,5 +198,29 @@ public class ProductManageController {
     public Result getProductSpecificationByProductId(@PathVariable Integer productId){
         List<ProductSpecificationPO> productSpecificationPOList = productManageService.getProductSpecificationByProductId(productId);
         return Result.success(productSpecificationPOList);
+    }
+
+    @ApiOperation(value = "新建商品规格")
+    @PostMapping(path = "/productSpecification")
+    @PassToken
+    public Result addSpecification(@RequestBody ProductSpecificationPO productSpecificationPO) {
+        productSpecificationPO = productManageService.addSpecification(productSpecificationPO);
+        return Result.success(productSpecificationPO);
+    }
+
+    @ApiOperation(value = "修改商品规格")
+    @PutMapping(path = "/productSpecification")
+    @PassToken
+    public Result updateSpecification(@RequestBody ProductSpecificationPO productSpecificationPO) {
+        productSpecificationPO = productManageService.updateSpecification(productSpecificationPO);
+        return Result.success(productSpecificationPO);
+    }
+
+    @ApiOperation(value = "删除商品规格")
+    @DeleteMapping(path = "/productSpecification/{productSpecificationId}")
+    @PassToken
+    public Result deleteSpecification(@PathVariable Integer productSpecificationId) {
+        int i = productManageService.deleteSpecification(productSpecificationId);
+        return Result.success(i);
     }
 }
