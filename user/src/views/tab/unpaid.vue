@@ -9,14 +9,14 @@
     <ul>
       <van-swipe-cell>
         <li v-for="item in orders" :key="item.id">
-          <div class="orderDetail">
+          <div class="orderDetail" @click="orderdetail(item.orderid,item.ordertitle,item.totalprice,item.status)">
             <div class="orderId">订单号：{{item.orderid}}</div>
             <div class="orderTitle van-multi-ellipsis">{{item.ordertitle}}</div>
             <div class="orderPrice">￥{{item.totalprice}}</div>
           </div>
           <div class="orderStatus">
             <van-button round type="danger" text="取消订单" @click="cancle(item.orderid)"/>
-            <van-button round type="danger" text="去支付" @click="Submit(item.orderid,item.ordertitle,item.totalprice)"/>
+            <van-button round type="danger" text="去支付" @click="pay(item.orderid,item.ordertitle,item.totalprice)"/>
           </div>
         </li>
       </van-swipe-cell>
@@ -30,26 +30,25 @@ export default {
   name: "unpaid",
   data(){
     return{
-      userId: '',
       orderStatus:'',
       orders:[
         {
           orderid:'1',
           ordertitle:'标题1',
           totalprice: 110,
-          status:'待支付'
+          status:1
         },
         {
           orderid:'2',
           ordertitle:'标题2',
           totalprice: 210,
-          status:'待支付'
+          status:1
         },
         {
           orderid:'3',
           ordertitle:'标题3',
           totalprice: 310,
-          status:'待支付'
+          status:1
         },
       ],
     }
@@ -65,10 +64,10 @@ export default {
       //调用订单取消接口
       this.params = {}
       this.params.id = orderid
-      this.$api.cancelOrder(this.params)
+      // this.$api.cancelOrder(this.params)
       location.reload()
     },
-    Submit(id,title,price){
+    pay(id,title,price){
       sessionStorage.setItem('orderid',id)
       sessionStorage.setItem('ordertitle',title)
       sessionStorage.setItem('totalprice',price)
@@ -79,13 +78,17 @@ export default {
       // 调用订单获取接口   status=0 待支付状态
       this.params = {}
       this.params.orderStatus = this.orderStatus
-      let list = []
-      let that = this
-      list.push({userId:this.userId})
-      this.params.list = list
-      this.$api.getOrder(this.params).then(function (response){
-         that.orders = response.data.data
-      })
+      // let that = this
+      // this.$api.getOrder(this.params).then(function (response){
+      //    that.orders = response.data.data
+      // })
+    },
+    orderdetail(orderid,ordertitle,totalprice,status){
+      sessionStorage.setItem('orderid',orderid)
+      sessionStorage.setItem('ordertitle',ordertitle)
+      sessionStorage.setItem('totalprice',totalprice)
+      sessionStorage.setItem('status',status)
+      this.$router.push('/orderdetail')
     },
   }
 }

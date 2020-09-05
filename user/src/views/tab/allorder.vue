@@ -9,7 +9,7 @@
       <ul>
         <van-swipe-cell>
           <li v-for="item in orders" :key="item.id">
-            <div class="orderDetail">
+            <div class="orderDetail" @click="orderdetail(item.orderid,item.ordertitle,item.totalprice,item.status)">
               <div class="orderId">订单号：{{item.orderid}}</div>
               <div class="orderTitle van-multi-ellipsis">{{item.ordertitle}}</div>
               <div class="orderPrice">￥{{item.totalprice}}</div>
@@ -25,10 +25,10 @@
                 <div class="orderStatus" v-if="item.status === 6">已评价</div>
                 <div class="orderStatus" v-if="item.status === 7">取消中</div>
               </div>
-              <van-button v-if="item.status === 0" round type="danger" text="取消订单" @click="cancle(item.orderid)"/>
-              <van-button v-if="item.status === 0" round type="danger" text="去支付" @click="Submit(item.orderid,item.ordertitle,item.totalprice)"/>
-              <van-button v-if="item.status === 1" round type="danger" text="确认收货" @click="receive()"/>
-              <van-button v-if="item.status === 2" round type="danger" text="去评价" @click="evaluate()"/>
+              <van-button v-if="item.status === 1" round type="danger" text="取消订单" @click="cancle(item.orderid)"/>
+              <van-button v-if="item.status === 1" round type="danger" text="去支付" @click="pay(item.orderid,item.ordertitle,item.totalprice)"/>
+              <van-button v-if="item.status === 4" round type="danger" text="确认收货" @click="receive()"/>
+              <van-button v-if="item.status === 5" round type="danger" text="去评价" @click="evaluate()"/>
             </div>
           </li>
         </van-swipe-cell>
@@ -42,7 +42,6 @@ export default {
   name: "allorder",
   data(){
     return{
-      userId: '',
       orders:[
         {
           orderid:'1',
@@ -54,43 +53,43 @@ export default {
           orderid:'2',
           ordertitle:'标题2',
           totalprice: 210,
-          status:0
+          status:1
         },
         {
           orderid:'3',
           ordertitle:'标题3',
           totalprice: 310,
-          status:1
+          status:7
         },
         {
           orderid:'4',
           ordertitle:'标题4',
           totalprice: 110,
-          status:1
+          status:2
         },
         {
           orderid:'5',
           ordertitle:'标题5',
           totalprice: 210,
-          status:2
+          status:3
         },
         {
           orderid:'6',
           ordertitle:'标题6',
           totalprice: 310,
-          status:2
+          status:4
         },
         {
           orderid:'7',
           ordertitle:'标题7',
           totalprice: 110,
-          status:3
+          status:5
         },
         {
           orderid:'8',
           ordertitle:'标题8',
           totalprice: 210,
-          status:3
+          status:6
         }
       ]
     }
@@ -106,11 +105,11 @@ export default {
       //调用订单取消接口
       this.params = {}
       this.params.id = orderid
-      this.$api.cancelOrder(this.params)
+      // this.$api.cancelOrder(this.params)
       location.reload()
       location.reload()
     },
-    Submit(id,title,price){
+    pay(id,title,price){
       sessionStorage.setItem('orderid',id)
       sessionStorage.setItem('ordertitle',title)
       sessionStorage.setItem('totalprice',price)
@@ -130,13 +129,17 @@ export default {
     getOrders(){
       //调用订单获取接口
       this.params = {}
-      let list = []
-      let that = this
-      list.push({userId:this.userId})
-      this.params.list = list
-      this.$api.getOrder(this.params).then(function (response){
-        that.orders = response.data.data
-      })
+      // let that = this
+      // this.$api.getOrder(this.params).then(function (response){
+      //   that.orders = response.data.data
+      // })
+    },
+    orderdetail(orderid,ordertitle,totalprice,status){
+      sessionStorage.setItem('orderid',orderid)
+      sessionStorage.setItem('ordertitle',ordertitle)
+      sessionStorage.setItem('totalprice',totalprice)
+      sessionStorage.setItem('status',status)
+      this.$router.push('/orderdetail')
     },
   }
 }

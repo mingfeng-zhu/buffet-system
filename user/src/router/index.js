@@ -117,6 +117,11 @@ const router = new VueRouter({
                     name:'editAddress',
                     component:() => import('../views/tab/editAddress.vue')
                 },
+                {
+                    path: '/orderdetail',
+                    name:'orderdetail',
+                    component:() => import('../views/tab/orderdetail.vue')
+                },
             ]
         }
     ]
