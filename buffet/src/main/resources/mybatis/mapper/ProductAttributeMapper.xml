@@ -22,6 +22,17 @@
     </collection>
   </resultMap>
 
+  <resultMap id="ProductAttrManagerDTOMap" type="cn.ffcs.buffet.model.dto.ProductAttrManagerDTO">
+    <id column="product_attribute_id" property="productAttributeId" jdbcType="INTEGER" />
+    <result column="product_attribute_name" property="productAttributeName" jdbcType="VARCHAR" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <collection property="productAttributeValuePOList"
+                column="product_attribute_id"
+                ofType="cn.ffcs.buffet.model.po.ProductAttributeValuePO"
+                select="cn.ffcs.buffet.mapper.ProductAttributeValuePOMapper.selectValueByProductAttributeId">
+    </collection>
+  </resultMap>
+
   <sql id="Base_Column_List" >
     product_attribute_id, product_attribute_name, product_id, create_by, create_time, 
     update_by, update_time
@@ -44,7 +55,7 @@
       #{productId,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductAttributePO" >
+  <insert id="insertSelective" keyProperty="productAttributeId" keyColumn="product_attribute_id" parameterType="cn.ffcs.buffet.model.po.ProductAttributePO" >
     insert into product_attribute
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="productAttributeId != null" >
@@ -130,6 +141,14 @@
 
   <select id="selectProductAttributeListByProductId" resultMap="ProductAttributeDTOResultMap" parameterType="INTEGER">
     select product_attribute_id, product_attribute_name, product_id
+    from product_attribute
+    where product_id = #{productId, jdbcType=INTEGER}
+    order by product_attribute_id asc
+  </select>
+
+  <select id="selectAttrAndValueByProductId" resultMap="ProductAttrManagerDTOMap">
+    select
+    <include refid="Base_Column_List"/>
     from product_attribute
     where product_id = #{productId, jdbcType=INTEGER}
     order by product_attribute_id asc

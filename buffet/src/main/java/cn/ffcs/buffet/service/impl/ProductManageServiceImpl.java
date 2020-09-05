@@ -2,13 +2,12 @@ package cn.ffcs.buffet.service.impl;
 
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.util.TokenUtil;
-import cn.ffcs.buffet.mapper.ProductCategoryPOMapper;
-import cn.ffcs.buffet.mapper.ProductPOMapper;
-import cn.ffcs.buffet.mapper.ProductSpecificationPOMapper;
-import cn.ffcs.buffet.mapper.UserPOMapper;
+import cn.ffcs.buffet.mapper.*;
+import cn.ffcs.buffet.model.dto.ProductAttrManagerDTO;
+import cn.ffcs.buffet.model.dto.ProductAttributeDTO;
 import cn.ffcs.buffet.model.dto.ProductManagerDTO;
 import cn.ffcs.buffet.model.dto.UserDTO;
-import cn.ffcs.buffet.model.po.ProductCategoryPO;
+import cn.ffcs.buffet.model.po.*;
 import cn.ffcs.buffet.service.ProductManageService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -36,6 +35,12 @@ public class ProductManageServiceImpl implements ProductManageService {
 
     @Autowired
     private ProductSpecificationPOMapper productSpecificationPOMapper;
+
+    @Autowired
+    private ProductAttributePOMapper productAttributePOMapper;
+
+    @Autowired
+    private ProductAttributeValuePOMapper productAttributeValuePOMapper;
 
     @Autowired
     private UserPOMapper userPOMapper;
@@ -98,6 +103,31 @@ public class ProductManageServiceImpl implements ProductManageService {
     }
 
     @Override
+    public ProductPO addProduct(ProductPO productPO, ProductSpecificationPO productSpecificationPO) {
+        Timestamp now = new Timestamp(new Date().getTime());
+        productPO.setCreateTime(now);
+        productPO.setUpdateTime(now);
+
+        int i = productPOMapper.insertSelective(productPO);
+
+        productSpecificationPO.setProductId(productPO.getProductId());
+        productSpecificationPO.setCreateTime(now);
+        productSpecificationPO.setUpdateTime(now);
+        productSpecificationPO.setStatus(2);
+
+        i += productSpecificationPOMapper.insertSelective(productSpecificationPO);
+
+        return productPOMapper.selectByPrimaryKey(productPO.getProductId());
+    }
+
+    @Override
+    public int updateProduct(ProductPO productPO) {
+        productPO.setUpdateTime(new Timestamp(new Date().getTime()));
+        int i = productPOMapper.updateByPrimaryKeySelective(productPO);
+        return i;
+    }
+
+    @Override
     public Integer deleteProduct(Integer productId) {
         //将商品id为productId的规格删除（状态置为0）
         Integer flag = productSpecificationPOMapper.updateStatusByProductId(productId, 0);
@@ -116,5 +146,71 @@ public class ProductManageServiceImpl implements ProductManageService {
         //将商品id为productId的规格状态置为2
         Integer flag = productSpecificationPOMapper.updateStatusByProductId(productId, 2);
         return flag;
+    }
+
+    @Override
+    public List<ProductAttrManagerDTO> selectProductAttributeByProductId(Integer productId) {
+        List<ProductAttrManagerDTO> productAttrManagerDTOList = this.productAttributePOMapper.selectAttrAndValueByProductId(productId);
+        return productAttrManagerDTOList;
+    }
+
+    @Override
+    public Integer addProductAttribute(ProductAttributePO productAttributePO) {
+        productAttributePO.setCreateTime(new Timestamp(new Date().getTime()));
+        productAttributePO.setUpdateTime(new Timestamp(new Date().getTime()));
+        int i = this.productAttributePOMapper.insertSelective(productAttributePO);
+        return i;
+    }
+
+    @Override
+    public Integer updateProductAttribute(ProductAttributePO productAttributePO) {
+        productAttributePO.setUpdateTime(new Timestamp(new Date().getTime()));
+        int i = this.productAttributePOMapper.updateByPrimaryKeySelective(productAttributePO);
+        return i;
+    }
+
+    @Override
+    public Integer deleteProductAttribute(Integer productAttributeId) {
+        int i = this.productAttributePOMapper.deleteByPrimaryKey(productAttributeId);
+        i += this.productAttributeValuePOMapper.deleteByProductAttributeId(productAttributeId);
+        return i;
+    }
+
+    @Override
+    public Integer deleteAttrValue(Integer productId, Integer productAttributeId, Integer productAttributeValueId) {
+        Integer flag = 0;
+        ProductAttributePO productAttributePO = productAttributePOMapper.selectByPrimaryKey(productAttributeId);    // 获取规格属性
+        ProductAttributeValuePO productAttributeValuePO = productAttributeValuePOMapper.selectByPrimaryKey(productAttributeValueId);    // 获取规格属性值
+
+        // 删除商品规格表
+        String specification = "\"" +  productAttributePO.getProductAttributeName() + "\"" + ":" + "\"" + productAttributeValuePO.getProductAttributeValue() + "\"";
+        List<ProductSpecificationPO> productSpecificationPOList = productSpecificationPOMapper.selectBySpecification(productId, specification);
+        for (int i = 0; i < productSpecificationPOList.size(); i++) {
+            /*int index = productSpecificationPOList.get(i).getProductSpecification().indexOf(specification);
+            String tmp = productSpecificationPOList.get(i).getProductSpecification();
+            if (index == 1) {
+                tmp = tmp.substring(0, index) + tmp.substring(index + specification.length() + 1);
+            } else if (index > 1) {
+                tmp = tmp.substring(0, index - 1) + tmp.substring(index + specification.length());
+            }
+            productSpecificationPOList.get(i).setProductSpecification(tmp);*/
+            productSpecificationPOList.get(i).setStatus(0);
+            flag += productSpecificationPOMapper.updateByPrimaryKeySelective(productSpecificationPOList.get(i));
+        }
+        // 删除属性值
+        flag += productAttributeValuePOMapper.deleteByPrimaryKey(productAttributeValueId);
+        return flag;
+    }
+
+    @Override
+    public ProductAttributeValuePO addAttrValue(ProductAttributeValuePO productAttributeValuePO) {
+        int i = productAttributeValuePOMapper.insertSelective(productAttributeValuePO);
+        return productAttributeValuePO;
+    }
+
+    @Override
+    public List<ProductSpecificationPO> getProductSpecificationByProductId(Integer productId) {
+        List<ProductSpecificationPO> productSpecificationPOList = productSpecificationPOMapper.selectByProductId(productId);
+        return productSpecificationPOList;
     }
 }
