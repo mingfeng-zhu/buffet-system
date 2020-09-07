@@ -48,6 +48,11 @@ public class AddressPO extends BasePO {
      */
     private Byte addressDelete;
 
+    /**
+     * 是否默认地址
+     */
+    private Boolean defaultAddress = false;
+
     public Integer getId() {
         return id;
     }
@@ -112,6 +117,14 @@ public class AddressPO extends BasePO {
         this.addressDelete = addressDelete;
     }
 
+    public Boolean getDefaultAddress() {
+        return defaultAddress;
+    }
+
+    public void setDefaultAddress(Boolean defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
     @Override
     public String toString() {
         return "AddressPO{" +
@@ -123,8 +136,7 @@ public class AddressPO extends BasePO {
                 ", houseNumber='" + houseNumber + '\'' +
                 ", areaCode='" + areaCode + '\'' +
                 ", addressDelete=" + addressDelete +
-                ", createBy='" + createBy + '\'' +
-                ", updateBy='" + updateBy + '\'' +
+                ", defaultAddress=" + defaultAddress +
                 '}';
     }
 }
