@@ -15,22 +15,40 @@
     id, order_id, status, operate_time, create_time, change_time, creator, modifier
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from t_order_status
     where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="listOrderStatusRecordByOrderId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_order_status
+    where order_id = #{orderId,jdbcType=BIGINT}
+    order by create_time asc
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_order_status
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.ffcs.buffet.model.po.OrderStatus">
-    insert into t_order_status (id, order_id, status, 
-      operate_time, create_time, change_time, 
+    insert into t_order_status (id, order_id, status,
+      operate_time, create_time, change_time,
       creator, modifier)
-    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=BIGINT}, #{status,jdbcType=CHAR}, 
-      #{operateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{changeTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=BIGINT}, #{status,jdbcType=CHAR},
+      #{operateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{changeTime,jdbcType=TIMESTAMP},
       #{creator,jdbcType=INTEGER}, #{modifier,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertOrderStatusList" parameterType="java.util.List">
+    insert into t_order_status
+    (order_id, status)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.orderId},
+      #{item.status}
+      )
+    </foreach>
   </insert>
   <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.OrderStatus">
     insert into t_order_status

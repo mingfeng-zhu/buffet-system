@@ -15,12 +15,33 @@
     <result column="modifier" jdbcType="INTEGER" property="modifier" />
     <result column="status" jdbcType="CHAR" property="status" />
   </resultMap>
+
+  <resultMap id="OrderListMap" type="cn.ffcs.buffet.model.dto.OrderDTO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="total_money" jdbcType="DECIMAL" property="totalMoney" />
+    <result column="order_status" jdbcType="CHAR" property="orderStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <collection property="userPO"
+                column="user_id"
+                ofType="cn.ffcs.buffet.model.po.UserPO"
+                select="cn.ffcs.buffet.mapper.UserPOMapper.selectUserByUserId">
+    </collection>
+    <collection property="addressPO"
+                column="address_id"
+                ofType="cn.ffcs.buffet.model.po.AddressPO"
+                select="cn.ffcs.buffet.mapper.AddressPOMapper.getAddressById">
+    </collection>
+  </resultMap>
+
   <sql id="Base_Column_List">
-    id, order_id, user_id, address_id, total_money, order_type, order_status, create_time, 
+    id, order_id, user_id, address_id, total_money, order_type, order_status, create_time,
     change_time, creator, modifier, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from t_order
     where id = #{id,jdbcType=BIGINT}
@@ -37,40 +58,44 @@
     from t_order
     where order_status &lt;&gt; ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@cancel.getIndex()}
   </select>
-  <select id="listOrder" resultMap="BaseResultMap">
+  <select id="listOrder" resultMap="OrderListMap">
     select
     <include refid="Base_Column_List" />
     from t_order
     where 1=1
-    <if test="userId != null">
+    <if test="userId != null and userId != ''">
       and user_id = #{userId,jdbcType=INTEGER}
     </if>
-    <if test="orderStatus != null">
+    <if test="orderStatus != null and orderStatus != ''">
       and order_status = #{orderStatus,jdbcType=CHAR}
     </if>
-    <if test="orderStatus != null">
+    <if test="orderId != null and orderId != ''">
       and order_id = #{orderId,jdbcType=VARCHAR}
     </if>
+    order by create_time desc
   </select>
   <select id="listOrderByCurrentId" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from t_order
     where user_id = #{userId,jdbcType=INTEGER}
+    <if test="orderStatus != null and orderStatus != ''">
+      and order_status = #{orderStatus,jdbcType=CHAR}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from t_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="cn.ffcs.buffet.model.po.OrderPO">
-    insert into t_order (id, order_id, user_id, 
-      address_id, total_money, order_type, 
-      order_status, create_time, change_time, 
+    insert into t_order (id, order_id, user_id,
+      address_id, total_money, order_type,
+      order_status, create_time, change_time,
       creator, modifier, status
       )
-    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, 
-      #{addressId,jdbcType=INTEGER}, #{totalMoney,jdbcType=DECIMAL}, #{orderType,jdbcType=CHAR}, 
-      #{orderStatus,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{changeTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+      #{addressId,jdbcType=INTEGER}, #{totalMoney,jdbcType=DECIMAL}, #{orderType,jdbcType=CHAR},
+      #{orderStatus,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{changeTime,jdbcType=TIMESTAMP},
       #{creator,jdbcType=INTEGER}, #{modifier,jdbcType=INTEGER}, #{status,jdbcType=CHAR}
       )
   </insert>

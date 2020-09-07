@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.mapper;
 
+import cn.ffcs.buffet.model.dto.OrderDTO;
 import cn.ffcs.buffet.model.po.OrderPO;
 import io.swagger.models.auth.In;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public interface OrderMapper {
      * @param orderId 订单流水号
      * @return
      */
-    List<OrderPO> listOrder(Integer userId, String orderStatus, String orderId);
+    List<OrderDTO> listOrder(Integer userId, String orderStatus, String orderId);
 
     /**
      * 删除指定订单id的订单
@@ -41,7 +42,7 @@ public interface OrderMapper {
      * @param list 订单idList
      * @param orderStatus 订单状态
      */
-    void updateOrderByIdList(List<Integer> list, String orderStatus);
+    void updateOrderByIdList(List<Long> list, String orderStatus);
 
     /**
      * 获取交易订单总数
@@ -66,7 +67,8 @@ public interface OrderMapper {
     /**
      * 获取当前用户的订单信息
      * @param userId 用户id
+     * @param orderStatus 订单状态
      * @return
      */
-    List<OrderPO> listOrderByCurrentId(Integer userId);
+    List<OrderPO> listOrderByCurrentId(Integer userId, String orderStatus);
 }

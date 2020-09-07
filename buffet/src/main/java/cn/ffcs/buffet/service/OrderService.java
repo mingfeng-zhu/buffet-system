@@ -2,6 +2,7 @@ package cn.ffcs.buffet.service;
 
 import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.common.dto.Result;
+import cn.ffcs.buffet.model.dto.OrderDTO;
 import cn.ffcs.buffet.model.po.OrderPO;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -22,7 +23,7 @@ public interface OrderService {
      * @param orderId 订单流水号
      * @return
      */
-    Result listOrder(Integer userId, String orderStatus, Page<OrderPO> page, String orderId);
+    Result listOrder(Integer userId, String orderStatus, Page<OrderDTO> page, String orderId);
 
     /**
      * 删除指定订单id的订单，批量形式
@@ -37,7 +38,7 @@ public interface OrderService {
      * @param list 订单idList
      * @return
      */
-    Result updateOrderByIdList(List<Integer> list, String orderStatus);
+    Result updateOrderByIdList(List<Long> list, String orderStatus);
 
     /**
      * 查询订单总数、总交易额
@@ -85,9 +86,10 @@ public interface OrderService {
      * 获取当前用户的订单信息
      * @param userId 用户id
      * @param page 分页信息
+     * @param orderStatus 订单状态
      * @return
      */
-    Result listOrderByCurrentId(Integer userId, Page<OrderPO> page);
+    Result listOrderByCurrentId(Integer userId, Page<OrderPO> page, String orderStatus);
 
     /**
      * 获取指定订单信息
@@ -95,4 +97,12 @@ public interface OrderService {
      * @return
      */
     Result getOrderById(Long id);
+
+    /**
+     * 取消订单，用于后台管理员批量取消订单
+     * @param idList 订单列表
+     * @param orderStatus 订单状态
+     * @return
+     */
+    Result cancelOrderList(List<Long> idList, String orderStatus);
 }
