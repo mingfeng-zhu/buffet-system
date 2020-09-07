@@ -6,6 +6,7 @@
         placeholder="商品名"
         style="width: 200px;"
         class="filter-item"
+        size="mini"
         @keyup.enter.native="handleFilter"
       />
       <el-button
@@ -14,6 +15,7 @@
         type="primary"
         style="margin-left: 10px;"
         icon="el-icon-search"
+        size="mini"
         @click="handleFilter"
       >搜索</el-button>
       <el-button
@@ -21,6 +23,7 @@
         style="float: right;margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
+        size="mini"
         @click="showDialog(type = 'add')"
       >新增</el-button>
     </div>
@@ -35,18 +38,18 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="showDialog(type = 'update', scope.$index)">修改</el-button>
+          <el-button type="primary" size="mini" @click="showDialog(type = 'update', scope.$index)">修改</el-button>
           <el-popconfirm v-if="scope.row.status === 1" title="确定要上架吗？" @onConfirm="upProduct(scope.$index)">
-            <el-button slot="reference" type="info" size="small" style="margin-left:5px">上架</el-button>
+            <el-button slot="reference" type="info" size="mini" style="margin-left:5px">上架</el-button>
           </el-popconfirm>
           <el-popconfirm v-if="scope.row.status === 2" title="确定要下架吗？" @onConfirm="dropProduct(scope.$index)">
-            <el-button slot="reference" type="warning" size="small" style="margin-left:5px">下架</el-button>
+            <el-button slot="reference" type="warning" size="mini" style="margin-left:5px">下架</el-button>
           </el-popconfirm>
           <el-popconfirm title="确定要删除吗？" @onConfirm="deleteProduct(scope.$index)">
-            <el-button slot="reference" type="danger" size="small" style="margin-left:5px">删除</el-button>
+            <el-button slot="reference" type="danger" size="mini" style="margin-left:5px">删除</el-button>
           </el-popconfirm>
-          <el-button type="success" size="small" style="margin-left: 5px" @click="showAttr(scope.$index)">查看规格属性</el-button>
-          <el-button size="small" type="primary" plain style="margin-left: 5px" @click="showSpeci(scope.$index)">查看规格</el-button>
+          <el-button type="success" size="mini" style="margin-left: 5px" @click="showAttr(scope.$index)">查看属性</el-button>
+          <el-button size="mini" type="primary" plain style="margin-left: 5px" @click="showSpeci(scope.$index)">查看规格</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -108,7 +111,7 @@
       </el-row>
     </el-dialog>
 
-    <el-dialog title="规格属性" loading="false" :visible.sync="dialogAttrVisible" width="40%">
+    <el-dialog title="商品属性" loading="false" :visible.sync="dialogAttrVisible" width="40%">
       <template v-if="productAttrList != undefined  && productAttrList.length > 0">
         <el-card v-for="(item, index) in productAttrList" shadow="never" style="margin: 5px 0">
           <el-row>
@@ -117,7 +120,7 @@
               <el-input v-model="item.productAttributeName" size="mini"></el-input>
             </el-col>
             <el-col :span="3">
-              <el-popconfirm title="确定要删除吗？" @onConfirm="deleteAttr(index)">
+              <el-popconfirm title="删除属性会删除对应的规格信息，确定要删除吗？" @onConfirm="deleteAttr(index)">
                 <el-button slot="reference" type="danger" size="small" style="margin-left:10px">删除</el-button>
               </el-popconfirm>
             </el-col>
@@ -133,7 +136,8 @@
                 closable
                 style="margin: 5px 5px"
                 type="success"
-                @close="handleRemoveAttr(index, vindex)">
+                @close="handleRemoveAttr(index, vindex)"
+                @click="updateAttrValue(index, vindex)">
                 {{ value.productAttributeValue }}
               </el-tag>
 
@@ -158,6 +162,55 @@
         <br>
         <el-button type="primary" size="small" @click="addAttr()">添加规格属性</el-button>
       </template>
+    </el-dialog>
+
+    <el-dialog title="商品规格" loading="false" :visible.sync="dialogSpeciVisible" width="40%">
+      <template>
+        <el-button type="primary" size="mini" style="float: right" @click="showSpeciMgr(type = 'add')">新增</el-button>
+        <el-table :data="productSpecificationList" size="mini">
+           <el-table-column prop="productSpecification" label="属性/属性值">
+             <template scope="scope">
+               {{ scope.row.productSpecification | praseSpeci}}
+             </template>
+           </el-table-column>
+           <el-table-column prop="productStorage" width="100px" label="库存量"/>
+           <el-table-column prop="productPrice" width="100px" label="价格"/>
+           <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button type="primary" size="mini" style="margin-left: 10px" @click="showSpeciMgr(type = 'update', scope.$index)">修改</el-button>
+                <el-popconfirm v-if="scope.row.productSpecification === '{}'" title="确定要删除吗？" @onConfirm="deleteSpeci(scope.$index)">
+                  <el-button slot="reference" type="danger" size="mini" style="margin-left:10px" disabled>删除</el-button>
+                </el-popconfirm>
+                <el-popconfirm v-else title="确定要删除吗？" @onConfirm="deleteSpeci(scope.$index)">
+                  <el-button slot="reference" type="danger" size="mini" style="margin-left:10px">删除</el-button>
+                </el-popconfirm>
+              </template>
+           </el-table-column>
+        </el-table>
+      </template>
+    </el-dialog>
+
+    <el-dialog title="规格新建/修改" loading="false" :visible.sync="speciMgr" width="40%">
+      <el-form :model="productSpecification" ref="speciForm">
+        <el-form-item label="属性/属性值" prop="productSpecification">
+          <!-- <el-input v-model="productSpecification.productSpecification" disabled/> -->
+        </el-form-item>
+        <el-form-item v-for="(item, value) in productAttrList" :label="item.productAttributeName">
+          <el-radio-group v-model="item.checkValue">
+            <el-radio v-for="(valueItem, valueIndex) in item.productAttributeValuePOList" :label="valueIndex">{{ valueItem.productAttributeValue}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="库存量" prop="productStorage" :rules="{ required: true, message: '请输入商品库存量', trigger: 'blur' }">
+          <el-input-number v-model="productSpecification.productStorage"/>
+        </el-form-item>
+        <el-form-item label="价格" prop="productPrice" :rules="{ required: true, message: '请输入商品价格', trigger: 'blur' }">
+          <el-input v-model="productSpecification.productPrice"/>
+        </el-form-item>
+        <el-form-item align="center">
+          <el-button type="primary" size="mini" style="margin-left: 10px" @click="handleSpeciSubmit('speciForm')">保存</el-button>
+          <el-button size="mini" style="margin-left: 10px" @click="speciMgr = false">取消</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -209,8 +262,8 @@ import { getProductCategoryList,
 getProductList, addProduct, updateProduct, deleteProduct, dropProduct, upProduct, 
 getProductAttributeListByProductId, 
 addProductAttribute, updateProductAttribute, deleteProductAttribute,
-deleteProductAttributeValue, addProductAttributeValue,
-getProductSpecificationByProductId } from '@/api/product/product'
+deleteProductAttributeValue, addProductAttributeValue, updateProductAttributeValue,
+getProductSpecificationByProductId, addSpecification, updateSpecification, deleteSpecification } from '@/api/product/product'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves'
 import { parseTime } from '@/utils'
@@ -222,6 +275,20 @@ export default {
     parseTime(time) {
       var date = new Date(time)
       return parseTime(date, '{y}-{m}-{d} {h}:{i}')
+    },
+    praseSpeci(speci) {
+      var obj = JSON.parse(speci)
+      var keys = Object.keys(obj)
+      let str = ''
+      if (keys != null) {
+        for(let i = 0; i < keys.length; i++) {
+          str += '; ' + keys[i] + '/' + obj[keys[i]]
+        }
+      }
+      if (str === '') {
+        return '无属性'
+      }
+      return str.substring(2)
     }
   },
   data() {
@@ -269,7 +336,12 @@ export default {
       dialogAttrVisible: false,
       productAttrList: [],
       productSpecificationPOList: [],
-      switchValue: false
+      switchValue: false,
+      dialogSpeciVisible: false,
+      productSpecificationList: [],
+      speciMgr: false,
+      speciMgrIndex: null,
+      productSpecification: {}
     }
   },
   created() {
@@ -341,11 +413,11 @@ export default {
           this.productSpecificationPOList = res.data
           this.updateIndex = index
           this.product = Object.assign({}, this.productList[index])
-          if (this.productSpecificationPOList.length == 1 && this.productSpecificationPOList[0].productSpecification === '{}') {
-            this.switchValue = false
-          } else {
-            this.switchValue = true
-          }
+          // if (this.productSpecificationPOList.length == 1 && this.productSpecificationPOList[0].productSpecification === '{}') {
+          //   this.switchValue = false
+          // } else {
+          //   this.switchValue = true
+          // }
         })
       }      
       this.dialogFormVisible = true
@@ -388,7 +460,7 @@ export default {
       this.productSpecification.productPrice = this.productSpecification.productPrice.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
     },
     handleAvatarSuccess(res, file) {
-      console.log(res)
+      // console.log(res)
       if (res.code === 2000) {
         this.product.productPicturePath = 'http://localhost:8082' + res.data;
       }
@@ -434,12 +506,18 @@ export default {
       }
       if (this.productAttrList[index].productAttributeId == undefined) {  // 没有主键是添加
         addProductAttribute(this.productAttrList[index]).then(res => {
-          this.$set(this.productAttrList, index, res.data)
+          let data = res.data
+          this.$set(data, 'inputVisible', false)
+          this.$set(data, 'inputValue', '')
+          this.$set(this.productAttrList, index, data)
           this.$message.success('保存商品属性成功')
         })
       } else {  // 有主键是修改
         updateProductAttribute(this.productAttrList[index]).then(res => {
-          this.$set(this.productAttrList, index, res.data)
+          let data = res.data
+          this.$set(data, 'inputVisible', false)
+          this.$set(data, 'inputValue', '')
+          this.$set(this.productAttrList, index, data)
           this.$message.success('保存商品属性成功')
         })
       }
@@ -466,6 +544,8 @@ export default {
       if (this.productAttrList[index].inputValue) {
         if (this.productAttrList[index].productAttributeId == undefined) {
           this.$message.error('请先保存属性，然后再添加属性值')
+          this.$set(this.productAttrList[index], 'inputVisible', false)
+          this.$set(this.productAttrList[index], 'inputValue', '')
           return
         }
 
@@ -476,6 +556,9 @@ export default {
         }
         // 调用新增属性值得接口新增
         addProductAttributeValue(value).then(res => {
+          if (this.productAttrList[index].productAttributeValuePOList == undefined) {
+            this.$set(this.productAttrList[index], 'productAttributeValuePOList', [])
+          }
           this.productAttrList[index].productAttributeValuePOList.push(res.data)
           this.$message.success('新增属性值成功')
         })
@@ -499,6 +582,144 @@ export default {
           this.productAttrList[index].productAttributeValuePOList.splice(vindex, 1)
           this.$message.success('删除属性值成功')
         })
+      })
+    },
+    updateAttrValue(index, vindex) {
+      let data = Object.assign({}, this.productAttrList[index].productAttributeValuePOList[vindex])
+      this.$prompt('请输入属性值', '属性值修改', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        if (value != null && value != '') {
+          data.productAttributeValue = value
+          updateProductAttributeValue(data).then(res => {
+            this.$set(this.productAttrList[index].productAttributeValuePOList, vindex, res.data)
+            this.$message.success('修改成功');
+          })
+        } else {
+          this.$message.error('属性值不能为空');
+        }
+      })
+    },
+    showSpeci(index) {
+      // 获取规格
+      getProductSpecificationByProductId(this.productList[index].productId).then(res => {
+        this.productSpecificationList = res.data
+        this.updateIndex = index
+        this.dialogSpeciVisible = true
+      })
+
+      // 获取属性/属性值
+      getProductAttributeListByProductId(this.productList[index].productId).then(res => {
+        this.productAttrList = res.data
+        for(let i = 0; i < this.productAttrList.length; i++) {
+          this.$set(this.productAttrList[i], 'checkValue', -1)
+        }
+      })
+    },
+    showSpeciMgr(type, index) {
+      if (type === 'add') {
+        if (this.productAttrList == null || this.productAttrList.length == 0) {
+          this.$message.info('该商品没有属性，请先创建属性及属性值')
+          return
+        }
+
+        for(let i = 0; i < this.productAttrList.length; i++) {
+          this.productAttrList[i].checkValue = -1
+        }
+
+        this.productSpecification = {
+          productSpecificationId: null,
+          productSpecification: null,
+          productStorage: null,
+          productPrice: null,
+          productId: this.productList[this.updateIndex].productId
+        }
+      }
+      if (type === 'update') {
+        this.productSpecification = Object.assign({}, this.productSpecificationList[index])
+        this.speciMgrIndex = index
+
+        var obj = JSON.parse(this.productSpecification.productSpecification)
+        var keys = Object.keys(obj)
+        if (keys != undefined && keys.length > 0){
+          for(let i = 0; i < this.productAttrList.length; i++) {
+            let attrName = this.productAttrList[i].productAttributeName
+            let ind = keys.findIndex(el => el === attrName)
+            if (ind >= 0) {
+              let value = obj[keys[ind]]
+              let valueIndex =  this.productAttrList[i].productAttributeValuePOList.findIndex(el => el.productAttributeValue === value)
+              this.productAttrList[i].checkValue = valueIndex >= 0 ? valueIndex : -1
+            }
+          }
+        }
+      }
+      this.submitType = type
+      this.speciMgr = true
+    },
+    handleSpeciSubmit(formName) {
+      // 获取商品规格, 判断是否重复
+      let tmp = ""
+      if (this.productAttrList != null && this.productAttrList.length > 0){
+        for(let i = 0; i < this.productAttrList.length; i++) {
+          if (this.productAttrList[i].checkValue == -1) {
+            this.$message.error("请先选择规格属性值")
+            return
+          }
+          tmp += ',"' +  this.productAttrList[i].productAttributeName + '"'
+          tmp += ':"' + this.productAttrList[i].productAttributeValuePOList[this.productAttrList[i].checkValue].productAttributeValue + '"'
+        }
+        tmp = '{' + tmp.substring(1) + '}'
+        this.productSpecification.productSpecification = tmp
+      }
+
+      if (this.submitType === 'add') {
+        let ind = this.productSpecificationList.findIndex(el => el.productSpecification === this.productSpecification.productSpecification)
+        if (ind >= 0){
+          this.$message.error("规格属性组已存在，请重新选择")
+          return
+        }
+
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            addSpecification(this.productSpecification).then(res => {
+              this.showSpeci(this.updateIndex)  // 重新获取列表
+              this.$message.success('添加成功')
+              this.speciMgr = false
+            })
+          } else {
+            this.$message.error("请先完善规格信息")
+            return
+          }
+        })
+      }
+      
+      if (this.submitType === 'update') {
+        let ind = this.productSpecificationList.findIndex(el => el.productSpecification === this.productSpecification.productSpecification)
+        if (ind >= 0 && ind != this.speciMgrIndex){
+          this.$message.error("规格属性组已存在，请重新选择")
+          return
+        }
+
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            updateSpecification(this.productSpecification).then(res => {
+              this.showSpeci(this.updateIndex)  // 重新获取列表
+              this.$message.success('修改成功')
+              this.speciMgr = false
+            })
+          } else {
+            this.$message.error("请先完善规格信息")
+            return
+          }
+        })
+      } 
+    },
+    deleteSpeci(index) {
+      // console.log(index)
+      deleteSpecification(this.productSpecificationList[index].productSpecificationId).then(res => {
+        this.productSpecificationList.splice(index, 1)
+        this.$message.success('删除成功')
       })
     }
   }

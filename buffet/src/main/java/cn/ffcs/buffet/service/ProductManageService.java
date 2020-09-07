@@ -110,7 +110,7 @@ public interface ProductManageService {
      * @param productAttributePO
      * @return
      */
-    Integer addProductAttribute(ProductAttributePO productAttributePO);
+    ProductAttributePO addProductAttribute(ProductAttributePO productAttributePO);
 
     /**
      * 修改商品规格属性
@@ -142,10 +142,39 @@ public interface ProductManageService {
      */
     ProductAttributeValuePO addAttrValue(ProductAttributeValuePO productAttributeValuePO);
 
+
+    /**
+     * 修改商品属性值
+     * @param productAttributeValuePO
+     * @return
+     */
+    int updateAttrValue(ProductAttributeValuePO productAttributeValuePO);
+
     /**
      * 获取商品规格集合
      * @param productId
      * @return
      */
     List<ProductSpecificationPO> getProductSpecificationByProductId(Integer productId);
+
+    /**
+     * 添加商品规格
+     * @param productSpecificationPO
+     * @return
+     */
+    ProductSpecificationPO addSpecification(ProductSpecificationPO productSpecificationPO);
+
+    /**
+     * 修改商品规格
+     * @param productSpecificationPO
+     * @return
+     */
+    ProductSpecificationPO updateSpecification(ProductSpecificationPO productSpecificationPO);
+
+    /**
+     * 删除商品规格
+     * @param productSpecificationId
+     * @return
+     */
+    int deleteSpecification(Integer productSpecificationId);
 }

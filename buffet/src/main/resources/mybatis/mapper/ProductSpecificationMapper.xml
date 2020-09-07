@@ -64,7 +64,7 @@
       #{status,jdbcType=INTEGER}, #{productSpecificationPicture, jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="productSpecificationId" keyColumn="product_specification_id" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
     insert into product_specification
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="productSpecificationId != null" >

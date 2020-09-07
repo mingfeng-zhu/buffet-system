@@ -1,5 +1,10 @@
 package cn.ffcs.buffet.common.util;
 
+import cn.ffcs.buffet.model.vo.OrderStatusListVO;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 常量类
  * @author huang.zhao
@@ -27,8 +32,8 @@ public class Constant {
      */
     public enum Order_STATUS {
         cancelled("0", "已取消"), wait_pay("1", "待支付"), wait_receive("2", "待接单"),
-        in_make("3", "制作中"), in_delivery("4", "配送中"), completed("5", "已完成"),
-        cancel("6", "已取消");
+        in_make("3", "待配送"), in_delivery("4", "配送中"), completed("5", "已收货"),
+        evaluated("6", "已评价"), in_cancel("7", "取消中"), overtime("8", "超时未支付");
         private String index;
         private String name;
         // 构造方法
@@ -42,6 +47,16 @@ public class Constant {
         }
         public String getIndex() {
             return index;
+        }
+
+        public static List<OrderStatusListVO> getStatusList() {
+            List<OrderStatusListVO> orderStatusListVOList = new ArrayList<>();
+            for (Order_STATUS order_status: Order_STATUS.values()) {
+                OrderStatusListVO orderStatusListVO = new OrderStatusListVO(order_status.getIndex(), order_status.getName());
+                orderStatusListVOList.add(orderStatusListVO);
+            }
+
+            return orderStatusListVOList;
         }
     }
 

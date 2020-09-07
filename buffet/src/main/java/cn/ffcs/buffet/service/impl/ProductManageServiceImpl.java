@@ -155,25 +155,46 @@ public class ProductManageServiceImpl implements ProductManageService {
     }
 
     @Override
-    public Integer addProductAttribute(ProductAttributePO productAttributePO) {
+    public ProductAttributePO addProductAttribute(ProductAttributePO productAttributePO) {
         productAttributePO.setCreateTime(new Timestamp(new Date().getTime()));
         productAttributePO.setUpdateTime(new Timestamp(new Date().getTime()));
         int i = this.productAttributePOMapper.insertSelective(productAttributePO);
-        return i;
+        return productAttributePOMapper.selectByPrimaryKey(productAttributePO.getProductAttributeId());
     }
 
     @Override
     public Integer updateProductAttribute(ProductAttributePO productAttributePO) {
+        int flag = 0;
+
+        ProductAttributePO old = productAttributePOMapper.selectByPrimaryKey(productAttributePO.getProductAttributeId());
+        List<ProductSpecificationPO> productSpecificationPOList = productSpecificationPOMapper.selectBySpecification(old.getProductId(), old.getProductAttributeName());
+        for (int i = 0; i < productSpecificationPOList.size(); i++) {
+            int index = productSpecificationPOList.get(i).getProductSpecification().indexOf(old.getProductAttributeName());
+            String tmp = productSpecificationPOList.get(i).getProductSpecification();
+            tmp = tmp.substring(0, index) + productAttributePO.getProductAttributeName() + tmp.substring(index + old.getProductAttributeName().length());
+            productSpecificationPOList.get(i).setProductSpecification(tmp);
+            flag += productSpecificationPOMapper.updateByPrimaryKeySelective(productSpecificationPOList.get(i));
+        }
         productAttributePO.setUpdateTime(new Timestamp(new Date().getTime()));
-        int i = this.productAttributePOMapper.updateByPrimaryKeySelective(productAttributePO);
-        return i;
+        flag = this.productAttributePOMapper.updateByPrimaryKeySelective(productAttributePO);
+        return flag;
     }
 
     @Override
     public Integer deleteProductAttribute(Integer productAttributeId) {
-        int i = this.productAttributePOMapper.deleteByPrimaryKey(productAttributeId);
-        i += this.productAttributeValuePOMapper.deleteByProductAttributeId(productAttributeId);
-        return i;
+        int flag = 0;
+        ProductAttributePO productAttributePO = productAttributePOMapper.selectByPrimaryKey(productAttributeId);
+        // 删除规格
+        List<ProductSpecificationPO> productSpecificationPOList = productSpecificationPOMapper.selectBySpecification(productAttributePO.getProductId(), productAttributePO.getProductAttributeName());
+        for (int i = 0; i < productSpecificationPOList.size(); i++) {
+            productSpecificationPOList.get(i).setStatus(0);
+            flag += productSpecificationPOMapper.updateByPrimaryKeySelective(productSpecificationPOList.get(i));
+        }
+        // 删除属性值
+        flag += this.productAttributeValuePOMapper.deleteByProductAttributeId(productAttributeId);
+        // 删除属性
+        flag += this.productAttributePOMapper.deleteByPrimaryKey(productAttributeId);
+        return flag;
     }
 
     @Override
@@ -204,13 +225,68 @@ public class ProductManageServiceImpl implements ProductManageService {
 
     @Override
     public ProductAttributeValuePO addAttrValue(ProductAttributeValuePO productAttributeValuePO) {
+        productAttributeValuePO.setCreateTime(new Timestamp(new Date().getTime()));
+        productAttributeValuePO.setUpdateTime(new Timestamp(new Date().getTime()));
         int i = productAttributeValuePOMapper.insertSelective(productAttributeValuePO);
         return productAttributeValuePO;
+    }
+
+    @Override
+    public int updateAttrValue(ProductAttributeValuePO productAttributeValuePO) {
+        int flag = 0;
+
+        ProductAttributePO productAttributePO = productAttributePOMapper.selectByPrimaryKey(productAttributeValuePO.getProductAttributeId());
+        ProductAttributeValuePO old = productAttributeValuePOMapper.selectByPrimaryKey(productAttributeValuePO.getProductAttributeValueId());
+
+        String specification = "\"" +  productAttributePO.getProductAttributeName() + "\"" + ":" + "\"" + old.getProductAttributeValue() + "\"";
+        List<ProductSpecificationPO> productSpecificationPOList = productSpecificationPOMapper.selectBySpecification(productAttributePO.getProductId(), specification);
+        for (int i = 0; i < productSpecificationPOList.size(); i++) {
+            int index = productSpecificationPOList.get(i).getProductSpecification().indexOf(old.getProductAttributeValue());
+            String tmp = productSpecificationPOList.get(i).getProductSpecification();
+            tmp = tmp.substring(0, index) + productAttributeValuePO.getProductAttributeValue() + tmp.substring(index + old.getProductAttributeValue().length());
+            productSpecificationPOList.get(i).setProductSpecification(tmp);
+            flag += productSpecificationPOMapper.updateByPrimaryKeySelective(productSpecificationPOList.get(i));
+        }
+        flag += productAttributeValuePOMapper.updateByPrimaryKeySelective(productAttributeValuePO);
+        return flag;
     }
 
     @Override
     public List<ProductSpecificationPO> getProductSpecificationByProductId(Integer productId) {
         List<ProductSpecificationPO> productSpecificationPOList = productSpecificationPOMapper.selectByProductId(productId);
         return productSpecificationPOList;
+    }
+
+    @Override
+    public ProductSpecificationPO addSpecification(ProductSpecificationPO productSpecificationPO) {
+        int flag = 0;
+        List<ProductSpecificationPO> productSpecificationPOList = productSpecificationPOMapper.selectBySpecification(productSpecificationPO.getProductId(), "{}");
+        for (int i = 0; i < productSpecificationPOList.size(); i++) {
+            if ("{}".equals(productSpecificationPOList.get(i).getProductSpecification())) {
+                productSpecificationPOList.get(i).setStatus(0);
+                flag += productSpecificationPOMapper.updateByPrimaryKeySelective(productSpecificationPOList.get(i));
+            }
+        }
+
+        productSpecificationPO.setStatus(2);
+        productSpecificationPO.setUpdateTime(new Timestamp(new Date().getTime()));
+        productSpecificationPO.setCreateTime(new Timestamp(new Date().getTime()));
+        flag += productSpecificationPOMapper.insertSelective(productSpecificationPO);
+        return productSpecificationPO;
+    }
+
+    @Override
+    public ProductSpecificationPO updateSpecification(ProductSpecificationPO productSpecificationPO) {
+        productSpecificationPO.setUpdateTime(new Timestamp(new Date().getTime()));
+        int i = productSpecificationPOMapper.updateByPrimaryKeySelective(productSpecificationPO);
+        return productSpecificationPO;
+    }
+
+    @Override
+    public int deleteSpecification(Integer productSpecificationId) {
+        ProductSpecificationPO productSpecificationPO = productSpecificationPOMapper.selectByPrimaryKey(productSpecificationId);
+        productSpecificationPO.setStatus(0);
+        int i = productSpecificationPOMapper.updateByPrimaryKeySelective(productSpecificationPO);
+        return i;
     }
 }
