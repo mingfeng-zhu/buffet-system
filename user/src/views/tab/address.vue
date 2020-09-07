@@ -11,7 +11,7 @@
             default-tag-text="默认"
             @add="onAdd"
             @edit="onEdit"
-            @click-item="select"
+            @select="select"
     />
   </div>
 </template>
@@ -41,11 +41,11 @@
         },
       mounted() {
             this.selected = sessionStorage.getItem('selected')
-            sessionStorage.setItem('selected','0')
       },
         methods: {
             onClickLeft() {
                 this.$router.back()
+                sessionStorage.setItem('selected','0')
             },
             onAdd() {
                 // Toast('新增地址');
@@ -56,11 +56,12 @@
                 this.$router.push({name: 'editAddress', query: {id: item.id}})
                 // Toast('编辑地址:' + index);
             },
-            select(){
+            select(item,index){
               //只有从订单确认界面发起的才会返回地址
               if(this.selected === '1') {
-                let info = JSON.stringify(this.list[this.chosenAddressId - 1])
+                let info = JSON.stringify(this.list[index])
                 sessionStorage.setItem('address', info)
+                sessionStorage.setItem('selected','0')
                 this.$router.back()
               }
             }

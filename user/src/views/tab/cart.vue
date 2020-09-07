@@ -163,7 +163,7 @@
                         return item2.shopCart.id !==item.shopCart.id
                     })
                 }
-                // this.count();
+                this.count();
             },
             // 计算价格
             count: function() {
@@ -215,7 +215,6 @@
                     sessionStorage.setItem('cartgoods',info)
                     this.$router.push("/orderconfirm");
                 }
-                console.log(cartgoods);
             }
         }
     };

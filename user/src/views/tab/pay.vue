@@ -6,7 +6,7 @@
   />
 
   <div class="orderDetail">
-    <p class="orderId">订单号:{{orderid}}</p>
+    <p class="orderId">订单编号:{{serialNumber}}</p>
     <p class="orderTitle">{{ordertitle}}</p>
     <p class="orderPrice">￥{{totalprice}}</p>
   </div>
@@ -33,12 +33,12 @@ export default {
     return{
       picked:'1', //支付方式
       orderid:'', //订单id
+      serialNumber:'',
       ordertitle:'',
       totalprice: 0,
       paycode:'', //支付结果
       idlist:[],
-      goodcountlist:[]
-
+      goodcountlist:[],
     }
   },
   mounted() {
@@ -47,12 +47,20 @@ export default {
     this.totalprice = sessionStorage.getItem('totalprice')
     this.idlist = JSON.parse(sessionStorage.getItem('idlist'))
     this.goodcountlist = JSON.parse(sessionStorage.getItem('goodcountlist'))
+    this.getNumber()
   },
   methods:{
     onClickLeft() {
       this.$router.push('/person')
     },
-    paySubmit(){
+    //获取订单流水号
+    getNumber(){
+      let that = this
+      this.$api.getOrderById({id:this.orderid}).then(function (response){
+        that.serialNumber = response.data.data.orderPO.orderId
+      })
+    },
+    async paySubmit(){
        sessionStorage.setItem('orderid','')
        sessionStorage.setItem('ordertitle','')
        sessionStorage.setItem('totalprice','')
@@ -63,11 +71,11 @@ export default {
        this.params.id = this.orderid
        this.params.idList = this.idlist
        this.params.goodCountList = this.goodcountlist
-       // let that = this
-       // this.$api.payOrder(this.params).then(function (response){
-       //   that.paycode = response.data.code
-       // })
-       if(this.paycode === '2000') {
+       let that = this
+       await this.$api.payOrder(this.params).then(function (response){
+         that.paycode = response.data.code
+       })
+       if(this.paycode === 2000) {
          this.$router.push("/success")
        }else {
          this.$router.push("/faild")

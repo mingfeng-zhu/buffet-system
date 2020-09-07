@@ -36,8 +36,10 @@ const creatOrder = (p) => axios.post('/order/addOrder',p)
 const payOrder = (p) => axios.post('/order/payOrder',p)
 //获取订单列表
 const getOrder = (p) => axios.get('/order/listOrderByCurrentUser',p)
-//取消订单
-const cancelOrder = (p) => axios.post('/order/cancelOrder',p)
+//获取指定订单信息
+const getOrderById = (p) => axios.get('/order/getOrderById',{ params: p })
+//修改订单状态
+const editOrderStatus = (p) => axios.post('/order/edilOrderStatus',p)
 // 获取用户信息
 const getUserInfo = (p) => axios.get('/user/getUserInfo', { params: p })
 //修改用户信息
@@ -61,7 +63,8 @@ export default {
     creatOrder,
     payOrder,
     getOrder,
-    cancelOrder,
+    getOrderById,
+    editOrderStatus,
     getUserInfo,
     updateUser
 }

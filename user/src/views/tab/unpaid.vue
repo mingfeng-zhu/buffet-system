@@ -10,7 +10,7 @@
       <van-swipe-cell>
         <li v-for="item in orders" :key="item.id">
           <div class="orderDetail" @click="orderdetail(item.orderid,item.ordertitle,item.totalprice,item.status)">
-            <div class="orderId">订单号：{{item.orderid}}</div>
+            <div class="orderId">订单编号：{{item.orderid}}</div>
             <div class="orderTitle van-multi-ellipsis">{{item.ordertitle}}</div>
             <div class="orderPrice">￥{{item.totalprice}}</div>
           </div>

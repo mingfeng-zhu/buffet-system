@@ -113,14 +113,15 @@ export default {
       this.address.isSelected = 'true'
     },
     //订单提交
-    orderSubmit(){
+    async orderSubmit(){
       //调用订单生成接口  post方法 返回订单id
       this.params = {}
-      if (this.picked === '1'){
-        this.params.addressId = '0';
-      }else {
-        this.params.addressId = this.address.id
-      }
+      // if (this.picked === '1'){
+      //   this.params.addressId = '0';
+      // }else {
+      //   this.params.addressId = this.address.id
+      // }
+      this.params.addressId = '1';
       this.params.totalMoney = this.totalprice
       let idlist = []
       let goodcountlist = []
@@ -147,11 +148,10 @@ export default {
       this.params.idList = idlist
       this.params.goodCountList = goodcountlist
       this.params.totalMoneyList = totalmoneylist
-      // let that = this
-      // this.$api.creatOrder(this.params).then(function (response){
-      //   that.orderid = response.data.data
-      // })
-      console.log(this.params)
+      let that = this
+      await this.$api.creatOrder(this.params).then(function (response){
+        that.orderid = response.data.data
+      })
       sessionStorage.setItem('orderid',this.orderid)
       sessionStorage.setItem('ordertitle',ordertitle)
       sessionStorage.setItem('totalprice',this.totalprice)
@@ -166,9 +166,11 @@ export default {
       let cartPrice = 0   //每个商品总价
       this.cartgoods.forEach(function(item) {
           cartPrice = Number(item.num) * Number(item.price);
+          cartPrice=Number(cartPrice.toFixed(2))
           cartGoods.push({id:item.id,price:item.price,title:item.title,num:item.num,cartprice:cartPrice,
             productimg:item.productimg,specification:item.specification})
           totalPrice += cartPrice; //累计总价
+          totalPrice=Number(totalPrice.toFixed(2))
       })
       this.cartgoods = cartGoods
       this.totalprice = totalPrice
