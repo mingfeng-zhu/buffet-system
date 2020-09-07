@@ -187,6 +187,18 @@ export function addProductAttributeValue(data) {
 }
 
 /**
+ * 修改商品规格属性值
+ * @param {*} data 
+ */
+export function updateProductAttributeValue(data) {
+  return request({
+    url: '/admin/product/productAttributeValue',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
  * 获取商品规格
  * @param {*} params 
  */
@@ -194,5 +206,40 @@ export function getProductSpecificationByProductId(id) {
   return request({
     url: `/admin/product/getProductSpecificationByProductId/${id}`,
     method: 'get'
+  })
+}
+
+/**
+ * 添加规格
+ * @param {*} data 
+ */
+export function addSpecification(data) {
+  return request({
+    url: '/admin/product/productSpecification',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改规格
+ * @param {*} data 
+ */
+export function updateSpecification(data) {
+  return request({
+    url: '/admin/product/productSpecification',
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * 删除规格
+ * @param {*} id 
+ */
+export function deleteSpecification(id) {
+  return request({
+    url: `/admin/product/productSpecification/${id}`,
+    method: 'delete'
   })
 }
