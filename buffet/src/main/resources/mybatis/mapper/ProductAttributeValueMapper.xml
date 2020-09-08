@@ -39,7 +39,7 @@
       #{productAttributeId,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductAttributeValuePO" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="productAttributeValueId" keyColumn="product_attribute_value_id" parameterType="cn.ffcs.buffet.model.po.ProductAttributeValuePO" >
     insert into product_attribute_value
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="productAttributeValueId != null" >
@@ -125,6 +125,19 @@
 
   <select id="selectProductAttributeValueByProductAttributeId" resultMap="ProductAttributeValueResultMap" parameterType="INTEGER">
     select product_attribute_value_id, product_attribute_value, product_attribute_id
+    from product_attribute_value
+    where product_attribute_id = #{productAttributeId, jdbcType=INTEGER}
+    order by product_attribute_value_id asc
+  </select>
+
+  <delete id="deleteByProductAttributeId">
+    delete from product_attribute_value
+    where product_attribute_id = #{productAttributeId,jdbcType=INTEGER}
+  </delete>
+
+  <select id="selectValueByProductAttributeId" resultType="cn.ffcs.buffet.model.po.ProductAttributeValuePO">
+    select
+    <include refid="Base_Column_List"/>
     from product_attribute_value
     where product_attribute_id = #{productAttributeId, jdbcType=INTEGER}
     order by product_attribute_value_id asc

@@ -14,7 +14,7 @@
         <result column="default_address_id" jdbcType="INTEGER" property="defaultAddressId" />
     </resultMap>
     <sql id="Base_Column_List">
-    user_id, user_name, create_time, update_time, user_password, user_img,user_sex,user_tel,user_state
+    user_id, user_name, create_time, update_time, user_password, user_img,user_sex,user_tel,user_state,default_address_id
   </sql>
     <update id="updateUser">
         UPDATE USER
@@ -29,10 +29,10 @@
                 update_time=#{updateTime},
             </if>
             <if test="userImg != null">
-                userImg=#{userImg},
+                user_img=#{userImg},
             </if>
             <if test="userPassword != null">
-                user_password#{userPassword},
+                user_password=#{userPassword},
             </if>
 <!--            <if test="userTel != null">-->
 <!--                user_tel=#{userTel},-->

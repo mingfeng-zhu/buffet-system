@@ -37,7 +37,7 @@
     and
     address_delete = 0
   </select>
-  <insert id="insert" parameterType="cn.ffcs.buffet.model.po.AddressPO">
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.ffcs.buffet.model.po.AddressPO">
     insert into t_address (id, user_id, receiver_name, 
       receiver_phone, address, house_number, area_code,
       create_by, create_time, update_by, 

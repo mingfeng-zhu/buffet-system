@@ -6,17 +6,12 @@ import cn.ffcs.buffet.common.util.Constant;
 import cn.ffcs.buffet.common.util.Snowflake;
 import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.mapper.OrderMapper;
-import cn.ffcs.buffet.model.dto.OrderDetailAndProductDTO;
-import cn.ffcs.buffet.model.dto.OrderDetailDTO;
-import cn.ffcs.buffet.model.dto.OrderTotalDataDTO;
-import cn.ffcs.buffet.model.dto.ProductSpecificationDTO;
+import cn.ffcs.buffet.model.dto.*;
 import cn.ffcs.buffet.model.po.*;
 import cn.ffcs.buffet.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -45,17 +40,14 @@ public class OrderServiceImpl implements OrderService {
     private ShopCartService shopCartService;
 
     @Override
-    public Result listOrder(Integer userId, String orderStatus, Page<OrderPO> page, String orderId) {
+    public Result listOrder(Integer userId, String orderStatus, Page<OrderDTO> page, String orderId) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        List<OrderPO> orderPOList = orderMapper.listOrder(userId, orderStatus, orderId);
-        PageInfo<OrderPO> pageInfo = new PageInfo<>(orderPOList);
-
-        if (pageInfo.getTotal() > 0) {
-            page.setList(pageInfo.getList());
-            page.setTotal(pageInfo.getTotal());
-            return Result.success(page);
-        }
-        return Result.success(null);
+        List<OrderDTO> orderPOList = orderMapper.listOrder(userId, orderStatus, orderId);
+        PageInfo<OrderDTO> pageInfo = new PageInfo<>(orderPOList);
+        //分页数据返回
+        page.setList(pageInfo.getList());
+        page.setTotal(pageInfo.getTotal());
+        return Result.success(page);
     }
 
     @Override
@@ -65,8 +57,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result updateOrderByIdList(List<Integer> list, String orderStatus) {
+    public Result updateOrderByIdList(List<Long> list, String orderStatus) {
         orderMapper.updateOrderByIdList(list, orderStatus);
+        //生成订单状态改变记录
+        List<OrderStatus> orderStatusList = new ArrayList<>();
+        for(Long id: list) {
+            OrderStatus orderStatusPO = new OrderStatus();
+            orderStatusPO.setOrderId(id);
+            orderStatusPO.setStatus(orderStatus);
+            orderStatusList.add(orderStatusPO);
+        }
+        orderStatusService.insertOrderStatusList(orderStatusList);
         return Result.success();
     }
 
@@ -131,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
 
         //若是详单插入成功，则将用户的购物车清空
         if(detailResult > Constant.RETURN_DATA_COUNT) {
-            int deleteShopCart = shopCartService.deleteShopCartByUserId(1);
+            int deleteShopCart = shopCartService.deleteShopCartByUserId(userId);
         }
         //插入一条订单状态记录
         OrderStatus orderStatus = new OrderStatus();
@@ -157,6 +158,50 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result cancelOrder(Long id) {
+        int orderResult;
+        String currentStatus;
+        //获取当前订单信息
+        OrderPO orderPO = orderMapper.selectByPrimaryKey(id);
+        //判断订单现在状态，若是待支付状态，则只需要进行订单状态的改变
+        if(Constant.Order_STATUS.wait_pay.getIndex().equals(orderPO.getOrderStatus())) {
+            //进行订单的支付状态改变,改成已取消
+            orderResult = orderMapper.editOrderStatus(id, Constant.Order_STATUS.cancelled.getIndex());
+            currentStatus = Constant.Order_STATUS.cancelled.getIndex();
+        }
+        //若是处于已支付，即待接单状态，则需要将商品库存回退，再进行取消订单的操作。
+        else if(Constant.Order_STATUS.wait_receive.getIndex().equals(orderPO.getOrderStatus())) {
+            //获取当前订单下的详单信息
+            List<Long> orderIdList = new ArrayList<>();
+            orderIdList.add(id);
+            List<OrderDetail> orderDetailList = orderDetailService.listOrderDetailByOrderIdList(orderIdList);
+
+            //进行商品库存与销量的更新
+            List<Integer> list = new ArrayList<>();
+            List<Integer> countList = new ArrayList<>();
+            for(int count = 0; count < orderDetailList.size(); count++) {
+                list.add(orderDetailList.get(count).getGoodId());
+                countList.add(orderDetailList.get(count).getGoodCount());
+            }
+            int result = productModuleService.updateProductStorage(list, countList);
+            //进行订单的支付状态改变,改成已取消
+            orderResult = orderMapper.editOrderStatus(id, Constant.Order_STATUS.cancelled.getIndex());
+            currentStatus = Constant.Order_STATUS.cancelled.getIndex();
+        }
+        //若是处于其他状态，则需要管理员的审核才能取消订单
+        else {
+            orderResult = orderMapper.editOrderStatus(id, Constant.Order_STATUS.in_cancel.getIndex());
+            currentStatus = Constant.Order_STATUS.in_cancel.getIndex();
+        }
+
+        //修改状态成功，则进行订单状态改变的记录
+        if(orderResult > Constant.RETURN_DATA_COUNT) {
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setOrderId(id);
+            orderStatus.setStatus(currentStatus);
+            orderStatusService.insertOrderStatus(orderStatus);
+            return Result.success();
+        }
+
 
         return null;
     }
@@ -199,9 +244,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result listOrderByCurrentId(Integer userId, Page<OrderPO> page) {
+    public Result listOrderByCurrentId(Integer userId, Page<OrderPO> page, String orderStatus) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        List<OrderPO> orderPOList = orderMapper.listOrderByCurrentId(userId);
+        List<OrderPO> orderPOList = orderMapper.listOrderByCurrentId(userId, orderStatus);
         PageInfo<OrderPO> pageInfo = new PageInfo<>(orderPOList);
 
         if (orderPOList.size() > 0) {
@@ -286,4 +331,32 @@ public class OrderServiceImpl implements OrderService {
 
         return Result.success(orderDetailDTO);
     }
+
+    @Override
+    public Result cancelOrderList(List<Long> idList, String orderStatus) {
+        //获取当前订单下的详单信息
+        List<OrderDetail> orderDetailList = orderDetailService.listOrderDetailByOrderIdList(idList);
+
+        //进行商品库存与销量的更新
+        List<Integer> list = new ArrayList<>();
+        List<Integer> countList = new ArrayList<>();
+        for(int count = 0; count < orderDetailList.size(); count++) {
+            list.add(orderDetailList.get(count).getGoodId());
+            countList.add(orderDetailList.get(count).getGoodCount());
+        }
+        int result = productModuleService.updateProductStorage(list, countList);
+        //进行订单的支付状态改变,改成已取消
+        orderMapper.updateOrderByIdList(idList, Constant.Order_STATUS.cancelled.getIndex());
+        //插入订单改变记录
+        List<OrderStatus> orderStatusList = new ArrayList<>();
+        for(int count = 0; count < idList.size(); count++) {
+            OrderStatus orderStatus1 = new OrderStatus();
+            orderStatus1.setOrderId(idList.get(count));
+            orderStatus1.setStatus(Constant.Order_STATUS.cancelled.getIndex());
+            orderStatusList.add(orderStatus1);
+        }
+        Integer insertResult = orderStatusService.insertOrderStatusList(orderStatusList);
+        return Result.success();
+    }
+
 }

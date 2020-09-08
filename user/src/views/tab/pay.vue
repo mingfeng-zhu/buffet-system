@@ -63,10 +63,10 @@ export default {
        this.params.id = this.orderid
        this.params.idList = this.idlist
        this.params.goodCountList = this.goodcountlist
-      let that = this
-       this.$api.payOrder(this.params).then(function (response){
-         that.paycode = response.data.code
-       })
+       // let that = this
+       // this.$api.payOrder(this.params).then(function (response){
+       //   that.paycode = response.data.code
+       // })
        if(this.paycode === '2000') {
          this.$router.push("/success")
        }else {

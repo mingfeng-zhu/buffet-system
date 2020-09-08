@@ -64,7 +64,7 @@
       #{status,jdbcType=INTEGER}, #{productSpecificationPicture, jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="productSpecificationId" keyColumn="product_specification_id" parameterType="cn.ffcs.buffet.model.po.ProductSpecificationPO" >
     insert into product_specification
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="productSpecificationId != null" >
@@ -85,7 +85,7 @@
       <if test="status != null" >
         status,
       </if>
-      <if test="product_specification_picture != null" >
+      <if test="productSpecificationPicture != null" >
         product_specification_picture,
       </if>
       <if test="createBy != null" >
@@ -236,5 +236,19 @@
 
   <select id="selectStatusByProductId" resultType="INTEGER">
     select max(status) from product_specification where product_id = #{productId}
+  </select>
+
+  <select id="selectBySpecification" resultType="cn.ffcs.buffet.model.po.ProductSpecificationPO">
+    select
+    <include refid="Base_Column_List"/>
+    from product_specification
+    where product_id = #{productId} and product_specification like concat('%', #{productSpecification}, '%')
+  </select>
+
+  <select id="selectByProductId" resultType="cn.ffcs.buffet.model.po.ProductSpecificationPO">
+    select
+    <include refid="Base_Column_List"/>
+    from product_specification
+    where product_id = #{productId} and status in (1, 2)
   </select>
 </mapper>

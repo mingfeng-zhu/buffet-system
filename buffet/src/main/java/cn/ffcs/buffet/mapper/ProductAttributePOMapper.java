@@ -1,5 +1,6 @@
 package cn.ffcs.buffet.mapper;
 
+import cn.ffcs.buffet.model.dto.ProductAttrManagerDTO;
 import cn.ffcs.buffet.model.dto.ProductAttributeDTO;
 import cn.ffcs.buffet.model.po.ProductAttributePO;
 import org.apache.ibatis.annotations.Param;
@@ -27,4 +28,6 @@ public interface ProductAttributePOMapper {
     int updateByPrimaryKey(ProductAttributePO record);
 
     List<ProductAttributeDTO> selectProductAttributeListByProductId(@Param("productId") Integer productId);
+
+    List<ProductAttrManagerDTO> selectAttrAndValueByProductId(@Param("productId") Integer productId);
 }

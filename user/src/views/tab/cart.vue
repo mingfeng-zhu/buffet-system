@@ -10,7 +10,7 @@
                   :value="item.shopCart.id"
                   v-model="item.isChecked"
                   checked-color="#15C481"
-                  @click="chooseChange(item)"
+                  @click="chooseChange()"
           ></van-checkbox>
           <div class="shopdetail">
             <div class="detailimg">
@@ -118,12 +118,13 @@
             async listShopCartByUserId() {
                const {data} = await this.$api.listShopCartByUserId({userId:1})
                 this.goods=data.data
+                console.log(this.goods)
                 this.goods.forEach(item=> {
                     item.isChecked=true
                 })
             },
             // checkbox的change事件
-            chooseChange(item) {
+            chooseChange() {
                 //CheckBox自带改变isChecked
                 // item.isChecked=!item.isChecked
                 this.setSelectedData()
@@ -200,7 +201,9 @@
                 let cartgoods = [];
                 this.goods.forEach(function(item) {
                     if (item.isChecked) {
-                        cartgoods.push({ id:item.id,price:item.price,title:item.title,num:item.num});
+                        cartgoods.push({ id:item.productSpecificationDTO.productSpecificationId,price:item.productSpecificationDTO.productPrice,
+                          title:item.productSpecificationDTO.productPO.productName,num:item.shopCart.goodCount,
+                          productimg:item.productSpecificationDTO.productSpecificationPicture,specification:item.productSpecificationDTO.productSpecification});
                     }
                 });
                 if (cartgoods.length === 0) {

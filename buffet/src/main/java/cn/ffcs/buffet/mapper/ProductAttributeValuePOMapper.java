@@ -27,4 +27,13 @@ public interface ProductAttributeValuePOMapper {
     int updateByPrimaryKey(ProductAttributeValuePO record);
 
     List<ProductAttributeValueDTO> selectProductAttributeValueByProductAttributeId(@Param("productAttributeId") Integer productAttributeId);
+
+    /**
+     * 根虎属性id删除属性值
+     * @param productAttributeId
+     * @return
+     */
+    int deleteByProductAttributeId(@Param("productAttributeId") Integer productAttributeId);
+
+    List<ProductAttributeValuePO> selectValueByProductAttributeId(@Param("productAttributeId") Integer productAttributeId);
 }
