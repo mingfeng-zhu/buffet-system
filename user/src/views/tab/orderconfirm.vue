@@ -116,12 +116,11 @@ export default {
     async orderSubmit(){
       //调用订单生成接口  post方法 返回订单id
       this.params = {}
-      // if (this.picked === '1'){
-      //   this.params.addressId = '0';
-      // }else {
-      //   this.params.addressId = this.address.id
-      // }
-      this.params.addressId = '1';
+      if (this.picked === '1'){
+        this.params.addressId = '0';
+      }else {
+        this.params.addressId = this.address.id
+      }
       this.params.totalMoney = this.totalprice
       let idlist = []
       let goodcountlist = []

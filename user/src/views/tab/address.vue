@@ -27,7 +27,6 @@
         },
       async mounted() {
           this.selected = sessionStorage.getItem('selected')
-          sessionStorage.setItem('selected','0')
           let user = JSON.parse(localStorage.getItem('userPo'))
           let userId = user.userId
           let userInfo = await this.$api.getUserInfo()
@@ -78,7 +77,7 @@
                 let info = JSON.stringify(this.list[index])
                 sessionStorage.setItem('address', info)
                 sessionStorage.setItem('selected','0')
-                this.$router.back()
+                this.$router.push('/orderconfirm')
               }
             }
         },

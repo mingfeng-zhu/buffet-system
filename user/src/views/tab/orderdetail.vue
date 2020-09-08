@@ -213,14 +213,13 @@ export default {
       width: 100%;
       display: flex;
       flex-direction: column;
-      margin-bottom: 100px;
       li{
         width: 100%;
         height: 120px;
         background-color: #fff;
         display: flex;
         flex-direction: row;
-        margin-bottom: 12px;
+        margin-bottom: 3px;
         .cartgoodDetail{
           width: 100%;
           display: flex;
