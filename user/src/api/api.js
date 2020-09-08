@@ -50,6 +50,8 @@ const updateUser = (p) => axios.post('/user/updateUser',p)
 const insert = (p) => axios.post('address/insert',p)
 // 编辑地址
 const update = (p) => axios.post('address/update',p)
+// 删除地址
+const deleteAddress = (p) => axios.delete(`address/delete/${p}`)
 export default {
     getProductCategoryList,
     getAllProductList,
@@ -75,5 +77,6 @@ export default {
     insert,
     addressList,
     getAddressById,
-    update
+    update,
+    deleteAddress
 }

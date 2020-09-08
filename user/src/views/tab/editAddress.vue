@@ -68,7 +68,9 @@
                 this.$router.push('/address')
             },
             onDelete() {
-                // Toast('delete');
+                this.$api.deleteAddress(this.$route.query.id)
+                Toast('删除地址成功')
+                this.$router.push('/address')
             }
         },
     };

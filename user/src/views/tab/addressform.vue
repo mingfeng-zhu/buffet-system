@@ -6,13 +6,14 @@
             @click-left="onClickLeft"
     />
    <van-address-edit
-     :area-list="areaList"
-     show-set-default
-     show-search-result
-     :search-result="searchResult"
-     :area-columns-placeholder="['请选择', '请选择', '请选择']"
-     @save="onSave"
-     @delete="onDelete"
+           :address-info="addressInfo"
+           :area-list="areaList"
+           show-set-default
+           show-search-result
+           :search-result="searchResult"
+           :area-columns-placeholder="['请选择', '请选择', '请选择']"
+           @save="onSave"
+           @delete="onDelete"
    />
   </div>
 </template>
@@ -24,6 +25,9 @@
       return {
         areaList,
         searchResult: [],
+          addressInfo:{
+              isDefault:true
+          },
       };
     },
     methods: {
