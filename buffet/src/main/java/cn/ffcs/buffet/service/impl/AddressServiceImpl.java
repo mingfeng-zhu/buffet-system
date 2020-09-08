@@ -5,12 +5,15 @@ import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.mapper.AddressPOMapper;
 import cn.ffcs.buffet.mapper.UserPOMapper;
 import cn.ffcs.buffet.model.po.AddressPO;
+import cn.ffcs.buffet.model.po.UserPO;
 import cn.ffcs.buffet.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,15 +51,35 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public int insert(AddressPO record) {
-        record.setUserId(TokenUtil.getUserIdAndUserTelOfToken().getUserId());
+        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
+        record.setUserId(userId);
         record.setCreateBy(TokenUtil.getUserIdAndUserTelOfToken().getUserId().toString());
         record.setUpdateBy(TokenUtil.getUserIdAndUserTelOfToken().getUserId().toString());
-        return addressPOMapper.insert(record);
+        record.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        record.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        addressPOMapper.insert(record);
+        // 更新默认地址信息
+        if(record.getDefaultAddress() == true){
+            UserPO userPO = new UserPO();
+            userPO.setUserId(userId);
+            userPO.setDefaultAddressId(record.getId());
+            userPOMapper.updateUser(userPO);
+        }
+
+        return 1;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public int update(AddressPO record) {
-        return addressPOMapper.update(record);
+        addressPOMapper.update(record);
+        if(record.getDefaultAddress() == true){
+            UserPO userPO = new UserPO();
+            userPO.setUserId(TokenUtil.getUserIdAndUserTelOfToken().getUserId());
+            userPO.setDefaultAddressId(record.getId());
+            userPOMapper.updateUser(userPO);
+        }
+
+        return 1;
     }
 }

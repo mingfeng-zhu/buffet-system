@@ -44,8 +44,18 @@ const cancelOrder = (p) => axios.post('/order/cancelOrder',p)
 const editOrderStatus = (p) => axios.post('/order/editOrderStatus',p)
 // 获取用户信息
 const getUserInfo = (p) => axios.get('/user/getUserInfo', { params: p })
+// 获取地址列表
+const addressList = (p) => axios.get('/address/list', { params: p })
+// 获取某一个地址
+const getAddressById = (p) => axios.get('address/getAddressById', { params: p })
 //修改用户信息
 const updateUser = (p) => axios.post('/user/updateUser',p)
+// 新增地址
+const insert = (p) => axios.post('address/insert',p)
+// 编辑地址
+const update = (p) => axios.post('address/update',p)
+// 删除地址
+const deleteAddress = (p) => axios.delete(`address/delete/${p}`)
 export default {
     getProductCategoryList,
     getAllProductList,
@@ -69,5 +79,10 @@ export default {
     cancelOrder,
     editOrderStatus,
     getUserInfo,
-    updateUser
+    updateUser,
+    insert,
+    addressList,
+    getAddressById,
+    update,
+    deleteAddress
 }

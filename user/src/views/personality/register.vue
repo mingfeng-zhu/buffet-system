@@ -105,6 +105,9 @@
 
 <script>
     import { Dialog } from 'vant'
+    import md5 from 'js-md5'
+    import {Toast} from 'vant';
+
     // import axios from 'axios'
     import upLoaderImg from "../../api/upLoaderImg"
     export default {
@@ -176,14 +179,18 @@
                 console.log('submit', values);
                 this.params.userImg=this.uploadImg
                 this.params.userName=values.name
-                this.params.userPassword=this.password
+                this.params.userPassword=md5(this.password)
                 this.params.userSex=Number(this.sex)
                 this.params.userTel=this.tel
                 this.params.code=this.verifycode
                 console.log('this.params', this.params)
                 let { data } = await this.$api.signUp(this.params)
                 console.log(196, data)
-                this.$router.push('/login')
+                if (data.code===2000){
+                    this.$router.push('/login')
+                } else {
+                    Toast(data.message)
+                }
             },
             onClickLeft() {
                 this.$router.back()

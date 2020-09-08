@@ -44,7 +44,7 @@
         name: 'person',
         data() {
             return {
-                name: '123',
+                name: '',
                 money: 3000,
                 user:{},
                 img:''
@@ -53,6 +53,7 @@
         mounted() {
             this.user = JSON.parse(localStorage.getItem('userPo'))
             this.name = this.user.userName
+            console.log('this.user.userImg', this.user.userImg)
             if (this.user.userImg) {
                 this.img = 'http://121.199.49.199:8082'+this.user.userImg
             } else {
