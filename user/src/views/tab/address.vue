@@ -22,26 +22,41 @@
             return {
                 selected:'0',
                 chosenAddressId: '1',
-                list: [
-                    {
-                        id: '1',
-                        name: '张三',
-                        tel: '13000000000',
-                        address: '浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室',
-                        isDefault: true,
-                    },
-                    {
-                        id: '2',
-                        name: '李四',
-                        tel: '1310000000',
-                        address: '浙江省杭州市拱墅区莫干山路 50 号',
-                    },
-                ]
+                list: []
             };
         },
-      mounted() {
-            this.selected = sessionStorage.getItem('selected')
-            sessionStorage.setItem('selected','0')
+      async mounted() {
+          this.selected = sessionStorage.getItem('selected')
+          sessionStorage.setItem('selected','0')
+          let user = JSON.parse(localStorage.getItem('userPo'))
+          let userId = user.userId
+          let userInfo = await this.$api.getUserInfo()
+          let id = userInfo.data.data.defaultAddressId
+          console.log(34, id)
+          // 数据回显
+          let {data} = await this.$api.addressList({userId:userId})
+          console.log(34, data.data)
+          for (let i=0;i<data.data.length;i++) {
+              this.list[i] ={}
+              this.$set(this.list, '[i]', {})
+              this.$set(this.list[i], 'address', data.data[i].address+data.data[i].houseNumber)
+              this.$set(this.list[i], 'id', data.data[i].id)
+              this.$set(this.list[i], 'name', data.data[i].receiverName)
+              this.$set(this.list[i], 'tel', data.data[i].receiverPhone)
+          }
+          // 默认地址的处理
+          this.list.forEach(item=> {
+              if (item.id==id) {
+                  item.isDefault = true
+              }
+          })
+          // 将默认地址置顶
+          this.list.forEach(item=> {
+              if (item.isDefault) {
+                  this.list.unshift(item)
+              }
+              this.list = Array.from(new Set(this.list));
+          })
       },
         methods: {
             onClickLeft() {

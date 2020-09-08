@@ -111,7 +111,6 @@
                     goodCount: 0
                 }
                 await this.$api.addShopCartRecord(param)
-                console.log('删除购物车')
                 this.goods = this.goods.filter(item2=> {
                     return item2.shopCart.id !==value.shopCart.id
                 })
@@ -154,8 +153,7 @@
                     productSpecificationId: item.productSpecificationDTO.productSpecificationId,
                     goodCount: item.shopCart.goodCount
                 }
-                let { postdata } = await this.$api.addShopCartRecord(param)
-                console.log('添加到购物车', postdata)
+                await this.$api.addShopCartRecord(param)
                 // Toast(item.num);
                 if (item.shopCart.goodCount === 0) {
                     this.goods = this.goods.filter(item2=> {
@@ -270,7 +268,7 @@
             //margin-left: 65px;
             //margin-top: -50px;
             .detailimg {
-              width: 64px;
+              width: 68px;
               height: 64px;
               background: rgba(165, 165, 165, 1);
               border-radius: 4px;

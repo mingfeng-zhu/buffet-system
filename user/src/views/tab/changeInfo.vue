@@ -37,6 +37,7 @@
 
 <script>
     import upLoaderImg from "../../api/upLoaderImg";
+    import { Toast } from 'vant'	//引入Toast
 
     export default {
         name: "personInfo",
@@ -55,7 +56,7 @@
                 let { data } = await this.$api.getUserInfo()
                 this.name = data.data.userName
                 if (data.data.userImg) {
-                    this.fileList[0].url = data.data.userImg
+                    this.fileList[0].url = 'http://121.199.49.199:8082'+data.data.userImg
                 }
                 else {
                     this.fileList[0].url = 'https://img.yzcdn.cn/vant/cat.jpeg'
@@ -71,6 +72,13 @@
                     userName: this.name,
                 }
                 await this.$api.updateUser(param)
+                Toast('修改成功')
+                this.$router.push('/')
+                console.log('this.uploadImg', this.uploadImg)
+                let user = JSON.parse(localStorage.getItem('userPo'))
+                user.userImg = this.uploadImg
+                user.userName = this.name
+                localStorage.setItem('userPo', JSON.stringify(user))
             },
             async afterRead(file) {
                 let uploadImg = await upLoaderImg(file.file)//使用上传的方法。file.file

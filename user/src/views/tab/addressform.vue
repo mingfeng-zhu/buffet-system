@@ -7,7 +7,6 @@
     />
    <van-address-edit
      :area-list="areaList"
-     show-delete
      show-set-default
      show-search-result
      :search-result="searchResult"
@@ -19,6 +18,7 @@
 </template>
 <script>
   import areaList from "../../assets/area";
+  import {Toast} from "vant";
   export default {
     data() {
       return {
@@ -30,9 +30,19 @@
         onClickLeft() {
             this.$router.back()
         },
-        onSave(content) {
-            // Toast('save');
+        async onSave(content) {
             console.log(content)
+            let address = {
+                receiverName: content.name,
+                receiverPhone: content.tel,
+                houseNumber: content.addressDetail,
+                areaCode: content.areaCode,
+                address: content.province + ' ' + content.city + ' ' + content.county,
+                defaultAddress:content.isDefault
+            }
+            await this.$api.insert(address)
+            Toast('新增地址成功')
+            this.$router.push('/address')
         },
         onDelete() {
             // Toast('delete');

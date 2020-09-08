@@ -42,6 +42,8 @@
 </template>
 
 <script>
+    import md5 from 'js-md5'
+    import {Toast} from 'vant';
     export default {
         name: 'Login',
         data() {
@@ -61,17 +63,17 @@
             async onSubmit(values) {
                 console.log('submit', values);
                 this.params = {}
-                // this.params.userImg=this.uploadImg
-                // this.params.userName=this.username
-                this.params.userPassword=this.password
-                // this.params.userSex=Number(this.sex)
+                this.params.userPassword=md5(this.password)
                 this.params.userTel=this.tel
-                // this.params.code=this.verifycode
-                console.log('this.params', this.params)
                 let { data } = await this.$api.login(this.params)
-                localStorage.setItem('token', data.data.token)
-                localStorage.setItem('userPo', JSON.stringify(data.data.userPO))
-                this.$router.push('/')
+                if(data.code===2000) {
+                    localStorage.setItem('token', data.data.token)
+                    localStorage.setItem('userPo', JSON.stringify(data.data.userPO))
+                    this.$router.push('/')
+                } else {
+                    Toast(data.message)
+                }
+
             },
             onClickLeft() {
                 this.$router.back()

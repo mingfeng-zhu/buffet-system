@@ -24,7 +24,7 @@ instance.interceptors.response.use(
     response => response.status === 200 ? Promise.resolve(response) : Promise.reject(response),
     error => {
       console.log('_______________',error.response)
-    if (error.response.status == 401) {
+    if (error.response.code == 401) {
         // Toast('用户未登录');
     }else if(error.response.status == 403){
         // Toast('登录过期，请重新登录');

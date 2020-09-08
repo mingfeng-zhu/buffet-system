@@ -32,6 +32,11 @@ const router = new VueRouter({
             component:() => import('../views/tab/changeInfo.vue')
         },
         {
+            path: '/changePassword',
+            name:'changeInfo',
+            component:() => import('../views/personality/changePassword.vue')
+        },
+        {
             path: '/',
             name: 'layOut',
             component: () => import('../views/home/layOut.vue'),

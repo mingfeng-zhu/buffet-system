@@ -144,9 +144,8 @@
                         productSpecificationId: productSpecificationId,
                         goodCount: this.num
                     }
-                    let {postdata} = await this.$api.addShopCartRecord(param)
+                    await this.$api.addShopCartRecord(param)
                     this.$router.push('/cart')
-                    console.log('添加到购物车', postdata)
                 }
                 else {
                     Dialog.confirm({
@@ -211,9 +210,7 @@
                         productSpecificationId: productSpecificationId,
                         goodCount: item.productNumOfCart
                     }
-                    console.log('sub购物车', param)
-                    let { postdata } = await this.$api.addShopCartRecord(param)
-                    console.log('添加到购物车', postdata)
+               await this.$api.addShopCartRecord(param)
                 }
             },
             async add(item) {
@@ -227,8 +224,7 @@
                             productSpecificationId: productSpecificationId,
                             goodCount: item.productNumOfCart
                         }
-                        let { postdata } = await this.$api.addShopCartRecord(param)
-                        console.log('添加到购物车', postdata)
+                       await this.$api.addShopCartRecord(param)
                     } else {
                         Toast(`该商品仅剩${item.productStorage}件`);
                     }
