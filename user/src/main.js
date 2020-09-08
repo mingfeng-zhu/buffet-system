@@ -17,6 +17,13 @@ Vue.config.productionTip = false
 Vue.prototype.$utils = utils
 Vue.prototype.$api = api
 
+// eslint-disable-next-line no-unused-vars
+router.afterEach((to, from,next)=>{
+
+  window.scrollTo(0,0)
+
+})
+
 
 new Vue({
   render: h => h(App),

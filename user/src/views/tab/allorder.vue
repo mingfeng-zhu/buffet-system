@@ -8,31 +8,42 @@
     <div class="orderList" v-if="orders.length>0">
       <ul>
         <van-swipe-cell>
-          <li v-for="item in orders" :key="item.id">
-            <div class="orderDetail" @click="orderdetail(item.orderid,item.ordertitle,item.totalprice,item.status)">
-              <div class="orderId">订单号：{{item.orderid}}</div>
-              <div class="orderTitle van-multi-ellipsis">{{item.ordertitle}}</div>
-              <div class="orderPrice">￥{{item.totalprice}}</div>
+          <li v-for="(item,index) in orders" :key="index">
+            <div class="orderDetail" @click="orderdetail(item)">
+              <div class="orderId">订单编号：{{item.orderPO.orderId}}</div>
+              <div class="orderTitle van-multi-ellipsis">
+                  <span
+                      v-for="(item2, index) in item.orderDetailAndProductDTO"
+                      :key="index"
+                  >
+                     {{item2.productSpecificationDTO.productPO.productName}}*{{item2.orderDetail.goodCount}}
+                  </span>
+              </div>
+              <div class="orderPrice">￥{{item.orderPO.totalMoney}}</div>
             </div>
             <div class="orderStatus">
               <div class="status">
-                <div class="orderStatus" v-if="item.status === 0">已取消</div>
-                <div class="orderStatus" v-if="item.status === 1">待支付</div>
-                <div class="orderStatus" v-if="item.status === 2">待接单</div>
-                <div class="orderStatus" v-if="item.status === 3">制作中</div>
-                <div class="orderStatus" v-if="item.status === 4">派送中，待收货</div>
-                <div class="orderStatus" v-if="item.status === 5">已确认收货，待评价</div>
-                <div class="orderStatus" v-if="item.status === 6">已评价</div>
-                <div class="orderStatus" v-if="item.status === 7">取消中</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '0'">已取消</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '1'">待支付</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '2'">待接单</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '3'">待配送</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '4'">配送中，待收货</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '5'">已收货，待评价</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '6'">已评价</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '7'">取消中</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '8'">超时未支付</div>
               </div>
-              <van-button v-if="item.status === 1" round type="danger" text="取消订单" @click="cancle(item.orderid)"/>
-              <van-button v-if="item.status === 1" round type="danger" text="去支付" @click="pay(item.orderid,item.ordertitle,item.totalprice)"/>
-              <van-button v-if="item.status === 4" round type="danger" text="确认收货" @click="receive()"/>
-              <van-button v-if="item.status === 5" round type="danger" text="去评价" @click="evaluate()"/>
+              <van-button v-if="item.orderPO.orderStatus === '1' || item.orderPO.orderStatus === '2' || item.orderPO.orderStatus === '3' || item.orderPO.orderStatus === '4'" round size="small" plain text="取消订单" @click="cancle(item.orderPO.id)"/>
+              <van-button v-if="item.orderPO.orderStatus === '1'" round size="small" type="danger" text="去支付" @click="pay(item)"/>
+              <van-button v-if="item.orderPO.orderStatus === '4'" round size="small" type="danger" text="确认收货" @click="receive(item.orderPO.id)"/>
+              <van-button v-if="item.orderPO.orderStatus === '5'" round size="small" type="danger" text="去评价" @click="evaluate(item.orderPO.id)"/>
             </div>
           </li>
         </van-swipe-cell>
       </ul>
+    </div>
+    <div class="getmore">
+      <van-button square plain hairline type="default" text="加载更多" @click="getMore()" style="width: 100%" v-if="hasmore === 'true'"/>
     </div>
   </div>
 </template>
@@ -42,104 +53,106 @@ export default {
   name: "allorder",
   data(){
     return{
-      orders:[
-        {
-          orderid:'1',
-          ordertitle:'标题1',
-          totalprice: 110,
-          status:0
-        },
-        {
-          orderid:'2',
-          ordertitle:'标题2',
-          totalprice: 210,
-          status:1
-        },
-        {
-          orderid:'3',
-          ordertitle:'标题3',
-          totalprice: 310,
-          status:7
-        },
-        {
-          orderid:'4',
-          ordertitle:'标题4',
-          totalprice: 110,
-          status:2
-        },
-        {
-          orderid:'5',
-          ordertitle:'标题5',
-          totalprice: 210,
-          status:3
-        },
-        {
-          orderid:'6',
-          ordertitle:'标题6',
-          totalprice: 310,
-          status:4
-        },
-        {
-          orderid:'7',
-          ordertitle:'标题7',
-          totalprice: 110,
-          status:5
-        },
-        {
-          orderid:'8',
-          ordertitle:'标题8',
-          totalprice: 210,
-          status:6
-        }
-      ]
+      pageIndex:1,
+      orders:[],
+      hasmore:'false',
     }
   },
-  mounted() {
-    //this.getOrders()
+  async created() {
+    await this.getOrders()
+    console.log(this.orders)
   },
   methods:{
     onClickLeft(){
       this.$router.back()
     },
-    cancle(orderid){
+    async cancle(id){
       //调用订单取消接口
       this.params = {}
-      this.params.id = orderid
-      // this.$api.cancelOrder(this.params)
-      location.reload()
+      this.params.id = id
+      await this.$api.cancelOrder(this.params)
       location.reload()
     },
-    pay(id,title,price){
-      sessionStorage.setItem('orderid',id)
+    pay(item){
+      sessionStorage.setItem('orderid',item.orderPO.id)
+      let title = ''
+      let idlist = []
+      let goodcountlist = []
+      for(let i = 0;i<item.orderDetailAndProductDTO.length;i++){
+        title += item.orderDetailAndProductDTO[i].productSpecificationDTO.productPO.productName+'*'+item.orderDetailAndProductDTO[i].orderDetail.goodCount+' '
+        idlist.push(item.orderDetailAndProductDTO[i].orderDetail.goodId)
+        goodcountlist.push(item.orderDetailAndProductDTO[i].orderDetail.goodCount)
+      }
       sessionStorage.setItem('ordertitle',title)
-      sessionStorage.setItem('totalprice',price)
+      sessionStorage.setItem('totalprice',item.orderPO.totalMoney)
+      sessionStorage.setItem('idlist',JSON.stringify(idlist))
+      sessionStorage.setItem('goodcountlist',JSON.stringify(goodcountlist))
       this.$router.push('/pay')
     },
-    receive(){
-      //调用收货接口 将status更新为2
+    async receive(id){
+      //将status更新为5
+      this.params={}
+      this.params.id = id
+      this.params.orderStatus = '5'
+      await this.$api.editOrderStatus(this.params)
       //刷新页面
       location.reload()
     },
-    evaluate(){
-      //调用评价接口 status更新为3
+    async evaluate(id){
+      //调用评价接口 status更新为6
+      this.params={}
+      this.params.id = id
+      this.params.orderStatus = '6'
+      await this.$api.editOrderStatus(this.params)
       //刷新页面
       location.reload()
     },
-    //获取待支付订单列表
-    getOrders(){
-      //调用订单获取接口
-      this.params = {}
-      // let that = this
-      // this.$api.getOrder(this.params).then(function (response){
-      //   that.orders = response.data.data
-      // })
+    //获取所有订单列表
+    async getOrders(){
+      // 调用订单获取接口
+      let that = this
+      await this.$api.getOrder({pageNum:this.pageIndex,pageSize:5}).then(function (response){
+        that.orders = that.orders.concat(response.data.data)
+        if(response.data.data !== null){
+          that.hasmore = 'true'
+        }
+        if(response.data.data.length < 5){
+          that.hasmore = 'false'
+        }
+      })
+      if(this.hasmore !== 'false') {
+        await this.$api.getOrder({
+          pageNum: this.pageIndex + 1,
+          pageSize: 5
+        }).then(function (response) {
+          if (response.data.data === null) {
+            that.hasmore = 'false'
+          }
+        })
+      }
     },
-    orderdetail(orderid,ordertitle,totalprice,status){
-      sessionStorage.setItem('orderid',orderid)
-      sessionStorage.setItem('ordertitle',ordertitle)
-      sessionStorage.setItem('totalprice',totalprice)
-      sessionStorage.setItem('status',status)
+    orderdetail(item){
+      sessionStorage.setItem('orderid',item.orderPO.id)
+      sessionStorage.setItem('serialnumber',item.orderPO.orderId)
+      let title = ''
+      let idlist = []
+      let goodcountlist = []
+      for(let i = 0;i<item.orderDetailAndProductDTO.length;i++){
+        title += item.orderDetailAndProductDTO[i].productSpecificationDTO.productPO.productName+'*'+item.orderDetailAndProductDTO[i].orderDetail.goodCount+' '
+        idlist.push(item.orderDetailAndProductDTO[i].orderDetail.goodId)
+        goodcountlist.push(item.orderDetailAndProductDTO[i].orderDetail.goodCount)
+      }
+      sessionStorage.setItem('ordertitle',title)
+      sessionStorage.setItem('totalprice',item.orderPO.totalMoney)
+      sessionStorage.setItem('status',item.orderPO.orderStatus)
+      sessionStorage.setItem('idlist',JSON.stringify(idlist))
+      sessionStorage.setItem('goodcountlist',JSON.stringify(goodcountlist))
+      sessionStorage.setItem('cartgoods',JSON.stringify(item.orderDetailAndProductDTO))
       this.$router.push('/orderdetail')
+    },
+    getMore(){
+      this.pageIndex++
+      this.getOrders()
     },
   }
 }
@@ -161,14 +174,13 @@ export default {
       width: 100%;
       display: flex;
       flex-direction: column;
-      margin-bottom: 100px;
       li{
         width: 100%;
-        height: 130px;
+        height: 125px;
         background-color: #fff;
         display: flex;
         flex-direction: column;
-        margin-bottom: 12px;
+        margin-bottom: 3px;
         .orderDetail{
           width: 100%;
           display: flex;
@@ -217,6 +229,9 @@ export default {
         }
       }
     }
+  }
+  .getmore{
+    margin-bottom: 50px;
   }
 }
 </style>

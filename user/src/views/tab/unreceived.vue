@@ -8,16 +8,29 @@
     <div class="orderList" v-if="orders.length>0">
       <ul>
         <van-swipe-cell>
-          <li v-for="item in orders" :key="item.id">
-            <div class="orderDetail" @click="orderdetail(item.orderid,item.ordertitle,item.totalprice,item.status)">
-              <div class="orderId">订单号：{{item.orderid}}</div>
-              <div class="orderTitle van-multi-ellipsis">{{item.ordertitle}}</div>
-              <div class="orderPrice">￥{{item.totalprice}}</div>
+          <li v-for="(item,index) in orders" :key="index">
+            <div class="orderDetail" @click="orderdetail(item)">
+              <div class="orderId">订单编号：{{item.orderPO.orderId}}</div>
+              <div class="orderTitle van-multi-ellipsis">
+                  <span
+                      v-for="(item2, index) in item.orderDetailAndProductDTO"
+                      :key="index"
+                  >
+                     {{item2.productSpecificationDTO.productPO.productName}}*{{item2.orderDetail.goodCount}}
+                  </span>
+              </div>
+              <div class="orderPrice">￥{{item.orderPO.totalMoney}}</div>
             </div>
-            <van-button round type="danger" text="确认收货" @click="receive()"/>
+            <div class="orderStatus">
+              <van-button round size="small" plain text="取消订单" @click="cancle(item.orderPO.id)"/>
+              <van-button round size="small" type="danger" text="确认收货" @click="receive(item.orderPO.id)"/>
+            </div>
           </li>
         </van-swipe-cell>
       </ul>
+    </div>
+    <div class="getmore">
+      <van-button square plain hairline type="default" text="加载更多" @click="getMore()" style="width: 100%" v-if="hasmore === 'true'"/>
     </div>
   </div>
 </template>
@@ -27,57 +40,81 @@ export default {
   name: "unreceived",
   data(){
     return{
-      orderStatus:'',
-      orders:[
-        {
-          orderid:'1',
-          ordertitle:'标题1',
-          totalprice: 110,
-          status:4
-        },
-        {
-          orderid:'2',
-          ordertitle:'标题2',
-          totalprice: 210,
-          status:4
-        },
-        {
-          orderid:'3',
-          ordertitle:'标题3',
-          totalprice: 310,
-          status:4
-        }
-    ]
+      pageIndex:1,
+      orders:[],
+      hasmore:'false',
     }
   },
-  mounted() {
-    // this.getOrders()
+  async created() {
+    await this.getOrders()
   },
   methods:{
     onClickLeft(){
       this.$router.back()
     },
-    receive(){
-      //调用收货接口 将status更新为2
+    async cancle(id){
+      //调用订单取消接口
+      this.params = {}
+      this.params.id = id
+      await this.$api.cancelOrder(this.params)
+      location.reload()
+    },
+    async receive(id){
+      //将status更新为5
+      this.params={}
+      this.params.id = id
+      this.params.orderStatus = '5'
+      await this.$api.editOrderStatus(this.params)
       //刷新页面
       location.reload()
     },
     //获取待收货订单列表
-    getOrders(){
-      //调用订单获取接口   status=1 待收货状态
-      this.params = {}
-      this.params.orderStatus = this.orderStatus
-      // let that = this
-      // this.$api.getOrder(this.params).then(function (response){
-      //   that.orders = response.data.data
-      // })
+    async getOrders(){
+      // 调用订单获取接口   status=4 待支付状态
+      let that = this
+      await this.$api.getOrder({pageNum:this.pageIndex,pageSize:5,orderStatus:'4'}).then(function (response){
+        that.orders = that.orders.concat(response.data.data)
+        if(response.data.data !== null){
+          that.hasmore = 'true'
+        }
+        if(response.data.data.length < 5){
+          that.hasmore = 'false'
+        }
+      })
+      if(this.hasmore !== 'false') {
+        await this.$api.getOrder({
+          pageNum: this.pageIndex + 1,
+          pageSize: 5,
+          orderStatus: '4'
+        }).then(function (response) {
+          if (response.data.data === null) {
+            that.hasmore = 'false'
+          }
+        })
+      }
     },
-    orderdetail(orderid,ordertitle,totalprice,status){
-      sessionStorage.setItem('orderid',orderid)
-      sessionStorage.setItem('ordertitle',ordertitle)
-      sessionStorage.setItem('totalprice',totalprice)
-      sessionStorage.setItem('status',status)
+    orderdetail(item){
+      sessionStorage.setItem('orderid',item.orderPO.id)
+      sessionStorage.setItem('serialnumber',item.orderPO.orderId)
+      let title = ''
+      let idlist = []
+      let goodcountlist = []
+      for(let i = 0;i<item.orderDetailAndProductDTO.length;i++){
+        title += item.orderDetailAndProductDTO[i].productSpecificationDTO.productPO.productName+'*'+item.orderDetailAndProductDTO[i].orderDetail.goodCount+' '
+        idlist.push(item.orderDetailAndProductDTO[i].orderDetail.goodId)
+        goodcountlist.push(item.orderDetailAndProductDTO[i].orderDetail.goodCount)
+      }
+      sessionStorage.setItem('ordertitle',title)
+      sessionStorage.setItem('totalprice',item.orderPO.totalMoney)
+      sessionStorage.setItem('status',item.orderPO.orderStatus)
+      sessionStorage.setItem('idlist',JSON.stringify(idlist))
+      sessionStorage.setItem('goodcountlist',JSON.stringify(goodcountlist))
+      sessionStorage.setItem('cartgoods',JSON.stringify(item.orderDetailAndProductDTO))
       this.$router.push('/orderdetail')
+    },
+    getMore(){
+      this.pageIndex++
+      this.getOrders()
     },
   }
 }
@@ -135,13 +172,20 @@ export default {
             justify-content: flex-end;
           }
         }
-        .van-button{
-          margin-top: 5px;
-          margin-right: 5px;
+        .orderStatus{
+          display: flex;
+          flex-direction: row;
           align-self: flex-end;
+          margin-top: 15px;
+          .van-button{
+            margin-right: 10px;
+          }
         }
       }
     }
+  }
+  .getmore{
+    margin-bottom: 50px;
   }
 }
 </style>

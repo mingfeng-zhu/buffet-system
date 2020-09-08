@@ -8,7 +8,7 @@
     />
     <div class="order">
       <div class="detail">
-        <div class="orderId">订单号:{{orderid}}</div>
+        <div class="orderId">订单编号:{{serialNumber}}</div>
         <div class="orderTitle van-multi-ellipsis">{{ordertitle}}</div>
         <div class="orderPrice">￥{{totalprice}}</div>
       </div>
@@ -17,16 +17,17 @@
           <div class="orderStatus" v-if="status === 0">已取消</div>
           <div class="orderStatus" v-if="status === 1">待支付</div>
           <div class="orderStatus" v-if="status === 2">待接单</div>
-          <div class="orderStatus" v-if="status === 3">制作中</div>
-          <div class="orderStatus" v-if="status === 4">派送中，待收货</div>
-          <div class="orderStatus" v-if="status === 5">已确认收货，待评价</div>
+          <div class="orderStatus" v-if="status === 3">待配送</div>
+          <div class="orderStatus" v-if="status === 4">配送中，待收货</div>
+          <div class="orderStatus" v-if="status === 5">已收货，待评价</div>
           <div class="orderStatus" v-if="status === 6">已评价</div>
           <div class="orderStatus" v-if="status === 7">取消中</div>
+          <div class="orderStatus" v-if="status === 8">超时未支付</div>
         </div>
-        <van-button v-if="status === 1" round type="danger" text="取消订单" @click="cancle()"/>
-        <van-button v-if="status === 1" round type="danger" text="去支付" @click="pay()"/>
-        <van-button v-if="status === 4" round type="danger" text="确认收货" @click="receive()"/>
-        <van-button v-if="status === 5" round type="danger" text="去评价" @click="evaluate()"/>
+        <van-button v-if="status === 1 || status === 2 || status === 3 || status === 4" round size="small" plain text="取消订单" @click="cancle()"/>
+        <van-button v-if="status === 1" round size="small" type="danger" text="去支付" @click="pay()"/>
+        <van-button v-if="status === 4" round size="small" type="danger" text="确认收货" @click="receive()"/>
+        <van-button v-if="status === 5" round size="small" type="danger" text="去评价" @click="evaluate()"/>
       </div>
     </div>
     <div class="cartgoodsList">
@@ -36,21 +37,29 @@
             <div class="cartgoodDetail">
               <div class="detailImg">
                 <img
-                    :src="item.img"
+                    :src="item.productSpecificationDTO.productPO.productPicturePath"
                 />
               </div>
               <div class="detailText">
-                <div class="cartTitle van-multi-ellipsis--l2">{{ item.title }}</div>
+                <div class="cartTitle van-multi-ellipsis--l2">{{ item.productSpecificationDTO.productPO.productName }}</div>
+                <div class="specification">
+                  <span
+                      v-for="(item2, index) in Object.values(JSON.parse(item.productSpecificationDTO.productSpecification))"
+                      :key="index"
+                  >
+                     {{item2}}
+                  </span>
+                </div>
                 <div class="cartpriceNum">
                   <p class="cartPrice">
-                    ¥{{ item.price }}
+                    ¥{{ item.productSpecificationDTO.productPrice }}
                   </p>
                   <p class="cartNum">
-                    数量:{{ item.num }}
+                    数量:{{ item.orderDetail.goodCount }}
                   </p>
                 </div>
                 <div class="cartitemPrice">
-                  ￥:{{item.cartprice}}
+                  ￥{{item.orderDetail.money}}
                 </div>
               </div>
             </div>
@@ -69,72 +78,67 @@ export default {
       orderid:'',
       ordertitle:'',
       totalprice:'',
-      status:1,
-      cartgoods:[
-        {
-          id:0,
-          price: '20.00',
-          title:'标题1',
-          num:4,
-          cartprice:80
-        },
-        {
-          id:1,
-          price: '30.00',
-          title:'标题2',
-          num:4,
-          cartprice:120
-        }
-      ],
+      serialNumber:'',
+      status:'1',
+      idlist:[],
+      goodcountlist:[],
+      cartgoods:[],
     }
   },
   mounted() {
     this.orderid = sessionStorage.getItem('orderid')
+    this.serialNumber = sessionStorage.getItem('serialnumber')
     this.ordertitle = sessionStorage.getItem('ordertitle')
     this.totalprice = sessionStorage.getItem('totalprice')
     this.status = parseInt(sessionStorage.getItem('status'))
+    this.idlist = JSON.parse(sessionStorage.getItem('idlist'))
+    this.goodcountlist = JSON.parse(sessionStorage.getItem('goodcountlist'))
+    this.cartgoods = JSON.parse(sessionStorage.getItem('cartgoods'))
     sessionStorage.setItem('orderid','')
+    sessionStorage.setItem('serialnumber','')
     sessionStorage.setItem('ordertitle','')
     sessionStorage.setItem('totalprice','')
     sessionStorage.setItem('status','')
-    this.getOrders()
+    sessionStorage.setItem('idlist','')
+    sessionStorage.setItem('goodcountlist','')
+    sessionStorage.setItem('cartgoods','')
   },
   methods:{
     onClickLeft() {
       this.$router.back()
     },
-    cancle(){
+    async cancle(){
       //调用订单取消接口
       this.params = {}
       this.params.id = this.orderid
-      // this.$api.cancelOrder(this.params)
-      location.reload()
-      location.reload()
+      await this.$api.cancelOrder(this.params)
+      this.$router.push('/person')
     },
     pay(){
       sessionStorage.setItem('orderid',this.orderid)
       sessionStorage.setItem('ordertitle',this.ordertitle)
       sessionStorage.setItem('totalprice',this.totalprice)
+      sessionStorage.setItem('idlist',JSON.stringify(this.idlist))
+      sessionStorage.setItem('goodcountlist',JSON.stringify(this.goodcountlist))
       this.$router.push('/pay')
     },
-    receive(){
-      //调用收货接口 将status更新为2
-      //刷新页面
-      location.reload()
-    },
-    evaluate(){
-      //调用评价接口 status更新为3
-      //刷新页面
-      location.reload()
-    },
-    getOrders(){
-      //调用订单获取接口
-      this.params = {}
+    async receive(){
+      //将status更新为5
+      this.params={}
       this.params.id = this.orderid
-      // let that = this
-      // this.$api.getOrder(this.params).then(function (response){
-      //   that.order = response.data.data
-      // })
+      this.params.orderStatus = '5'
+      await this.$api.editOrderStatus(this.params)
+      //刷新页面
+      location.reload()
+    },
+    async evaluate(){
+      //调用评价接口 status更新为6
+      this.params={}
+      this.params.id = this.orderid
+      this.params.orderStatus = '6'
+      await this.$api.editOrderStatus(this.params)
+      //刷新页面
+      location.reload()
     },
   }
 }
@@ -212,7 +216,7 @@ export default {
       margin-bottom: 100px;
       li{
         width: 100%;
-        height: 96px;
+        height: 120px;
         background-color: #fff;
         display: flex;
         flex-direction: row;
@@ -225,7 +229,7 @@ export default {
           margin-left: 13px;
           .detailImg{
             width: 20%;
-            height: 70%;
+            height: 60%;
             background: rgba(165, 165, 165, 1);
             border-radius: 4px;
             img {
@@ -248,6 +252,10 @@ export default {
               font-size: 20px;
               color: #212121;
               line-height: 20px;
+            }
+            .specification{
+              margin-top: 5px;
+              font-size: 10px;
             }
             .cartpriceNum{
               width: 100%;
