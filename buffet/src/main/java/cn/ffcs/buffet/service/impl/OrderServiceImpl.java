@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result addOrder(Integer[] idList, BigDecimal totalMoney, BigDecimal[] totalMoneyList, Integer addressId, Integer[] goodCountList) {
+    public Result addOrder(Integer[] idList, BigDecimal totalMoney, BigDecimal[] totalMoneyList, Integer addressId, Integer[] goodCountList, Integer[] shopCartIdList) {
         //生成订单号
         OrderPO order = new OrderPO();
         //雪花算法，生成订单流水号
@@ -131,8 +131,9 @@ public class OrderServiceImpl implements OrderService {
         int detailResult = orderDetailService.insertList(orderDetailList);
 
         //若是详单插入成功，则将用户的购物车清空
+        List<Integer> shopIdList = Arrays.asList(shopCartIdList);
         if(detailResult > Constant.RETURN_DATA_COUNT) {
-            int deleteShopCart = shopCartService.deleteShopCartByUserId(userId);
+            int deleteShopCart = shopCartService.deleteShopCartByIdList(shopIdList);
         }
         //插入一条订单状态记录
         OrderStatus orderStatus = new OrderStatus();

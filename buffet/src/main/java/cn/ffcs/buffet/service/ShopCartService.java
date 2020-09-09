@@ -33,4 +33,11 @@ public interface ShopCartService {
      * @return
      */
     Integer deleteShopCartByUserId(Integer userId);
+
+    /**
+     * 批量删除购物车记录
+     * @param shopIdList 购物车idList
+     * @return
+     */
+    Integer deleteShopCartByIdList(List<Integer> shopIdList);
 }

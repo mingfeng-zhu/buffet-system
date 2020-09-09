@@ -136,7 +136,7 @@ public class OrderController {
     @PostMapping(path = "/addOrder")
     public Result addOrder(@RequestBody AddOrderAO addOrderAO) {
         return orderService.addOrder(addOrderAO.getIdList(), addOrderAO.getTotalMoney(), addOrderAO.getTotalMoneyList()
-                , addOrderAO.getAddressId(), addOrderAO.getGoodCountList());
+                , addOrderAO.getAddressId(), addOrderAO.getGoodCountList(), addOrderAO.getShopCartIdList());
     }
 
     /**

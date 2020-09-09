@@ -50,13 +50,13 @@
     select
     count(*)
     from t_order
-    where order_status &lt;&gt; ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@cancel.getIndex()}
+    where order_status &lt;&gt; ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@cancelled.getIndex()}
   </select>
   <select id="getTotalMoney" resultType="java.math.BigDecimal">
     select
     sum(total_money)
     from t_order
-    where order_status &lt;&gt; ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@cancel.getIndex()}
+    where order_status &lt;&gt; ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@cancelled.getIndex()}
   </select>
   <select id="listOrder" resultMap="OrderListMap">
     select
