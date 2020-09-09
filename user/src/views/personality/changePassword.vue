@@ -38,7 +38,7 @@
                 }
                 await this.$api.updateUser(param)
                Toast('修改密码成功')
-               this.$router.push('/')
+               this.$router.push('/login')
                let user = JSON.parse(localStorage.getItem('userPo'))
                user.userPassword = this.password
                localStorage.setItem('userPo', JSON.stringify(user))

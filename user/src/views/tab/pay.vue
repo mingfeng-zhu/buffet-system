@@ -24,6 +24,7 @@
 
 <script>
 import Vue from 'vue';
+import {Toast} from 'vant';
 import { RadioGroup, Radio } from 'vant';
 Vue.use(Radio);
 Vue.use(RadioGroup);
@@ -76,7 +77,8 @@ export default {
          that.paycode = response.data.code
        })
        if(this.paycode === 2000) {
-         this.$router.push("/success")
+           Toast('支付成功')
+           this.$router.push("/allorder")
        }else {
          this.$router.push("/faild")
        }
