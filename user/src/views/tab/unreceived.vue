@@ -60,10 +60,10 @@ export default {
       location.reload()
     },
     async receive(id){
-      //将status更新为5
+      //将status更新为6
       this.params={}
       this.params.id = id
-      this.params.orderStatus = '5'
+      this.params.orderStatus = '6'
       await this.$api.editOrderStatus(this.params)
       //刷新页面
       location.reload()
