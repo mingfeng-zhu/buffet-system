@@ -13,19 +13,11 @@
         <van-icon name="manager" @click="person()" color="#fff"/>
       </template>
     </van-nav-bar>
-<!--    <van-popup-->
-<!--         v-model="show"-->
-<!--         position="right"-->
-<!--         :style="{ height: '100%',width: '100%' }"-->
-<!--         closeable-->
-<!--    >-->
-<!--    </van-popup>-->
     </van-sticky>
     <router-view></router-view>
     <div class="footer">
       <van-tabbar v-model="active" placeholder="true">
         <van-tabbar-item icon="home-o" @click="$router.push('/')">首页</van-tabbar-item>
-<!--        <van-tabbar-item icon="apps-o">分类</van-tabbar-item>-->
         <van-tabbar-item icon="shopping-cart-o" :info="info" @click="toCart()">购物车</van-tabbar-item>
         <van-tabbar-item icon="user-o" @click="person()">个人中心</van-tabbar-item>
       </van-tabbar>
@@ -52,7 +44,6 @@
         methods: {
             toCart() {
                 this.user = JSON.parse(localStorage.getItem('userPo'))
-                console.log('user', this.user)
                 if (this.user) {
                     this.$router.push('/cart')
                 } else {
@@ -67,16 +58,8 @@
                 //     this.info = window.sessionStorage.getItem('num')
                 // }
             },
-            // showPopup() {
-                // if (!this.username){
-                //   this.$router.push('/login')
-                // } else {
-                //     this.show = true;
-                // }
-            // },
             person() {
                 this.user = JSON.parse(localStorage.getItem('userPo'))
-                console.log('user', this.user)
                 if (this.user) {
                     this.$router.push('/person')
                 } else {

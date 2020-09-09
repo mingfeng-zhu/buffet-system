@@ -66,7 +66,6 @@
                 this.$router.back()
             },
             async certain() {
-                console.log(this.name, this.uploadImg)
                 let param = {
                     userImg: this.uploadImg,
                     userName: this.name,
@@ -74,7 +73,6 @@
                 await this.$api.updateUser(param)
                 Toast('修改成功')
                 this.$router.push('/')
-                console.log('this.uploadImg', this.uploadImg)
                 let user = JSON.parse(localStorage.getItem('userPo'))
                 user.userImg = this.uploadImg
                 user.userName = this.name

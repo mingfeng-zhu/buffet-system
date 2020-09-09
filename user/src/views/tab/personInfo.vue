@@ -67,7 +67,6 @@
                 this.show = true
             },
             confirm() {
-                console.log(this.password)
                 if (md5(this.password) === this.userPassword){
                     this.$router.push('/changePassword')
                 } else {

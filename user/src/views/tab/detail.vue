@@ -141,7 +141,6 @@
             }
         },
         mounted() {
-            console.log(this.$route.query.id)
             this.id = this.$route.query.id
             this.getDetail()
             this.user = JSON.parse(localStorage.getItem('userPo'))
@@ -151,7 +150,6 @@
                 let { data } = await this.$api.getProductDetailAndCommentList(this.id)
                 this.detail = data.data[0]
                this.commentList =  this.detail.commentList
-               console.log('detail', this.detail)
             },
             async sub(item) {
                 if (item.productNumOfCart>0){
@@ -162,9 +160,7 @@
                         productSpecificationId: productSpecificationId,
                         goodCount: item.productNumOfCart
                     }
-                    console.log('sub购物车', param)
                     let { postdata } = await this.$api.addShopCartRecord(param)
-                    console.log('添加到购物车', postdata)
                 }
             },
             async add(item) {
@@ -172,14 +168,12 @@
                     if (item.productNumOfCart<item.productStorage){
                         item.productNumOfCart++
                         let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:item.productId,productSpecification:{}})
-                        console.log('data186', data)
                         let productSpecificationId = data.data.productSpecificationId
                         let param = {
                             productSpecificationId: productSpecificationId,
                             goodCount: item.productNumOfCart
                         }
                         let { postdata } = await this.$api.addShopCartRecord(param)
-                        console.log('添加到购物车', postdata)
                     } else {
                         Toast(`该商品仅剩${item.productStorage}件`);
                     }
@@ -213,8 +207,6 @@
                 this.attributeList=data.data
             },
             async select(id, name, item) {
-                console.log('id', id)
-                console.log('item', item)
                 this.attributeList.forEach(item2 => {
                     if (item2.productAttributeName === name) {
                         this.$set(item2,'selected',item.productAttributeValue)
@@ -228,7 +220,6 @@
                         this.queryspe[item2.productAttributeName]=item2.selected
                     })
                     let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:id,productSpecification:this.queryspe})
-                    console.log('data327', data)
                     if (data.data.numberOfCart) {
                         this.num = data.data.numberOfCart
                     } else {
@@ -241,13 +232,11 @@
                 }
             },
             async onAddCartClicked(item) {
-                console.log('item', item)
                 if (this.user) {
                     let {data} = await this.$api.getSpecificationByProductIdAndSpecification({
                         productId: item,
                         productSpecification: this.productSpecification
                     })
-                    console.log('data186', data)
                     let productSpecificationId = data.data.productSpecificationId
                     let param = {
                         productSpecificationId: productSpecificationId,
@@ -255,7 +244,6 @@
                     }
                     let {postdata} = await this.$api.addShopCartRecord(param)
                     this.$router.push('/cart')
-                    console.log('添加到购物车', postdata)
                 }
                 else {
                     Dialog.confirm({

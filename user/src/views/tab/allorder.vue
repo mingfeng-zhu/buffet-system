@@ -60,7 +60,6 @@ export default {
   },
   async created() {
     await this.getOrders()
-    console.log(this.orders)
   },
   methods:{
     onClickLeft(){

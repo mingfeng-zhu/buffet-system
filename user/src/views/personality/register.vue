@@ -176,16 +176,13 @@
                 this.uploadImg = uploadImg.data
             },
             async onSubmit(values) {
-                console.log('submit', values);
                 this.params.userImg=this.uploadImg
                 this.params.userName=values.name
                 this.params.userPassword=md5(this.password)
                 this.params.userSex=Number(this.sex)
                 this.params.userTel=this.tel
                 this.params.code=this.verifycode
-                console.log('this.params', this.params)
                 let { data } = await this.$api.signUp(this.params)
-                console.log(196, data)
                 if (data.code===2000){
                     this.$router.push('/login')
                 } else {
@@ -202,7 +199,6 @@
               this.certainflag = !this.certainflag
             },
             validatorCertainPassword(val) {
-                console.log('val', val)
                 if (val === this.password) {
                     return true
                 } else {

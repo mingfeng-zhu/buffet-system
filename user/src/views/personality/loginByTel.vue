@@ -59,12 +59,9 @@
                 return /^1[3456789]\d{9}$/.test(val)
             },
             async onSubmit(values) {
-                console.log('submit', values);
                 this.params.userTel=values.tel
                 this.params.code=values.code
-                console.log('this.params', this.params)
                 let { data } = await this.$api.loginByPhoneNumber(this.params)
-                console.log(196, data)
                 this.$router.push('/')
             },
             onClickLeft() {

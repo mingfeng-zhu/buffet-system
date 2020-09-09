@@ -132,13 +132,11 @@
                 this.attributeList=data.data
             },
             async onAddCartClicked(item) {
-                console.log('item', item)
                 if (this.user) {
                     let {data} = await this.$api.getSpecificationByProductIdAndSpecification({
                         productId: item,
                         productSpecification: this.productSpecification
                     })
-                    console.log('data186', data)
                     let productSpecificationId = data.data.productSpecificationId
                     let param = {
                         productSpecificationId: productSpecificationId,
@@ -161,8 +159,6 @@
                 }
             },
             async select(id, name, item) {
-                console.log('id', id)
-                console.log('item', item)
                 this.attributeList.forEach(item2 => {
                     if (item2.productAttributeName === name) {
                         this.$set(item2,'selected',item.productAttributeValue)
@@ -176,7 +172,6 @@
                         this.queryspe[item2.productAttributeName]=item2.selected
                     })
                     let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:id,productSpecification:this.queryspe})
-                    console.log('data327', data)
                     if (data.data.numberOfCart) {
                         this.num = data.data.numberOfCart
                     } else {
@@ -191,7 +186,6 @@
             load_more_items: async function() {
                    let {data} = await this.$api.getProductListByProductName({productName:this.value,pageSize:this.pageSize, pageNum:1})
                     let total = data.data.total
-                    console.log(204, total)
                     this.dataList = []
                     for (let i=1;i<= Math.ceil(total / 10);i++) {
                         let { data } = await this.$api.getProductListByProductName({productName:this.value,pageSize:this.pageSize, pageNum:i})
@@ -218,7 +212,6 @@
                     if (item.productNumOfCart<item.productStorage){
                         item.productNumOfCart++
                         let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:item.productId,productSpecification:{}})
-                        console.log('data186', data)
                         let productSpecificationId = data.data.productSpecificationId
                         let param = {
                             productSpecificationId: productSpecificationId,

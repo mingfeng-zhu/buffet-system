@@ -38,13 +38,11 @@
         },
         async mounted() {
             let {data} =await this.$api.getAddressById({id:this.$route.query.id})
-            console.log(31, data.data)
             this.addressInfo.name = data.data.receiverName
             this.addressInfo.tel = data.data.receiverPhone
             this.addressInfo.areaCode = data.data.areaCode
             this.addressInfo.addressDetail = data.data.houseNumber
             let userInfo = await this.$api.getUserInfo()
-            console.log('userInfo.data.defaultAddressId',  this.$route.query.id,userInfo.data.data.defaultAddressId,this.$route.query.id === userInfo.data.data.defaultAddressId)
             if (this.$route.query.id == userInfo.data.data.defaultAddressId) {
                 this.showDefault=false
             }

@@ -101,11 +101,9 @@
         computed: {},
         methods: {
             async showDetail(id) {
-                console.log('dianji ')
                 this.$router.push({name: 'detail', query: {id: id}})
             },
             async deleteCart(value) {
-                console.log('item99', value)
                 let param = {
                     productSpecificationId: value.productSpecificationDTO.productSpecificationId,
                     goodCount: 0
@@ -118,7 +116,6 @@
             async listShopCartByUserId() {
                const {data} = await this.$api.listShopCartByUserId({userId:1})
                 this.goods=data.data
-                console.log(this.goods)
                 this.goods.forEach(item=> {
                     item.isChecked=true
                 })
@@ -139,7 +136,6 @@
                 }
               })
                 this.count()
-                console.log('this.selectedData', this.selectedData)
             },
             ifCheckAll() {
                 if (this.selectedData.length !== this.goods.length) {
@@ -165,9 +161,7 @@
             },
             // 计算价格
             count: function() {
-                console.log('计算价格')
                 let totalPrice = 0; //临时总价
-                console.log('this.good', this.goods)
                 this.goods.forEach(function(val) {
                     if (val.isChecked) {
                         totalPrice += val.shopCart.goodCount * val.productSpecificationDTO.productPrice//累计总价
@@ -186,7 +180,6 @@
                         this.selectedData.push(item.shopCart.id)
                     })
                 } else {
-                    console.log(222)
                     this.allchecked = false
                     this.selectedData=[]
                     this.goods.forEach(item=>{

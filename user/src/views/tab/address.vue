@@ -31,10 +31,8 @@
           let userId = user.userId
           let userInfo = await this.$api.getUserInfo()
           let id = userInfo.data.data.defaultAddressId
-          console.log(34, id)
           // 数据回显
           let {data} = await this.$api.addressList({userId:userId})
-          console.log(34, data.data)
           for (let i=0;i<data.data.length;i++) {
               this.list[i] ={}
               this.$set(this.list, '[i]', {})
@@ -67,7 +65,6 @@
                 this.$router.push('/addressform')
             },
             onEdit(item, index) {
-                console.log(12, item, index)
                 this.$router.push({name: 'editAddress', query: {id: item.id}})
                 // Toast('编辑地址:' + index);
             },

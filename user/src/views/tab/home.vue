@@ -175,7 +175,6 @@
                         productSpecificationId: productSpecificationId,
                         goodCount: item.productNumOfCart
                     }
-                    console.log('sub购物车', param)
                     await this.$api.addShopCartRecord(param)
                 }
             },
@@ -184,7 +183,6 @@
                     if (item.productNumOfCart<item.productStorage){
                         item.productNumOfCart++
                         let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:item.productId,productSpecification:{}})
-                        console.log('data186', data)
                         let productSpecificationId = data.data.productSpecificationId
                         let param = {
                             productSpecificationId: productSpecificationId,
@@ -210,7 +208,6 @@
             // 懒加载
             load_more_items: async function() {
                 if (this.active===0){
-                    console.log('0')
                     let {data} = await this.$api.getAllProductList({pageSize:this.pageSize, pageNum:1})
                     this.images=[]
                     for (let i=0;i<4;i++) {
@@ -220,7 +217,6 @@
                         })
                     }
                     let total = data.data.total
-                    console.log(204, total)
                     this.dataList = []
                     for (let i=1;i<= Math.ceil(total / 10);i++) {
                         let { data } = await this.$api.getAllProductList({pageSize:this.pageSize, pageNum:i})
@@ -233,7 +229,6 @@
                 else {
                     let { data } = await this.$api.getProductListByProductCategoryId({productCategoryId:this.id,pageSize:this.pageSize, pageNum:1})
                     let total = data.data?data.data.total:0
-                    console.log(204, total)
                     this.dataList = []
                     for (let i=1;i<= Math.ceil(total / 10);i++) {
                         let { data } = await this.$api.getProductListByProductCategoryId({productCategoryId:this.id,pageSize:this.pageSize, pageNum:i})
@@ -247,7 +242,6 @@
             // 获取分类
             async getProductCategoryList() {
                 let { data } = await this.$api.getProductCategoryList()
-                console.log('分类列表')
                 data.data.forEach(item => {
                     this.items.push({
                         id:item.productCategoryId,
@@ -276,13 +270,11 @@
                 this.attributeList=data.data
             },
             async onAddCartClicked(item) {
-                console.log('item', item)
                 if (this.user) {
                     let {data} = await this.$api.getSpecificationByProductIdAndSpecification({
                         productId: item,
                         productSpecification: this.productSpecification
                     })
-                    console.log('data186', data)
                     let productSpecificationId = data.data.productSpecificationId
                     let param = {
                         productSpecificationId: productSpecificationId,
@@ -306,8 +298,6 @@
                     }
             },
             async select(id, name, item) {
-                console.log('id', id)
-                console.log('item', item)
                 this.attributeList.forEach(item2 => {
                     if (item2.productAttributeName === name) {
                         this.$set(item2,'selected',item.productAttributeValue)
@@ -321,7 +311,6 @@
                         this.queryspe[item2.productAttributeName]=item2.selected
                     })
                     let { data } = await this.$api.getSpecificationByProductIdAndSpecification({productId:id,productSpecification:this.queryspe})
-                    console.log('data327', data)
                     if (data.data.numberOfCart) {
                         this.num = data.data.numberOfCart
                     } else {

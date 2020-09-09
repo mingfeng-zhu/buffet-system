@@ -35,7 +35,6 @@
             this.$router.back()
         },
         async onSave(content) {
-            console.log(content)
             let address = {
                 receiverName: content.name,
                 receiverPhone: content.tel,

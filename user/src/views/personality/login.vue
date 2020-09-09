@@ -61,7 +61,6 @@
         },
         methods: {
             async onSubmit(values) {
-                console.log('submit', values);
                 this.params = {}
                 this.params.userPassword=md5(this.password)
                 this.params.userTel=this.tel
@@ -82,19 +81,15 @@
                 this.flag = !this.flag
             },
             onSelect(item) {
-                console.log('item', item)
                 // 默认情况下点击选项时不会自动收起
                 // 可以通过 close-on-click-action 属性开启自动收起
                 this.show = false
                 if (item.name === '找回密码'){
-                    console.log('找回密码')
                 } else {
-                    console.log('短信验证通过')
                     this.$router.push('/loginByTel')
                 }
             },
             register() {
-                console.log('注册')
                 this.$router.push('/register')
             }
         }

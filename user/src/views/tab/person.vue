@@ -27,7 +27,7 @@
       <van-grid>
         <van-grid-item icon="balance-o" text="待支付" @click="$router.push('/unpaid')"/>
         <van-grid-item icon="envelop-o" text="待收货" @click="$router.push('/unreceived')"/>
-        <van-grid-item icon="photo-o" text="待评价" @click="$router.push('/unevaluated')"/>
+<!--        <van-grid-item icon="photo-o" text="待评价" @click="$router.push('/unevaluated')"/>-->
         <van-grid-item icon="todo-list-o" text="全部订单" @click="$router.push('/allorder')"/>
       </van-grid>
     </van-cell-group>
@@ -53,7 +53,6 @@
         mounted() {
             this.user = JSON.parse(localStorage.getItem('userPo'))
             this.name = this.user.userName
-            console.log('this.user.userImg', this.user.userImg)
             if (this.user.userImg) {
                 this.img = 'http://121.199.49.199:8082'+this.user.userImg
             } else {
