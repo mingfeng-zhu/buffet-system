@@ -33,6 +33,9 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(ElementUI)
 
+import common from './utils/common.js';
+Vue.prototype.common = common
+
 Vue.config.productionTip = false
 
 new Vue({

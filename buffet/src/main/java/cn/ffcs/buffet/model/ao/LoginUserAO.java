@@ -31,6 +31,11 @@ public class LoginUserAO implements Serializable {
      */
     private String code;
 
+    /**
+     * 用户角色
+     */
+    private Byte userRole = 0;
+
     public String getUserTel() {
         return userTel;
     }
@@ -55,12 +60,21 @@ public class LoginUserAO implements Serializable {
         this.code = code;
     }
 
+    public Byte getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(Byte userRole) {
+        this.userRole = userRole;
+    }
+
     @Override
     public String toString() {
         return "LoginUserAO{" +
                 "userTel='" + userTel + '\'' +
                 ", userPassword='" + userPassword + '\'' +
                 ", code='" + code + '\'' +
+                ", userRole=" + userRole +
                 '}';
     }
 }

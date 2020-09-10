@@ -1,7 +1,9 @@
 package cn.ffcs.buffet.service;
 
 
+import cn.ffcs.buffet.common.dto.Page;
 import cn.ffcs.buffet.model.po.UserPO;
+import com.github.pagehelper.PageInfo;
 
 
 /**
@@ -39,4 +41,13 @@ public interface UserService {
      * @return
      */
     UserPO getUserInfo();
+
+    /**
+     * 获取分页list
+     * @param page 分页
+     * @param username 用户名
+     * @param userState 用户状态
+     * @return
+     */
+    PageInfo<UserPO> listUser(Page page, String username,Integer userState);
 }
