@@ -50,13 +50,33 @@
     select
     count(*)
     from t_order
-    where order_status &lt;&gt; ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@cancelled.getIndex()}
+    where order_status &gt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@completed.getIndex()}
+    and  order_status &lt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@evaluated.getIndex()}
+  </select>
+  <select id="getCurrentDayNumber" resultType="java.lang.Integer">
+    select
+    count(*)
+    from t_order
+    where order_status &gt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@completed.getIndex()}
+    and  order_status &lt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@evaluated.getIndex()}
+    and create_time &gt;= #{beforeDate,jdbcType=TIMESTAMP}
+    and create_time &lt; #{afterDate,jdbcType=TIMESTAMP}
   </select>
   <select id="getTotalMoney" resultType="java.math.BigDecimal">
     select
     sum(total_money)
     from t_order
-    where order_status &lt;&gt; ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@cancelled.getIndex()}
+    where order_status &gt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@completed.getIndex()}
+    and  order_status &lt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@evaluated.getIndex()}
+  </select>
+  <select id="getCurrentDayMoney" resultType="java.math.BigDecimal">
+    select
+    sum(total_money)
+    from t_order
+    where order_status &gt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@completed.getIndex()}
+    and  order_status &lt;= ${@cn.ffcs.buffet.common.util.Constant$Order_STATUS@evaluated.getIndex()}
+    and create_time &gt;= #{beforeDate,jdbcType=TIMESTAMP}
+    and create_time &lt; #{afterDate,jdbcType=TIMESTAMP}
   </select>
   <select id="listOrder" resultMap="OrderListMap">
     select

@@ -6,6 +6,7 @@ import io.swagger.models.auth.In;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -71,4 +72,20 @@ public interface OrderMapper {
      * @return
      */
     List<OrderPO> listOrderByCurrentId(Integer userId, String orderStatus);
+
+    /**
+     * 获取今日交易数
+     * @return
+     * @param beforeDate
+     * @param afterDate
+     */
+    int getCurrentDayNumber(Date beforeDate, Date afterDate);
+
+    /**
+     * 获取今日交易额
+     * @return
+     * @param beforeDate
+     * @param afterDate
+     */
+    BigDecimal getCurrentDayMoney(Date beforeDate, Date afterDate);
 }

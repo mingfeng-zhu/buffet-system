@@ -22,12 +22,26 @@ public class OrderTotalDataDTO {
 
     private BigDecimal totalMoney;
 
+    /**
+     * 今日交易额
+     */
+
+    private Integer currentDayNumber;
+
+    /**
+     * 今日交易额
+     */
+
+    private BigDecimal currentDayMoney;
+
     public OrderTotalDataDTO() {
     }
 
-    public OrderTotalDataDTO(Integer totalNumber, BigDecimal totalMoney) {
+    public OrderTotalDataDTO(Integer totalNumber, BigDecimal totalMoney, Integer currentDayNumber, BigDecimal currentDayMoney) {
         this.totalNumber = totalNumber;
         this.totalMoney = totalMoney;
+        this.currentDayNumber = currentDayNumber;
+        this.currentDayMoney = currentDayMoney;
     }
 
     @Override
@@ -35,6 +49,8 @@ public class OrderTotalDataDTO {
         return "OrderTotalDataDTO{" +
                 "totalNumber=" + totalNumber +
                 ", totalMoney=" + totalMoney +
+                ", currentDayNumber=" + currentDayNumber +
+                ", currentDayMoney=" + currentDayMoney +
                 '}';
     }
 
@@ -52,5 +68,21 @@ public class OrderTotalDataDTO {
 
     public void setTotalMoney(BigDecimal totalMoney) {
         this.totalMoney = totalMoney;
+    }
+
+    public Integer getCurrentDayNumber() {
+        return currentDayNumber;
+    }
+
+    public void setCurrentDayNumber(Integer currentDayNumber) {
+        this.currentDayNumber = currentDayNumber;
+    }
+
+    public BigDecimal getCurrentDayMoney() {
+        return currentDayMoney;
+    }
+
+    public void setCurrentDayMoney(BigDecimal currentDayMoney) {
+        this.currentDayMoney = currentDayMoney;
     }
 }

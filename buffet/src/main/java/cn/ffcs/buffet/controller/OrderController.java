@@ -79,31 +79,13 @@ public class OrderController {
     }
 
     /**
-     * 删除指定订单id的订单，批量形式
-     * @param idList idList
-     * @return
-     */
-    @PassToken
-    @AvoidRepeatableCommit
-    @ApiOperation(value = "删除指定订单id的订单，批量形式(后台使用)")
-    @PostMapping(path = "/deleteOrderByIdList")
-    @ResponseBody
-    public Result deleteOrderByIdList(@RequestParam(required = false, value = "idList[]") Integer[] idList) {
-        if(idList == null || idList.length == 0) {
-            return Result.fail("空数组");
-        }
-        List<Integer> list = java.util.Arrays.asList(idList);
-        return orderService.deleteOrderByOrderId(list);
-    }
-
-    /**
      * 修改订单状态，批量形式
      * @param updateOrderStatusAO 批量修改订单状态AO
      * @return
      */
     @PassToken
     @AvoidRepeatableCommit
-    @ApiOperation(value = "修改订单状态，后台web端使用，批量形式(用于后台的管理员批量派送、批量取消订单等功能)")
+    @ApiOperation(value = "修改订单状态，后台web端使用，批量形式(用于后台的管理员批量派送、批量接单等功能)")
     @PostMapping(path = "/updateOrderByIdList")
     public Result updateOrderByIdList(@RequestBody UpdateOrderStatusAO updateOrderStatusAO) {
         if(updateOrderStatusAO.getIdList() == null || updateOrderStatusAO.getIdList().length == 0) {
@@ -118,7 +100,7 @@ public class OrderController {
      * @return
      */
     @PassToken
-    @ApiOperation(value = "查询订单总数、总交易额")
+    @ApiOperation(value = "查询订单总数、总交易额、当日交易数、当日交易额")
     @GetMapping(value = "/getTotalNumberAndMoney")
     @ResponseBody
     public Result getTotalNumberAndMoney() {
@@ -190,6 +172,24 @@ public class OrderController {
     @ResponseBody
     public Result cancelOrder(@RequestBody CancelOrderAO cancelOrderAO) {
         return orderService.cancelOrder(cancelOrderAO.getId());
+    }
+
+    /**
+     * 删除指定订单id的订单，批量形式
+     * @param idList idList
+     * @return
+     */
+    @PassToken
+    @AvoidRepeatableCommit
+    @ApiOperation(value = "删除指定订单id的订单，批量形式(后台使用)")
+    @PostMapping(path = "/deleteOrderByIdList")
+    @ResponseBody
+    public Result deleteOrderByIdList(@RequestParam(required = false, value = "idList[]") Integer[] idList) {
+        if(idList == null || idList.length == 0) {
+            return Result.fail("空数组");
+        }
+        List<Integer> list = java.util.Arrays.asList(idList);
+        return orderService.deleteOrderByOrderId(list);
     }
 
     /**

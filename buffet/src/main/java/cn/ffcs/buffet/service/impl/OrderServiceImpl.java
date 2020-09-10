@@ -6,19 +6,19 @@ import cn.ffcs.buffet.common.util.Constant;
 import cn.ffcs.buffet.common.util.Snowflake;
 import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.mapper.OrderMapper;
+import cn.ffcs.buffet.mapper.UserPOMapper;
 import cn.ffcs.buffet.model.dto.*;
 import cn.ffcs.buffet.model.po.*;
 import cn.ffcs.buffet.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -38,6 +38,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired(required=false)
     private ShopCartService shopCartService;
+
+    @Autowired(required=false)
+    private UserPOMapper userPOMapper;
 
     @Override
     public Result listOrder(Integer userId, String orderStatus, Page<OrderDTO> page, String orderId) {
@@ -74,13 +77,34 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Result getTotalNumberAndMoney() {
         OrderTotalDataDTO orderTotalDataDTO = new OrderTotalDataDTO();
+        //获取总交易数
         int totalNumber = orderMapper.getTotalNumber();
+        //获取总交易额
         BigDecimal totalMoney = orderMapper.getTotalMoney();
         if(totalMoney == null) {
             totalMoney = new BigDecimal(0);
         }
+        //获取今日的0点的时间戳
+        Calendar dateRight = Calendar.getInstance();
+        dateRight.add(Calendar.DAY_OF_MONTH, Constant.CALENDAR_ONE);
+        dateRight.set(Calendar.HOUR_OF_DAY,  Constant.CALENDAR_ZERO);
+        dateRight.set(Calendar.MINUTE, Constant.CALENDAR_ZERO);
+        dateRight.set(Calendar.SECOND, Constant.CALENDAR_ZERO);
+        //明天凌晨0点
+        Date afterDate = dateRight.getTime();
+        dateRight.add(Calendar.DAY_OF_MONTH, -Constant.CALENDAR_ONE);
+        Date beforeDate = dateRight.getTime();
+        //获取今日交易数
+        int currentDayNumber = orderMapper.getCurrentDayNumber(beforeDate, afterDate);
+        //获取今日交易额
+        BigDecimal currentDayMoney = orderMapper.getCurrentDayMoney(beforeDate, afterDate);
+        if(currentDayMoney == null) {
+            currentDayMoney = new BigDecimal(0);
+        }
         orderTotalDataDTO.setTotalNumber(totalNumber);
         orderTotalDataDTO.setTotalMoney(totalMoney);
+        orderTotalDataDTO.setCurrentDayMoney(currentDayMoney);
+        orderTotalDataDTO.setCurrentDayNumber(currentDayNumber);
         return Result.success(orderTotalDataDTO);
     }
 
@@ -95,7 +119,8 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalMoney(totalMoney);
         order.setAddressId(addressId);
         //获取当前用户id
-        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
+//        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
+        Integer userId = 19;
         order.setUserId(userId);
         order.setOrderStatus(Constant.Order_STATUS.wait_pay.getIndex());
 
@@ -187,6 +212,9 @@ public class OrderServiceImpl implements OrderService {
             //进行订单的支付状态改变,改成已取消
             orderResult = orderMapper.editOrderStatus(id, Constant.Order_STATUS.cancelled.getIndex());
             currentStatus = Constant.Order_STATUS.cancelled.getIndex();
+
+            //进行用户金额的返还
+            int moneyResult = userPOMapper.updateMoneyByUser(orderPO.getUserId(), orderPO.getTotalMoney());
         }
         //若是处于其他状态，则需要管理员的审核才能取消订单
         else {
@@ -212,6 +240,15 @@ public class OrderServiceImpl implements OrderService {
                            @RequestParam(required = false, value = "goodCountList[]") Integer[] goodCountList) {
         //先二次检查库存是否充足
         //为避免在for循环中操作数据库，所以应该先批量查出所有商品规格的数据，再进行库存的判断
+        OrderPO orderPO = orderMapper.selectByPrimaryKey(id);
+        UserPO userPO = userPOMapper.selectUserByUserId(orderPO.getUserId());
+        //若是余额不足
+        if(userPO.getTotalMoney().compareTo(orderPO.getTotalMoney()) == -1) {
+            return Result.fail("支付失败，余额不足");
+        }
+
+        //扣除金额
+        int moneyResult = userPOMapper.updateMoneyByUser(orderPO.getUserId(), orderPO.getTotalMoney().negate());
         List<Integer> list = Arrays.asList(idList);
         List<ProductSpecificationDTO> productList = productModuleService.selectSpecificationByProductSpecificationIdList(list);
         List<Integer> countList = new ArrayList<>();
@@ -335,6 +372,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result cancelOrderList(List<Long> idList, String orderStatus) {
+
         //获取当前订单下的详单信息
         List<OrderDetail> orderDetailList = orderDetailService.listOrderDetailByOrderIdList(idList);
 
@@ -346,6 +384,13 @@ public class OrderServiceImpl implements OrderService {
             countList.add(orderDetailList.get(count).getGoodCount());
         }
         int result = productModuleService.updateProductStorage(list, countList);
+
+        //进行用户金额的返还
+        for(int count = 0; count < idList.size(); count++) {
+            OrderPO orderPO = orderMapper.selectByPrimaryKey(idList.get(count));
+            int moneyResult = userPOMapper.updateMoneyByUser(orderPO.getUserId(), orderPO.getTotalMoney());
+        }
+
         //进行订单的支付状态改变,改成已取消
         orderMapper.updateOrderByIdList(idList, Constant.Order_STATUS.cancelled.getIndex());
         //插入订单改变记录

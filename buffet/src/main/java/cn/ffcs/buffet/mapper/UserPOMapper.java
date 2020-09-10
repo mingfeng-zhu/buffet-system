@@ -4,6 +4,8 @@ import cn.ffcs.buffet.model.po.UserPO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 
 /**
  * @Description: 用户映射类
@@ -20,4 +22,6 @@ public interface UserPOMapper {
     int updateUser(UserPO user);
 
     UserPO selectUserByUserId(@Param("userId") Integer userId);
+
+    Integer updateMoneyByUser(Integer userId, BigDecimal totalMoney);
 }
