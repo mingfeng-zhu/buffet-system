@@ -41,8 +41,8 @@ public class Constant {
      */
     public enum Order_STATUS {
         cancelled("0", "已取消"), wait_pay("1", "待支付"), wait_receive("2", "待接单"),
-        in_make("3", "待配送"), in_delivery("4", "配送中"), completed("5", "已收货"),
-        evaluated("6", "已评价"), in_cancel("7", "取消中"), overtime("8", "超时未支付");
+        in_make("3", "待配送"), in_delivery("4", "配送中"), completed("5", "已完成"),
+        in_cancel("7", "取消中");
         private String index;
         private String name;
         // 构造方法
