@@ -462,7 +462,7 @@ export default {
     handleAvatarSuccess(res, file) {
       // console.log(res)
       if (res.code === 2000) {
-        this.product.productPicturePath = 'http://localhost:8082' + res.data;
+        this.product.productPicturePath = this.common.imageUrl + res.data;
       }
     },
     beforeAvatarUpload(file) {

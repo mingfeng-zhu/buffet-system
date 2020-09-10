@@ -17,8 +17,6 @@ const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 // api地址
 const apiUrl = process.env.API_URL
-// 图片
-const imageUrl = process.env.IMAGE_URL  || 'http://localhost:8082'
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
