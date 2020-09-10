@@ -88,4 +88,12 @@ public interface OrderMapper {
      * @param afterDate
      */
     BigDecimal getCurrentDayMoney(Date beforeDate, Date afterDate);
+
+    /**
+     * 获取时间区间内的订单信息
+     * @param dateBefore 开始时间
+     * @param dateAfter 结束时间
+     * @return
+     */
+    List<OrderPO> listOrderByDay(Date dateBefore, Date dateAfter);
 }

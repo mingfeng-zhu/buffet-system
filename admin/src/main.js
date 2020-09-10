@@ -11,6 +11,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import echarts from 'echarts'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -37,6 +38,8 @@ import common from './utils/common.js';
 Vue.prototype.common = common
 
 Vue.config.productionTip = false
+
+Vue.prototype.$echarts = echarts
 
 new Vue({
   el: '#app',

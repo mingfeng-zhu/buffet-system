@@ -29,7 +29,7 @@
         style="float: right;margin-left: 10px;"
         type="primary"
         @click="sureCancelOrder()"
-      >确认取消</el-button>
+      >审核取消</el-button>
       <el-button
         class="filter-item"
         style="float: right;margin-left: 10px;"
@@ -42,7 +42,12 @@
         type="primary"
         @click="receiveOrder()"
       >接单</el-button>
-
+      <el-button
+        class="filter-item"
+        style="float: right;margin-left: 10px;"
+        type="primary"
+        @click="adminCancelOrder()"
+      >确认取消</el-button>
     </div>
     <el-table :data="orderList" border style="width: 100%; margin-top:10px" @selection-change="selectChange">
       <el-table-column
@@ -50,7 +55,6 @@
         width="55">
       </el-table-column>
       <el-table-column fixed label="序号" width="50px" type="index" align="center" />
-      <!-- <el-table-column fixed prop="productCategoryId" label="分类ID" /> -->
       <el-table-column fixed prop="orderId" label="订单流水号">
         <template scope="scope"  >
           <el-popover
@@ -199,16 +203,10 @@
           name: "外卖配送中"
         },{
           index: "5",
-          name: "外卖已到达，待评价"
-        },{
-          index: "6",
-          name: "已评价，订单完成"
+          name: "外卖已到达，订单完成"
         },{
           index: "7",
           name: "订单取消中，待商家审核"
-        },{
-          index: "8",
-          name: "超时未接单"
         }],
         dialogTableVisible: false,
         orderDetailAndProductDTO: [],
@@ -376,6 +374,36 @@
         updateOrderByIdList(param).then(response => {
           this.$message({
             message: '所有待接单的订单都已成功派送',
+            type: 'success'
+          });
+          that.listOrderList()
+        })
+      },
+      /**
+       * 管理员取消订单
+       */
+      adminCancelOrder() {
+        let that = this
+        let idList = [];
+        for(let i = 0; i < that.selectList.length; i++) {
+          if(that.selectList[i].orderStatus == '3' || that.selectList[i].orderStatus == '4') {
+            idList.push(that.selectList[i].id)
+          }
+        }
+        if(idList.length == 0) {
+          this.$message({
+            message: '您还未选中接单中或者派送中的订单！',
+            type: 'success'
+          });
+          return ;
+        }
+        let param = {
+          'idList': idList,
+          'orderStatus': "0"
+        }
+        cancelOrderList(param).then(response => {
+          this.$message({
+            message: '所有待取消的订单都已成功取消',
             type: 'success'
           });
           that.listOrderList()
