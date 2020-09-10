@@ -37,6 +37,7 @@
             };
         },
         async mounted() {
+            // 回显地址信息
             let {data} =await this.$api.getAddressById({id:this.$route.query.id})
             this.addressInfo.name = data.data.receiverName
             this.addressInfo.tel = data.data.receiverPhone
@@ -48,9 +49,11 @@
             }
         },
         methods: {
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
             },
+            // 确定修改
             async onSave(content) {
                 let address = {
                     receiverName: content.name,
@@ -65,6 +68,7 @@
                 Toast('编辑地址成功')
                 this.$router.push('/address')
             },
+            // 删除地址
             onDelete() {
                 this.$api.deleteAddress(this.$route.query.id)
                 Toast('删除地址成功')

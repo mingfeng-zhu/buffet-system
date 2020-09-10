@@ -117,6 +117,7 @@
             // this.load_more_items()
         },
         methods:{
+            // 选择规格
             selectSpecification(item) {
                 this.productId = item.productId
                 this.specificationShow = true
@@ -125,13 +126,16 @@
                 this.storage = item.productStorage
                 this.image = item.productPicturePath
             },
+            // 根据规格获取信息
             async getProductAttributeList(id) {
                 // 商品id
                 this.specificationShow=true
                 let { data } = await this.$api.getProductAttributeListByProductId(id)
                 this.attributeList=data.data
             },
+            // 加入购物车
             async onAddCartClicked(item) {
+                // 已经登录
                 if (this.user) {
                     let {data} = await this.$api.getSpecificationByProductIdAndSpecification({
                         productId: item,
@@ -145,6 +149,7 @@
                     await this.$api.addShopCartRecord(param)
                     this.$router.push('/cart')
                 }
+                // 还没登录
                 else {
                     Dialog.confirm({
                         title: '尚未登录',
@@ -158,6 +163,7 @@
                         });
                 }
             },
+            // 选择规格
             async select(id, name, item) {
                 this.attributeList.forEach(item2 => {
                     if (item2.productAttributeName === name) {
@@ -166,6 +172,7 @@
                     this.selectList.push(item.productAttributeValue)
                 })
                 this.selectall = this.attributeList.every(item=>item.selected)
+                // 根据规格获取信息
                 if (this.selectall) {
                     this.queryspe = {}
                     this.attributeList.forEach(item2 => {
@@ -183,6 +190,7 @@
                     this.productSpecification = data.data.productSpecification
                 }
             },
+            // 获取搜索的数据
             load_more_items: async function() {
                    let {data} = await this.$api.getProductListByProductName({productName:this.value,pageSize:this.pageSize, pageNum:1})
                     let total = data.data.total
@@ -195,6 +203,7 @@
                     this.finished = true
                     this.loading = false
             },
+            // 减少
             async sub(item) {
                 if (item.productNumOfCart>0){
                     item.productNumOfCart--
@@ -207,6 +216,7 @@
                await this.$api.addShopCartRecord(param)
                 }
             },
+            // 加入购物车的数量增加
             async add(item) {
                 if (this.user) {
                     if (item.productNumOfCart<item.productStorage){

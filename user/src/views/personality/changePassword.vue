@@ -29,9 +29,11 @@
 
         },
         methods: {
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
             },
+            // 修改密码
            async changePassword() {
                 let param = {
                     userPassword: md5(this.password),

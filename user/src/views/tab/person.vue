@@ -51,6 +51,7 @@
             }
         },
         mounted() {
+            // 获取用户信息
             this.user = JSON.parse(localStorage.getItem('userPo'))
             this.name = this.user.userName
             if (this.user.userImg) {
@@ -63,6 +64,7 @@
             personInform() {
                 this.$router.push('/personInfo')
             },
+            // 退出登录
             loginout() {
                 Dialog.confirm({
                     message: '确定退出登录吗',

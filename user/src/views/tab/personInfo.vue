@@ -46,6 +46,7 @@
             this.getUserInfo()
         },
         methods: {
+            // 获取个人信息
             async getUserInfo() {
                 let { data } = await this.$api.getUserInfo()
                 this.name = data.data.userName
@@ -57,15 +58,19 @@
                     this.fileList[0].url = 'https://img.yzcdn.cn/vant/cat.jpeg'
                 }
             },
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
             },
+            // 修改个人信息
             changeInfo() {
                 this.$router.push('/changeInfo')
             },
+            // 修改密码
             changePassword() {
                 this.show = true
             },
+            // 修改密码的确认框
             confirm() {
                 if (md5(this.password) === this.userPassword){
                     this.$router.push('/changePassword')
@@ -74,6 +79,7 @@
                     this.password = ''
                 }
             },
+            // 重置密码
             resetPassword(action, done) {
                 this.password = ''
                 done()

@@ -140,7 +140,9 @@
         mounted() {
         },
         methods: {
+            // 获取验证码
             getCode() {
+                // 如果已经输入手机号
                 if (this.tel) {
                     Dialog.alert({
                         title: '已发送验证码',
@@ -163,18 +165,21 @@
                         this.$api.getCode({userTel:this.tel})
                     });
                 } else {
+                    // 如果尚未输入手机号
                     Dialog.alert({
                         message: '请先输入手机号',
                     }).then(() => {
                     });
                 }
             },
+            // 上传图片
             async afterRead(file) {
                 // 此时可以自行将文件上传至服务器
                 // let fileparam = {picture: file.file}
                 let uploadImg = await upLoaderImg(file.file)//使用上传的方法。file.file
                 this.uploadImg = uploadImg.data
             },
+            // 注册
             async onSubmit(values) {
                 this.params.userImg=this.uploadImg
                 this.params.userName=values.name
@@ -189,6 +194,7 @@
                     Toast(data.message)
                 }
             },
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
             },
@@ -198,6 +204,7 @@
             changeCertainType() {
               this.certainflag = !this.certainflag
             },
+            // 校验再次输入密码是否与输入的密码相同
             validatorCertainPassword(val) {
                 if (val === this.password) {
                     return true

@@ -60,6 +60,7 @@
             }
         },
         methods: {
+            // 登录
             async onSubmit(values) {
                 this.params = {}
                 this.params.userPassword=md5(this.password)
@@ -74,12 +75,14 @@
                 }
 
             },
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
             },
             changeType() {
                 this.flag = !this.flag
             },
+            // 点击选项
             onSelect(item) {
                 // 默认情况下点击选项时不会自动收起
                 // 可以通过 close-on-click-action 属性开启自动收起
@@ -89,6 +92,7 @@
                     this.$router.push('/loginByTel')
                 }
             },
+            // 注册
             register() {
                 this.$router.push('/register')
             }

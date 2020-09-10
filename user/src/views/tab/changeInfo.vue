@@ -52,6 +52,7 @@
             this.getUserInfo()
         },
         methods: {
+            // 获取用户信息
             async getUserInfo() {
                 let { data } = await this.$api.getUserInfo()
                 this.name = data.data.userName
@@ -62,9 +63,11 @@
                     this.fileList[0].url = 'https://img.yzcdn.cn/vant/cat.jpeg'
                 }
             },
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
             },
+            // 确认修改
             async certain() {
                 let param = {
                     userImg: this.uploadImg,
@@ -78,6 +81,7 @@
                 user.userName = this.name
                 localStorage.setItem('userPo', JSON.stringify(user))
             },
+            // 上传头像
             async afterRead(file) {
                 let uploadImg = await upLoaderImg(file.file)//使用上传的方法。file.file
                 this.uploadImg = uploadImg.data

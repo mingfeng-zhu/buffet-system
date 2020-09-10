@@ -100,9 +100,11 @@
         },
         computed: {},
         methods: {
+            // 显示详情页
             async showDetail(id) {
                 this.$router.push({name: 'detail', query: {id: id}})
             },
+            // 减去购物车的数量
             async deleteCart(value) {
                 let param = {
                     productSpecificationId: value.productSpecificationDTO.productSpecificationId,
@@ -113,6 +115,7 @@
                     return item2.shopCart.id !==value.shopCart.id
                 })
             },
+            // 获取购物车列表
             async listShopCartByUserId() {
                const {data} = await this.$api.listShopCartByUserId({userId:1})
                 this.goods=data.data
@@ -137,6 +140,7 @@
               })
                 this.count()
             },
+            // 是否全选
             ifCheckAll() {
                 if (this.selectedData.length !== this.goods.length) {
                         this.allchecked = false;

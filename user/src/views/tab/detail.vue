@@ -146,11 +146,13 @@
             this.user = JSON.parse(localStorage.getItem('userPo'))
         },
         methods: {
+            // 获取详细信息
            async getDetail() {
                 let { data } = await this.$api.getProductDetailAndCommentList(this.id)
                 this.detail = data.data[0]
                this.commentList =  this.detail.commentList
             },
+            // 购物车减去
             async sub(item) {
                 if (item.productNumOfCart>0){
                     item.productNumOfCart--
@@ -163,6 +165,7 @@
                     let { postdata } = await this.$api.addShopCartRecord(param)
                 }
             },
+            // 购物车加
             async add(item) {
                 if (this.user) {
                     if (item.productNumOfCart<item.productStorage){
@@ -206,6 +209,7 @@
                 let { data } = await this.$api.getProductAttributeListByProductId(id)
                 this.attributeList=data.data
             },
+            // 获取规格相应的信息
             async select(id, name, item) {
                 this.attributeList.forEach(item2 => {
                     if (item2.productAttributeName === name) {
@@ -231,6 +235,7 @@
                     this.productSpecification = data.data.productSpecification
                 }
             },
+            // 相应规格加入购物车
             async onAddCartClicked(item) {
                 if (this.user) {
                     let {data} = await this.$api.getSpecificationByProductIdAndSpecification({

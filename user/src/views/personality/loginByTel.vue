@@ -58,16 +58,20 @@
             validator(val) {
                 return /^1[3456789]\d{9}$/.test(val)
             },
+            // 通过手机号登录
             async onSubmit(values) {
                 this.params.userTel=values.tel
                 this.params.code=values.code
                 let { data } = await this.$api.loginByPhoneNumber(this.params)
                 this.$router.push('/')
             },
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
             },
+            // 发送验证码
             changeFlag() {
+                // 如果已经输入手机号
                 if (this.validator(this.tel)) {
                     Dialog.alert({
                         title: '已发送验证码',
@@ -90,6 +94,7 @@
                         this.$api.getCode({userTel: this.tel})
                     })
                 } else {
+                    // 如果尚未输入手机号
                     Dialog.alert({
                         message: '请先输入手机号',
                     }).then(() => {

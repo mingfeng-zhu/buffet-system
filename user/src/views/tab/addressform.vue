@@ -31,9 +31,11 @@
       };
     },
     methods: {
+        // 返回上一级
         onClickLeft() {
             this.$router.back()
         },
+        // 保存
         async onSave(content) {
             let address = {
                 receiverName: content.name,

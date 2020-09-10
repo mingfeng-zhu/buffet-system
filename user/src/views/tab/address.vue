@@ -56,14 +56,17 @@
           })
       },
         methods: {
+            // 返回上一级
             onClickLeft() {
                 this.$router.back()
                 sessionStorage.setItem('selected','0')
             },
+            // 新增地址
             onAdd() {
                 // Toast('新增地址');
                 this.$router.push('/addressform')
             },
+            // 编辑地址
             onEdit(item, index) {
                 this.$router.push({name: 'editAddress', query: {id: item.id}})
                 // Toast('编辑地址:' + index);

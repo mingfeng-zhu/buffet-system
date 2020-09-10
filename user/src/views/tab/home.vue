@@ -160,12 +160,15 @@
             this.user = JSON.parse(localStorage.getItem('userPo'))
         },
         methods: {
+            // 进入详情页
             async showDetail(id) {
                 this.$router.push({name: 'detail', query: {id: id}})
             },
+            // 搜索
             onSearch() {
                 this.$router.push({name: 'search', query: {value: this.searchValue}})
             },
+            // 减少购物车
             async sub(item) {
                 if (item.productNumOfCart>0){
                     item.productNumOfCart--
@@ -178,7 +181,9 @@
                     await this.$api.addShopCartRecord(param)
                 }
             },
+            // 增加购物车
             async add(item) {
+                // 如果已经登录
                 if (this.user) {
                     if (item.productNumOfCart<item.productStorage){
                         item.productNumOfCart++
@@ -193,6 +198,7 @@
                         Toast(`该商品仅剩${item.productStorage}件`);
                     }
                 } else {
+                    // 如果还没登录
                     Dialog.confirm({
                         title: '尚未登录',
                         message: '跳转到登录页？',
@@ -207,6 +213,7 @@
             },
             // 懒加载
             load_more_items: async function() {
+                // 获取所有商品
                 if (this.active===0){
                     let {data} = await this.$api.getAllProductList({pageSize:this.pageSize, pageNum:1})
                     this.images=[]
@@ -227,6 +234,7 @@
                     this.loading = false
                 }
                 else {
+                    // 根据分类获取商品
                     let { data } = await this.$api.getProductListByProductCategoryId({productCategoryId:this.id,pageSize:this.pageSize, pageNum:1})
                     let total = data.data?data.data.total:0
                     this.dataList = []
@@ -269,7 +277,9 @@
                 let { data } = await this.$api.getProductAttributeListByProductId(id)
                 this.attributeList=data.data
             },
+            // 加入相应规格
             async onAddCartClicked(item) {
+                // 如果已经登录
                 if (this.user) {
                     let {data} = await this.$api.getSpecificationByProductIdAndSpecification({
                         productId: item,
@@ -285,6 +295,7 @@
 
                 }
                 else {
+                    // 如果尚未登录
                         Dialog.confirm({
                             title: '尚未登录',
                             message: '跳转到登录页？',
@@ -297,6 +308,7 @@
                             });
                     }
             },
+            // 选规格
             async select(id, name, item) {
                 this.attributeList.forEach(item2 => {
                     if (item2.productAttributeName === name) {
@@ -305,6 +317,7 @@
                     this.selectList.push(item.productAttributeValue)
                 })
                 this.selectall = this.attributeList.every(item=>item.selected)
+                // 根据规格获取相应信息
                 if (this.selectall) {
                     this.queryspe = {}
                     this.attributeList.forEach(item2 => {
