@@ -36,12 +36,14 @@
             }
         },
         mounted() {
+            // 获取用户信息
             this.getinfo()
             if (this.$route.name === 'person') {
                this.headershow =false
             }
         },
         methods: {
+            // 跳转到购物车
             toCart() {
                 this.user = JSON.parse(localStorage.getItem('userPo'))
                 if (this.user) {
@@ -58,6 +60,7 @@
                 //     this.info = window.sessionStorage.getItem('num')
                 // }
             },
+            // 跳转到个人中心
             person() {
                 this.user = JSON.parse(localStorage.getItem('userPo'))
                 if (this.user) {

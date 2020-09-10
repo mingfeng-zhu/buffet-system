@@ -1,7 +1,7 @@
 //upLoaderImg.js
 import axios from 'axios'		//引入axios
 import { Toast } from 'vant'	//引入Toast
-
+// 上传图片的接口
 function upLoaderImg (file) {	//file为 你读取成功的回调文件信息
     //new 一个FormData格式的参数
     let params = new FormData()
