@@ -28,10 +28,8 @@
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '2'">待接单</div>
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '3'">待配送</div>
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '4'">配送中，待收货</div>
-                <div class="orderStatus" v-if="item.orderPO.orderStatus === '5'">已收货，待评价</div>
-                <div class="orderStatus" v-if="item.orderPO.orderStatus === '6'">已收货</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '5'">订单已完成</div>
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '7'">取消中</div>
-                <div class="orderStatus" v-if="item.orderPO.orderStatus === '8'">超时未支付</div>
               </div>
               <van-button v-if="item.orderPO.orderStatus === '1' || item.orderPO.orderStatus === '2' || item.orderPO.orderStatus === '3' || item.orderPO.orderStatus === '4'" round size="small" plain text="取消订单" @click="cancle(item.orderPO.id)"/>
               <van-button v-if="item.orderPO.orderStatus === '1'" round size="small" type="danger" text="去支付" @click="pay(item)"/>
@@ -89,10 +87,10 @@ export default {
       this.$router.push('/pay')
     },
     async receive(id){
-      //将status更新为6
+      //将status更新为5
       this.params={}
       this.params.id = id
-      this.params.orderStatus = '6'
+      this.params.orderStatus = '5'
       await this.$api.editOrderStatus(this.params)
       //刷新页面
       location.reload()
