@@ -105,4 +105,11 @@ public interface OrderService {
      * @return
      */
     Result cancelOrderList(List<Long> idList, String orderStatus);
+
+    /**
+     * 获取最近dayCount天的数据
+     * @param dayCount 天数
+     * @return
+     */
+    Result getEchartsData(Integer dayCount);
 }

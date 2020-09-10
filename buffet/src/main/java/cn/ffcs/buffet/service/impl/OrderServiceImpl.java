@@ -9,6 +9,7 @@ import cn.ffcs.buffet.mapper.OrderMapper;
 import cn.ffcs.buffet.mapper.UserPOMapper;
 import cn.ffcs.buffet.model.dto.*;
 import cn.ffcs.buffet.model.po.*;
+import cn.ffcs.buffet.model.vo.OrderDataVO;
 import cn.ffcs.buffet.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -119,8 +120,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalMoney(totalMoney);
         order.setAddressId(addressId);
         //获取当前用户id
-//        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
-        Integer userId = 19;
+        Integer userId = TokenUtil.getUserIdAndUserTelOfToken().getUserId();
         order.setUserId(userId);
         order.setOrderStatus(Constant.Order_STATUS.wait_pay.getIndex());
 
@@ -403,6 +403,51 @@ public class OrderServiceImpl implements OrderService {
         }
         Integer insertResult = orderStatusService.insertOrderStatusList(orderStatusList);
         return Result.success();
+    }
+
+    @Override
+    public Result getEchartsData(Integer dayCount) {
+        Calendar dateRight = Calendar.getInstance();
+        dateRight.add(Calendar.DAY_OF_MONTH, Constant.CALENDAR_ONE);
+        dateRight.set(Calendar.HOUR_OF_DAY,  Constant.CALENDAR_ZERO);
+        dateRight.set(Calendar.MINUTE, Constant.CALENDAR_ZERO);
+        dateRight.set(Calendar.SECOND, Constant.CALENDAR_ZERO);
+        //明天凌晨0点
+        Date dateAfter = dateRight.getTime();
+        //六天前凌晨
+        dateRight.add(Calendar.DAY_OF_MONTH, -dayCount);
+        Date dateBefore = dateRight.getTime();
+        //获取最近七天注册的新用户的数据
+        List<OrderPO> orders = orderMapper.listOrderByDay(dateBefore, dateAfter);
+        List<Integer> countList = new ArrayList<>();
+        List<BigDecimal> moneyList = new ArrayList<>();
+        for(int num = 0; num < dayCount; num++) {
+            countList.add(Constant.CALENDAR_ZERO);
+            moneyList.add(new BigDecimal(Constant.CALENDAR_ZERO));
+        }
+        Calendar dateLeft = Calendar.getInstance();
+        dateLeft.setTime(dateAfter);
+        dateLeft.add(Calendar.DAY_OF_MONTH, -Constant.CALENDAR_ONE);
+        dateRight.setTime(dateAfter);
+        Calendar demo = Calendar.getInstance();
+        //进行echarts图标数据整理
+        for(int i = dayCount - 1; i >= 0; i--) {
+            for (OrderPO order : orders) {
+                Date orderDate = order.getCreateTime();
+                demo.setTime(orderDate);
+                if (demo.after(dateLeft) && demo.before(dateRight)) {
+                    moneyList.set(i, moneyList.get(i).add(order.getTotalMoney()));
+                    countList.set(i, countList.get(i) + Constant.CALENDAR_ONE);
+                }
+            }
+            dateLeft.add(Calendar.DAY_OF_MONTH, -Constant.CALENDAR_ONE);
+            dateRight.add(Calendar.DAY_OF_MONTH, -Constant.CALENDAR_ONE);
+        }
+        //返回VO
+        OrderDataVO orderDataVO = new OrderDataVO();
+        orderDataVO.setCountList(countList);
+        orderDataVO.setMoneyList(moneyList);
+        return Result.success(orderDataVO);
     }
 
 }

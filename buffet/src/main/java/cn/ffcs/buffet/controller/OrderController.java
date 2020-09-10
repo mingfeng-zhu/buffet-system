@@ -96,7 +96,7 @@ public class OrderController {
     }
 
     /**
-     * 查询订单总数、总交易额
+     * 查询订单总数、总交易额、当日交易额、交易量
      * @return
      */
     @PassToken
@@ -205,6 +205,15 @@ public class OrderController {
     public Result cancelOrderList(@RequestBody UpdateOrderStatusAO updateOrderStatusAO) {
         List<Long> orderIdList = Arrays.asList(updateOrderStatusAO.getIdList());
         return orderService.cancelOrderList(orderIdList, updateOrderStatusAO.getOrderStatus());
+    }
+
+
+    @PassToken
+    @ApiOperation(value = "获取最近dayCount天的数据")
+    @GetMapping(path = "/getEchartsData")
+    @ResponseBody
+    public Result getEchartsData(Integer dayCount) {
+        return orderService.getEchartsData(dayCount);
     }
 
 }
