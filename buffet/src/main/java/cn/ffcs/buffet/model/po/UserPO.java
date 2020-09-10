@@ -3,7 +3,7 @@ package cn.ffcs.buffet.model.po;
 import cn.ffcs.buffet.common.util.Constant;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
-
+import java.math.BigDecimal;
 import java.util.Date;
 
 @ApiModel
@@ -66,6 +66,16 @@ public class UserPO {
      * 默认地址
      */
     private Integer defaultAddressId;
+
+    /**
+     * 用户角色
+     */
+    private Byte userRole = 0;
+
+    /**
+     * 总金额
+     */
+    private BigDecimal totalMoney;
 
     public Integer getUserId() {
         return userId;
@@ -147,6 +157,22 @@ public class UserPO {
         this.defaultAddressId = defaultAddressId;
     }
 
+    public Byte getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(Byte userRole) {
+        this.userRole = userRole;
+    }
+
+    public BigDecimal getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(BigDecimal totalMoney) {
+        this.totalMoney = totalMoney;
+    }
+
     @Override
     public String toString() {
         return "UserPO{" +
@@ -159,6 +185,8 @@ public class UserPO {
                 ", userImg='" + userImg + '\'' +
                 ", userSex=" + userSex +
                 ", userPassword='" + userPassword + '\'' +
+                ", userRole=" + userRole +
+                ", totalMoney=" + totalMoney +
                 '}';
     }
 }

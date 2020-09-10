@@ -29,7 +29,7 @@
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '3'">待配送</div>
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '4'">配送中，待收货</div>
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '5'">已收货，待评价</div>
-                <div class="orderStatus" v-if="item.orderPO.orderStatus === '6'">已评价</div>
+                <div class="orderStatus" v-if="item.orderPO.orderStatus === '6'">已收货</div>
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '7'">取消中</div>
                 <div class="orderStatus" v-if="item.orderPO.orderStatus === '8'">超时未支付</div>
               </div>
@@ -89,10 +89,10 @@ export default {
       this.$router.push('/pay')
     },
     async receive(id){
-      //将status更新为5
+      //将status更新为6
       this.params={}
       this.params.id = id
-      this.params.orderStatus = '5'
+      this.params.orderStatus = '6'
       await this.$api.editOrderStatus(this.params)
       //刷新页面
       location.reload()

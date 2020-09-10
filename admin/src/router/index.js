@@ -159,7 +159,26 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/admin/user',
+    component: Layout,
+    redirect: '/admin/user/index',
+    name: 'Example',
+    meta: {
+      title: '用户信息',
+      icon: 'example'
+    },
+    children: [{
+        path: 'index',
+        name: '用户管理',
+        component: () => import('@/views/user/index'),
+        meta: {
+          title: '用户管理',
+          icon: 'tree'
+        }
+      }
+    ]
+  },
   {
     path: '/product-module',
     component: Layout,

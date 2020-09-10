@@ -12,9 +12,11 @@
         <result column="user_tel" jdbcType="VARCHAR" property="userTel" />
         <result column="user_state" jdbcType="INTEGER" property="userState" />
         <result column="default_address_id" jdbcType="INTEGER" property="defaultAddressId" />
+        <result column="user_role" jdbcType="TINYINT" property="userRole" />
+        <result column="total_money" jdbcType="DECIMAL" property="totalMoney" />
     </resultMap>
     <sql id="Base_Column_List">
-    user_id, user_name, create_time, update_time, user_password, user_img,user_sex,user_tel,user_state,default_address_id
+    user_id, user_name, create_time, update_time, user_password, user_img,user_sex,user_tel,user_state,default_address_id,total_money
   </sql>
     <update id="updateUser">
         UPDATE USER
@@ -34,9 +36,9 @@
             <if test="userPassword != null">
                 user_password=#{userPassword},
             </if>
-<!--            <if test="userTel != null">-->
-<!--                user_tel=#{userTel},-->
-<!--            </if>-->
+            <if test="userState != null">
+                user_state=#{userState},
+            </if>
             <if test="defaultAddressId != null">
                 default_address_id = #{defaultAddressId,jdbcType=INTEGER},
             </if>
@@ -45,7 +47,11 @@
     </update>
 
     <select id="checkLogin" parameterType="cn.ffcs.buffet.model.po.UserPO" resultMap="BaseResultMap">
-        SELECT * FROM USER WHERE USER_TEL = #{userTel}
+        SELECT * FROM USER
+        WHERE
+        USER_TEL = #{userTel}
+        and
+        user_role = #{userRole}
     </select>
 
     <insert id="signUpUser" parameterType="cn.ffcs.buffet.model.po.UserPO">
@@ -73,6 +79,9 @@
             <if test="userImg != null">
                 user_img,
             </if>
+            <if test="totalMoney != null">
+                total_money,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             #{userId},
@@ -97,6 +106,9 @@
             <if test="userImg != null">
                 #{userImg},
             </if>
+            <if test="totalMoney != null">
+                {totalMoney},
+            </if>
         </trim>
     </insert>
 
@@ -105,4 +117,23 @@
         <include refid="Base_Column_List"/>
         from USER where user_id = #{userId, jdbcType=INTEGER}
     </select>
+
+    <select id="listUser" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM USER
+        WHERE user_role = 0
+        <if test="username != null and username != ''">
+            and user_name like concat("%",#{username},"%")
+        </if>
+        <if test="userState != null ">
+            and user_state = #{userState}
+        </if>
+    </select>
+
+    <update id="updateMoneyByUser">
+        UPDATE USER
+        set total_money = (total_money + #{totalMoney})
+        where user_id = #{userId}
+    </update>
 </mapper>

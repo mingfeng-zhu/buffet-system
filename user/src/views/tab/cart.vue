@@ -196,7 +196,8 @@
                     if (item.isChecked) {
                         cartgoods.push({ id:item.productSpecificationDTO.productSpecificationId,price:item.productSpecificationDTO.productPrice,
                           title:item.productSpecificationDTO.productPO.productName,num:item.shopCart.goodCount,
-                          productimg:item.productSpecificationDTO.productSpecificationPicture,specification:item.productSpecificationDTO.productSpecification});
+                          productimg:item.productSpecificationDTO.productSpecificationPicture,specification:item.productSpecificationDTO.productSpecification,
+                          shopcartid:item.shopCart.id});
                     }
                 });
                 if (cartgoods.length === 0) {

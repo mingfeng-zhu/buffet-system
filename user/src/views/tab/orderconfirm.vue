@@ -125,11 +125,13 @@ export default {
       let idlist = []
       let goodcountlist = []
       let totalmoneylist = []
+      let shopCartIdList = []
       let ordertitle = ''
       this.cartgoods.forEach(function (item,index){
         idlist.push(item.id)
         goodcountlist.push(item.num)
         totalmoneylist.push(item.cartprice)
+        shopCartIdList.push(item.shopcartid)
         if (index > 0 ){
           if(item.num>1) {
             ordertitle += '+' + item.title + '*' + item.num
@@ -147,6 +149,7 @@ export default {
       this.params.idList = idlist
       this.params.goodCountList = goodcountlist
       this.params.totalMoneyList = totalmoneylist
+      this.params.shopCartIdList = shopCartIdList
       let that = this
       await this.$api.creatOrder(this.params).then(function (response){
         that.orderid = response.data.data
@@ -167,7 +170,7 @@ export default {
           cartPrice = Number(item.num) * Number(item.price);
           cartPrice=Number(cartPrice.toFixed(2))
           cartGoods.push({id:item.id,price:item.price,title:item.title,num:item.num,cartprice:cartPrice,
-            productimg:item.productimg,specification:item.specification})
+            productimg:item.productimg,specification:item.specification,shopcartid:item.shopcartid})
           totalPrice += cartPrice; //累计总价
           totalPrice=Number(totalPrice.toFixed(2))
       })

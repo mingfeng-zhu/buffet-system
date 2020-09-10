@@ -11,7 +11,7 @@ const getDefaultState = () => {
 }
 
 const state = getDefaultState()
-
+const imageUrl = process.env.IMAGE_URL
 const mutations = {
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
@@ -32,10 +32,10 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ userName: username.trim(), userPassword: password, userTel: username.trim(), userRole: 1 }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        commit('SET_TOKEN', response.data.token)
+        setToken(response.data.token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -55,8 +55,8 @@ const actions = {
 
         const { name, avatar } = data
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        commit('SET_NAME', response.data.userName)
+        commit('SET_AVATAR', 'http://121.199.49.199:8082' + response.data.userImg)
         resolve(data)
       }).catch(error => {
         reject(error)

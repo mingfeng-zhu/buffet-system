@@ -100,4 +100,9 @@ public class ShopCartServiceImpl implements ShopCartService {
     public Integer deleteShopCartByUserId(Integer userId) {
         return shopCartMapper.deleteShopCartByUserId(userId);
     }
+
+    @Override
+    public Integer deleteShopCartByIdList(List<Integer> shopIdList) {
+        return shopCartMapper.deleteShopCartByIdList(shopIdList);
+    }
 }

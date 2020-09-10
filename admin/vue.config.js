@@ -15,6 +15,10 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
+// api地址
+const apiUrl = process.env.API_URL
+// 图片
+const imageUrl = process.env.IMAGE_URL  || 'http://localhost:8082'
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -39,7 +43,7 @@ module.exports = {
     proxy: {
       //解决跨域问题
       '/api': {
-        target: 'http://localhost:8082', // 请换成你的地址,
+        target: apiUrl, // 请换成你的地址,
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

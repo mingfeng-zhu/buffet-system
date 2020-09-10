@@ -13,11 +13,11 @@
     <result column="modifier" jdbcType="INTEGER" property="modifier" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, good_id, pay_status, good_count, create_time, change_time, creator, 
+    id, user_id, good_id, pay_status, good_count, create_time, change_time, creator,
     modifier
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from t_shop_cart
     where id = #{id,jdbcType=INTEGER}
@@ -42,12 +42,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.ffcs.buffet.model.po.ShopCart">
-    insert into t_shop_cart (id, user_id, good_id, 
-      pay_status, good_count, create_time, 
+    insert into t_shop_cart (id, user_id, good_id,
+      pay_status, good_count, create_time,
       change_time, creator, modifier
       )
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{goodId,jdbcType=INTEGER}, 
-      #{payStatus,jdbcType=CHAR}, #{goodCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{goodId,jdbcType=INTEGER},
+      #{payStatus,jdbcType=CHAR}, #{goodCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
       #{changeTime,jdbcType=TIMESTAMP}, #{creator,jdbcType=INTEGER}, #{modifier,jdbcType=INTEGER}
       )
   </insert>
@@ -166,5 +166,14 @@
     pay_status = ${@cn.ffcs.buffet.common.util.Constant$Shop_Cart_STATUS@paid.getIndex()}
     where user_id = #{userId,jdbcType=INTEGER} and good_id = #{goodId,jdbcType=INTEGER}
   </update>
-
+  <update id="deleteShopCartByIdList">
+    update t_shop_cart
+    set pay_status = ${@cn.ffcs.buffet.common.util.Constant$Shop_Cart_STATUS@paid.getIndex()}
+    <where>
+      id in
+      <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </where>
+  </update>
 </mapper>

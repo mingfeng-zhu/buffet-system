@@ -55,7 +55,7 @@ public interface OrderService {
      * @param goodCountList
      * @return
      */
-    Result addOrder(Integer[] idList, BigDecimal totalMoney, BigDecimal[] totalMoneyList, Integer addressId, Integer[] goodCountList);
+    Result addOrder(Integer[] idList, BigDecimal totalMoney, BigDecimal[] totalMoneyList, Integer addressId, Integer[] goodCountList, Integer[] shopCartIdList);
 
     /**
      * 支付订单

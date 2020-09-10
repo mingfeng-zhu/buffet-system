@@ -24,16 +24,18 @@ public class AddOrderAO implements Serializable {
 
     private Integer addressId;
 
+    private Integer[] shopCartIdList;
+
     public AddOrderAO() {
     }
 
-    public AddOrderAO(Integer[] idList, BigDecimal[] totalMoneyList, Integer[] goodCountList,
-                      BigDecimal totalMoney, Integer addressId) {
+    public AddOrderAO(Integer[] idList, BigDecimal[] totalMoneyList, Integer[] goodCountList, BigDecimal totalMoney, Integer addressId, Integer[] shopCartIdList) {
         this.idList = idList;
         this.totalMoneyList = totalMoneyList;
         this.goodCountList = goodCountList;
         this.totalMoney = totalMoney;
         this.addressId = addressId;
+        this.shopCartIdList = shopCartIdList;
     }
 
     @Override
@@ -44,6 +46,7 @@ public class AddOrderAO implements Serializable {
                 ", goodCountList=" + Arrays.toString(goodCountList) +
                 ", totalMoney=" + totalMoney +
                 ", addressId=" + addressId +
+                ", shopCartIdList=" + Arrays.toString(shopCartIdList) +
                 '}';
     }
 
@@ -85,5 +88,13 @@ public class AddOrderAO implements Serializable {
 
     public void setAddressId(Integer addressId) {
         this.addressId = addressId;
+    }
+
+    public Integer[] getShopCartIdList() {
+        return shopCartIdList;
+    }
+
+    public void setShopCartIdList(Integer[] shopCartIdList) {
+        this.shopCartIdList = shopCartIdList;
     }
 }

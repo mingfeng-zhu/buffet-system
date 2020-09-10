@@ -27,6 +27,15 @@ public class Constant {
     /** 商品库存为0 **/
     public static final Integer PRODUCT_NUMBER_ZERO = 0;
 
+    /** 时间数字1 **/
+    public static final Integer CALENDAR_ONE = 1;
+
+    /** 时间数字1 **/
+    public static final Integer CALENDAR_ZERO = 0;
+
+    /** 一天的时间戳 **/
+    public static final Integer ONE_DAY_COUNT = 3600 * 24 * 1000;
+
     /**
      * 订单状态
      */
