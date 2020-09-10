@@ -34,7 +34,7 @@
           <van-cell-group>
             <van-cell>
               <template #title>
-                <van-image style="float:left;margin-left: 25px" width="100px" height="100px"  :src="image"/>
+                <van-image style="float:left;margin-left: 25px" width="100px" height="100px"  :src="detail.image"/>
               </template>
               <template #default>
                 <p style="float: left">￥{{price}}</p><br>

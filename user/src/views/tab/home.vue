@@ -331,7 +331,6 @@
                     }
                     this.price=data.data.productPrice
                     this.storage = data.data.productStorage
-                    this.image = data.data.productSpecificationPicture
                     this.productSpecification = data.data.productSpecification
                 }
             }
