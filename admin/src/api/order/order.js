@@ -36,6 +36,17 @@ export function getOrderById(params) {
 }
 
 /**
+ * 获取订单总数、总交易额
+ * @param {*} params
+ */
+export function getTotalNumberAndMoney() {
+  return request({
+    url: '/api/order/getTotalNumberAndMoney',
+    method: 'get',
+  })
+}
+
+/**
  * 修改订单状态，批量形式
  * @param {*} params
  */
@@ -56,6 +67,18 @@ export function cancelOrderList(data) {
     url: '/api/order/cancelOrderList',
     method: 'post',
     data
+  })
+}
+
+/**
+ * 获取指定天数内的订单统计信息
+ * @param {*} params
+ */
+export function getEchartsData(params) {
+  return request({
+    url: '/api/order/getEchartsData',
+    method: 'get',
+    params
   })
 }
 
