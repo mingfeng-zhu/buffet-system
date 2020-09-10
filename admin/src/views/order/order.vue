@@ -47,7 +47,7 @@
         style="float: right;margin-left: 10px;"
         type="primary"
         @click="adminCancelOrder()"
-      >取消接单</el-button>
+      >确认取消</el-button>
     </div>
     <el-table :data="orderList" border style="width: 100%; margin-top:10px" @selection-change="selectChange">
       <el-table-column
@@ -203,16 +203,10 @@
           name: "外卖配送中"
         },{
           index: "5",
-          name: "外卖已到达，待评价"
-        },{
-          index: "6",
-          name: "已评价，订单完成"
+          name: "外卖已到达，订单完成"
         },{
           index: "7",
           name: "订单取消中，待商家审核"
-        },{
-          index: "8",
-          name: "超时未接单"
         }],
         dialogTableVisible: false,
         orderDetailAndProductDTO: [],
