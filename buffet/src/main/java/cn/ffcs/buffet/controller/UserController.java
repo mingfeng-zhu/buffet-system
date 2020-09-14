@@ -5,6 +5,7 @@ import cn.ffcs.buffet.common.redis.constant.StaticValue;
 import cn.ffcs.buffet.common.redis.utils.RedisCommands;
 import cn.ffcs.buffet.common.util.CodeUtils;
 import cn.ffcs.buffet.common.util.Constant;
+import cn.ffcs.buffet.common.util.Md5Util;
 import cn.ffcs.buffet.common.util.TokenUtil;
 import cn.ffcs.buffet.model.ao.LoginUserAO;
 import cn.ffcs.buffet.model.ao.SignUserAO;
@@ -66,7 +67,11 @@ public class UserController {
     public Result userLogin(@RequestBody LoginUserAO user, HttpServletRequest request) {
         UserPO checkUser = new UserPO();
         checkUser.setUserTel(user.getUserTel());
-        checkUser.setUserPassword(user.getUserPassword());
+        // 加密
+        String MD5Password = Md5Util.getMd5(user.getUserPassword(), user.getUserTel());
+        user.setUserPassword(MD5Password);
+        checkUser.setUserPassword(MD5Password);
+        System.out.println(checkUser.getUserPassword());
         checkUser.setUserRole(user.getUserRole());
         UserPO loginUser = userService.checkLogin(checkUser);
         if (loginUser == null) {
@@ -136,6 +141,8 @@ public class UserController {
         if (sessionCode.equals(user.getCode())) {
             UserPO signUser = new UserPO();
             BeanUtils.copyProperties(user, signUser);
+            // 密码加密
+            signUser.setUserPassword(Md5Util.getMd5(user.getUserPassword(), user.getUserTel()));
             UserPO checkuser = userService.checkLogin(signUser);
             if (checkuser == null) {
                 userService.signUpUser(signUser);
@@ -186,7 +193,10 @@ public class UserController {
     @PostMapping(path = "/updateUser")
     public Result updateUser(@RequestBody UserPO user, HttpServletRequest request) {
         user.setUserId(TokenUtil.getUserIdAndUserTelOfToken().getUserId());
-        Integer num = userService.updateUser(user);
+        if (!user.getUserPassword().isEmpty()){
+            user.setUserPassword(Md5Util.getMd5(user.getUserPassword(), user.getUserTel()));
+        }
+            Integer num = userService.updateUser(user);
         if (user.getUserId() == null) {
             return Result.fail("缺少用户id");
         }
