@@ -71,7 +71,6 @@ public class UserController {
         String MD5Password = Md5Util.getMd5(user.getUserPassword(), user.getUserTel());
         user.setUserPassword(MD5Password);
         checkUser.setUserPassword(MD5Password);
-        System.out.println(checkUser.getUserPassword());
         checkUser.setUserRole(user.getUserRole());
         UserPO loginUser = userService.checkLogin(checkUser);
         if (loginUser == null) {
