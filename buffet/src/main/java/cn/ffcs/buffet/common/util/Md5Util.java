@@ -3,7 +3,7 @@ package cn.ffcs.buffet.common.util;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
- * @Description: MD5加密工具类 这里盐使用user.getUsername()
+ * @Description: MD5加密工具类 这里盐使用user.getUserTel()
  * @Author: mingfeng.zhu
  * @Date: 2020/8/16 10:14
  */

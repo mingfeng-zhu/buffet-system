@@ -45,6 +45,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      * @return
      * @throws Exception
      */
+    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 从 http 请求头中取出 token
         String token = request.getHeader(TokenUtil.HEAD_NAME);
@@ -91,9 +92,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         throw new Exception("No Access");
     }
 
+    @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
     }
 
+    @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
     }
 

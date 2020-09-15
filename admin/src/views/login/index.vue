@@ -50,7 +50,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-
+import md5 from 'js-md5';
 export default {
   name: 'Login',
   data() {
@@ -104,8 +104,10 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          let loginForm = Object.assign({}, this.loginForm)
+          loginForm.password = md5(loginForm.password)
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          this.$store.dispatch('user/login', loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
