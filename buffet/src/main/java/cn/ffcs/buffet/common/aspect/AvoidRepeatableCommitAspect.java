@@ -2,6 +2,8 @@ package cn.ffcs.buffet.common.aspect;
 
 import cn.ffcs.buffet.common.dto.Result;
 import cn.ffcs.buffet.common.enums.ExceptionEnum;
+import cn.ffcs.buffet.common.redis.constant.StaticValue;
+import cn.ffcs.buffet.common.redis.utils.RedisCommands;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,6 +12,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -28,17 +31,10 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class AvoidRepeatableCommitAspect {
     /**
-     * 缓存，在3秒内最大并发10000
+     * redis
      */
-    private static final Cache<String, Object> CACHES = CacheBuilder.newBuilder()
-            // 设置并发级别为cpu核心数
-            .concurrencyLevel(Runtime.getRuntime().availableProcessors())
-            // 设置初始容量为100
-            .initialCapacity(100)
-            // 最大缓存1000个  1000之后就会按照LRU最近少使用算法来移除缓存项
-            .maximumSize(1000)
-            // 设置缓存写后3秒后过期
-            .expireAfterWrite(3, TimeUnit.SECONDS).build();
+    @Autowired
+    private RedisCommands redisCommands;
 
     /**
      * 日志
@@ -59,13 +55,12 @@ public class AvoidRepeatableCommitAspect {
     public Object interceptor(ProceedingJoinPoint pjp) {
         String key = getKey();
         if (!StringUtils.isEmpty(key)) {
-            if (CACHES.getIfPresent(key) != null) {
+            if (redisCommands.get(StaticValue.AVOID, key) != null) {
                 LOGGER.info("key:" + key + ",重复提交请求");
                 return Result.fail(ExceptionEnum.AVOID_REPEATABLE_COMMIT.getMsg(), ExceptionEnum.AVOID_REPEATABLE_COMMIT.getCode());
             }
             // 如果是第一次请求,就将 key 当前对象压入缓存中
-            CACHES.put(key, key);
-            ;
+            redisCommands.set(StaticValue.AVOID, key, key, 3);
         }
         try {
             return pjp.proceed();

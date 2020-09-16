@@ -46,7 +46,6 @@ public class OrderController {
      * @param orderId 订单流水号
      * @return
      */
-    @PassToken
     @ApiOperation(value = "获取订单列表，可选择的条件有用户id、订单流水号、订单状态。查询为分页查询。(后台使用)")
     @GetMapping(path = "/listOrder")
     public Result listOrder(Integer userId, String orderStatus, Page<OrderDTO> page, String orderId) {
@@ -58,7 +57,6 @@ public class OrderController {
      * @param page 分页数据
      * @return
      */
-    @PassToken
     @ApiOperation(value = "获取订单列表，可选择的条件：订单状态。查询为分页查询。(前台使用)")
     @GetMapping(path = "/listOrderByCurrentUser")
     public Result listOrderByCurrentId(Page<OrderPO> page, String orderStatus) {
@@ -71,7 +69,6 @@ public class OrderController {
      * @param id 订单id
      * @return
      */
-    @PassToken
     @ApiOperation(value = "获取指定订单信息， 参数： 订单orderPO的id。(前台使用)")
     @GetMapping(path = "/getOrderById")
     public Result getOrderById(Long id) {
@@ -83,7 +80,6 @@ public class OrderController {
      * @param updateOrderStatusAO 批量修改订单状态AO
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "修改订单状态，后台web端使用，批量形式(用于后台的管理员批量派送、批量接单等功能)")
     @PostMapping(path = "/updateOrderByIdList")
@@ -99,7 +95,6 @@ public class OrderController {
      * 查询订单总数、总交易额、当日交易额、交易量
      * @return
      */
-    @PassToken
     @ApiOperation(value = "查询订单总数、总交易额、当日交易数、当日交易额")
     @GetMapping(value = "/getTotalNumberAndMoney")
     @ResponseBody
@@ -112,7 +107,6 @@ public class OrderController {
      * @param addOrderAO 订单生成实体类
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "生成订单，订单未待支付状态.商品规格id集合、总价、各类商品价格集合、地址id、各类商品数量集合")
     @PostMapping(path = "/addOrder")
@@ -126,7 +120,6 @@ public class OrderController {
      * @param editOrderStatusAO 订单状态改变AO
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "修改订单状态，app端使用,传id（订单id）与需要修改成的状态(orderStatus)（String类型）。订单状态：" +
             "'2'为待接单（待支付的下一个状态）、'3'为制作中、'4'为派送中、'5'为已收货、6为已评价, 7为取消中, 8:超时未接单")
@@ -140,7 +133,6 @@ public class OrderController {
      * @param payOrderAO 支付订单AO
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "支付订单，用于app端支付订单操作, id:订单的id； idList：商品规格idList； goodCountList： 商品对应数量List")
     @PostMapping(path = "/payOrder")
@@ -153,7 +145,6 @@ public class OrderController {
      * 获取订单状态列表
      * @return
      */
-    @PassToken
     @ApiOperation(value = "获取订单状态列表")
     @GetMapping(path = "/listOrderStatusList")
     public Result listOrderStatusList() {
@@ -165,7 +156,6 @@ public class OrderController {
      * @param cancelOrderAO 订单id
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "取消订单，用于app端取消订单")
     @PostMapping(path = "/cancelOrder")
@@ -179,7 +169,6 @@ public class OrderController {
      * @param idList idList
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "删除指定订单id的订单，批量形式(后台使用)")
     @PostMapping(path = "/deleteOrderByIdList")
@@ -197,7 +186,6 @@ public class OrderController {
      * @param updateOrderStatusAO 批量确认取消订单AO
      * @return
      */
-    @PassToken
     @AvoidRepeatableCommit
     @ApiOperation(value = "取消订单，用于后台管理员批量取消订单")
     @PostMapping(path = "/cancelOrderList")
@@ -208,7 +196,6 @@ public class OrderController {
     }
 
 
-    @PassToken
     @ApiOperation(value = "获取最近dayCount天的数据")
     @GetMapping(path = "/getEchartsData")
     @ResponseBody

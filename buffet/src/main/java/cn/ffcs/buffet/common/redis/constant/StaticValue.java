@@ -13,11 +13,16 @@ public class StaticValue {
     public static final String USER_CODE = "code";
 
     /**
+     * 避免重复提交命名空间
+     */
+    public static final String AVOID = "avoid";
+
+    /**
      * 连接时间
      */
     public static final int COMMAND_TIMEOUT = 5000;
     /**
-     * 冒号
+     * 下划线
       */
     public static final String UNDERLINE = "_";
 }

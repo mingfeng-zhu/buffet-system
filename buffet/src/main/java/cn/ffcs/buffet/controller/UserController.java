@@ -70,6 +70,7 @@ public class UserController {
         // 加密
         String MD5Password = Md5Util.getMd5(user.getUserPassword(), user.getUserTel());
         user.setUserPassword(MD5Password);
+        System.out.println(user);
         checkUser.setUserPassword(MD5Password);
         checkUser.setUserRole(user.getUserRole());
         UserPO loginUser = userService.checkLogin(checkUser);
@@ -172,7 +173,6 @@ public class UserController {
         String code = CodeUtils.getCode(4, CodeUtils.NUMBER_CODE);
         // 放入redis, 10分钟后过期
         Boolean set = redisCommands.set(StaticValue.USER_CODE, userTel, code, 10 * 60);
-        System.out.println("set:" + set);
         params.put("message", "验证码为: " + code + "；10分钟后过期。");
         params.put("number", userTel);
         try {
@@ -192,9 +192,11 @@ public class UserController {
     @PostMapping(path = "/updateUser")
     public Result updateUser(@RequestBody UserPO user, HttpServletRequest request) {
         user.setUserId(TokenUtil.getUserIdAndUserTelOfToken().getUserId());
+        System.out.println(user.toString());
         if (!user.getUserPassword().isEmpty()){
-            user.setUserPassword(Md5Util.getMd5(user.getUserPassword(), user.getUserTel()));
+            user.setUserPassword(Md5Util.getMd5(user.getUserPassword(), TokenUtil.getUserIdAndUserTelOfToken().getUserTel()));
         }
+        System.out.println(user.toString());
             Integer num = userService.updateUser(user);
         if (user.getUserId() == null) {
             return Result.fail("缺少用户id");
